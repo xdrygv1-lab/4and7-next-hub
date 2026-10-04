@@ -446,7 +446,7 @@ async function show(){
   if(narrow())setCollapsed(true);
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
-    main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><button class="btn p" type="button" id="tpBtn">보완 남기기</button></span></div><div class="toolpanel" id="tp" hidden></div><iframe class="frame" src="${src}" title="${t}"></iframe>`;
+    main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><button class="btn p" type="button" id="tpBtn">보완 남기기</button></span></div><div class="toolpanel" id="tp" hidden></div><iframe class="frame" src="${src}?v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     const name=h==='tool-ap'?'AP 스크립트 자동작성':'경정기 비교 계산기';
     $('#tp').appendChild(contribBox(name,{kind:'오류',hint:'어느 탭에서 무엇이 이상했는지, 어떻게 바뀌면 좋을지 적어 주세요.'}));
     $('#tpBtn').onclick=()=>{$('#tp').hidden=!$('#tp').hidden;$('#tpBtn').textContent=$('#tp').hidden?'보완 남기기':'닫기'};return}

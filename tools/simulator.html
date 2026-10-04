@@ -68,80 +68,80 @@ details summary{cursor:pointer;font-weight:700}
 <body>
 <div class="wrap">
 <header>
- <div><div class="eyebrow">4&7 NEXT · DEMO v1</div><h1>경영인정기보험 시뮬레이터</h1></div>
- <div class="muted" id="srcline"></div>
+  <div><div class="eyebrow">4&7 NEXT · DEMO v1</div><h1>경영인정기보험 시뮬레이터</h1></div>
+  <div class="muted" id="srcline"></div>
 </header>
 
 <section class="card">
- <div class="grid">
- <div>
- <label>대표 나이</label>
- <div class="agebox"><input id="ageR" type="range" min="20" max="75" value="45"><input id="ageN" type="number" min="20" max="75" value="45"></div>
- </div>
- <div><label>성별</label><div class="seg" id="sex"><button data-v="남" class="on">남</button><button data-v="여">여</button></div></div>
- <div><label>심사유형</label><div class="seg" id="uw"><button data-v="일반" class="on">일반</button><button data-v="간편">간편</button></div></div>
- <div><label>보기 방식</label><div class="seg" id="mode"><button data-v="amt" class="on">가입금액 기준</button><button data-v="bud">보험료 기준</button></div></div>
- <div id="inAmt"><label>가입금액</label><div class="inrow"><input id="amt" type="number" min="1" step="1" value="10"><span>억원</span></div></div>
- <div id="inBud" hidden><label>월 보험료</label><div class="inrow"><input id="bud" type="number" min="10" step="10" value="300"><span>만원</span></div>
- <div class="chips" id="budChips" style="margin-top:6px"></div></div>
- <div><label>순비용 기준 연도</label><select id="netY"></select></div>
- <div><label>정렬 기준</label><select id="sortSel">
- <option value="rN">기준 연도 환급률 높은 순</option><option value="nN">기준 연도 순비용 낮은 순</option>
- <option value="prem">월 보험료 낮은 순</option><option value="rfN">기준 연도 해지환급금 큰 순</option><option value="amtx">가입금액 큰 순(예산 기준)</option><option value="co">보험사 이름순</option></select></div>
- <div><label>&nbsp;</label><div class="seg" id="okOnly"><button data-v="all" class="on">전체 상품</button><button data-v="ok">가입 가능만</button></div></div>
- </div>
- <div class="row2">
- <div><span class="lbl">비교 상품</span><div class="chips" id="pchips"></div></div>
- <div><span class="lbl">표시할 경과년수</span><div class="chips" id="ychips"></div></div>
- <div><span class="lbl">재정심사 참고</span><div class="seg" id="uwOn"><button data-v="off" class="on">끄기</button><button data-v="on">켜기</button></div></div>
- </div>
- <div id="uwPanel" class="mt" hidden>
- <div class="grid">
- <div><label>대표 연간소득</label><div class="inrow"><input id="inc" type="number" min="0" step="1000" value="20000"><span>만원</span></div></div>
- <div><label>고객등급</label><div class="seg" id="grade"><button data-v="클래식" class="on">클래식↑</button><button data-v="일반">일반</button></div></div>
- <div><label>기계약 사망보험금 합산</label><div class="inrow"><input id="prior" type="number" min="0" step="0.5" value="0"><span>억원</span></div></div>
- <div><label>법인 설립 2년 미만</label><div class="seg" id="young"><button data-v="n" class="on">아니오</button><button data-v="y">예</button></div></div>
- </div>
- <div class="uwout mt" id="uwOut"></div>
- </div>
+  <div class="grid">
+    <div>
+      <label>대표 나이</label>
+      <div class="agebox"><input id="ageR" type="range" min="20" max="75" value="45"><input id="ageN" type="number" min="20" max="75" value="45"></div>
+    </div>
+    <div><label>성별</label><div class="seg" id="sex"><button data-v="남" class="on">남</button><button data-v="여">여</button></div></div>
+    <div><label>심사유형</label><div class="seg" id="uw"><button data-v="일반" class="on">일반</button><button data-v="간편">간편</button></div></div>
+    <div><label>보기 방식</label><div class="seg" id="mode"><button data-v="amt" class="on">가입금액 기준</button><button data-v="bud">보험료 기준</button></div></div>
+    <div id="inAmt"><label>가입금액</label><div class="inrow"><input id="amt" type="number" min="1" step="1" value="10"><span>억원</span></div></div>
+    <div id="inBud" hidden><label>월 보험료</label><div class="inrow"><input id="bud" type="number" min="10" step="10" value="300"><span>만원</span></div>
+      <div class="chips" id="budChips" style="margin-top:6px"></div></div>
+    <div><label>순비용 기준 연도</label><select id="netY"></select></div>
+    <div><label>정렬 기준</label><select id="sortSel">
+      <option value="rN">기준 연도 환급률 높은 순</option><option value="nN">기준 연도 순비용 낮은 순</option>
+      <option value="prem">월 보험료 낮은 순</option><option value="rfN">기준 연도 해지환급금 큰 순</option><option value="amtx">가입금액 큰 순(예산 기준)</option><option value="co">보험사 이름순</option></select></div>
+    <div><label>&nbsp;</label><div class="seg" id="okOnly"><button data-v="all" class="on">전체 상품</button><button data-v="ok">가입 가능만</button></div></div>
+  </div>
+  <div class="row2">
+    <div><span class="lbl">비교 상품</span><div class="chips" id="pchips"></div></div>
+    <div><span class="lbl">표시할 경과년수</span><div class="chips" id="ychips"></div></div>
+    <div><span class="lbl">재정심사 참고</span><div class="seg" id="uwOn"><button data-v="off" class="on">끄기</button><button data-v="on">켜기</button></div></div>
+  </div>
+  <div id="uwPanel" class="mt" hidden>
+    <div class="grid">
+      <div><label>대표 연간소득</label><div class="inrow"><input id="inc" type="number" min="0" step="1000" value="20000"><span>만원</span></div></div>
+      <div><label>고객등급</label><div class="seg" id="grade"><button data-v="클래식" class="on">클래식↑</button><button data-v="일반">일반</button></div></div>
+      <div><label>기계약 사망보험금 합산</label><div class="inrow"><input id="prior" type="number" min="0" step="0.5" value="0"><span>억원</span></div></div>
+      <div><label>법인 설립 2년 미만</label><div class="seg" id="young"><button data-v="n" class="on">아니오</button><button data-v="y">예</button></div></div>
+    </div>
+    <div class="uwout mt" id="uwOut"></div>
+  </div>
 </section>
 
 <div class="kpis" id="kpis"></div>
 
 <section class="card">
- <div class="tabs"><button class="tab on" data-t="cmp">상품 비교</button><button class="tab" data-t="age">나이별 보기</button><button class="tab" data-t="dsg">실제 설계서</button></div>
+  <div class="tabs"><button class="tab on" data-t="cmp">상품 비교</button><button class="tab" data-t="age">나이별 보기</button><button class="tab" data-t="dsg">실제 설계서</button></div>
 
- <div id="t-cmp">
- <div class="sec-h"><span class="muted" id="cmpNote"></span><span class="muted">행을 누르면 상세 · 머리글로 정렬</span></div>
- <div class="tbl-wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
- <div id="detail" hidden class="mt">
- <div class="sec-h"><h2 id="dTitle"></h2><span id="dBadges"></span></div>
- <div class="detail">
- <div><div class="muted">경과년수별 해지환급률</div><div id="chartY"></div></div>
- <div><div class="muted">나이별 월 보험료</div><div id="chartA"></div></div>
- </div>
- <div class="detail mt">
- <div class="tbl-wrap"><table id="ytbl"><thead><tr><th class="l">경과</th><th>도달 나이</th><th>누적 납입</th><th>해지환급금</th><th>환급률</th><th>순비용</th><th class="l">전환</th></tr></thead><tbody></tbody></table></div>
- <dl class="facts" id="facts"></dl>
- </div>
- </div>
- </div>
+  <div id="t-cmp">
+    <div class="sec-h"><span class="muted" id="cmpNote"></span><span class="muted">행을 누르면 상세 · 머리글로 정렬</span></div>
+    <div class="tbl-wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+    <div id="detail" hidden class="mt">
+      <div class="sec-h"><h2 id="dTitle"></h2><span id="dBadges"></span></div>
+      <div class="detail">
+        <div><div class="muted">경과년수별 해지환급률</div><div id="chartY"></div></div>
+        <div><div class="muted">나이별 월 보험료 (점: 원자료, 점선: 추정)</div><div id="chartA"></div></div>
+      </div>
+      <div class="detail mt">
+        <div class="tbl-wrap"><table id="ytbl"><thead><tr><th class="l">경과</th><th>도달 나이</th><th>누적 납입</th><th>해지환급금</th><th>환급률</th><th>순비용</th><th class="l">전환</th></tr></thead><tbody></tbody></table></div>
+        <dl class="facts" id="facts"></dl>
+      </div>
+    </div>
+  </div>
 
- <div id="t-age" hidden>
- <div class="sec-h">
- <div class="inrow"><span class="muted">표시 값</span>
- <select id="ageMetric" style="width:auto"><option value="prem">월 보험료</option><option value="amtx">가입 가능 금액(예산 기준)</option><option value="rN">기준 연도 환급률</option><option value="nN">기준 연도 순비용</option></select>
- <select id="ageStep" style="width:auto"><option value="5">5세 단위</option><option value="1">1세 단위</option></select>
- </div>
- <span class="muted">파란 글씨: 추정값 · 굵은 행: 현재 나이 · – : 가입 불가 또는 자료 없음</span>
- </div>
- <div class="tbl-wrap"><table id="atbl"><thead></thead><tbody></tbody></table></div>
- </div>
+  <div id="t-age" hidden>
+    <div class="sec-h">
+      <div class="inrow"><span class="muted">표시 값</span>
+        <select id="ageMetric" style="width:auto"><option value="prem">월 보험료</option><option value="amtx">가입 가능 금액(예산 기준)</option><option value="rN">기준 연도 환급률</option><option value="nN">기준 연도 순비용</option></select>
+        <select id="ageStep" style="width:auto"><option value="5">5세 단위</option><option value="1">1세 단위</option></select>
+      </div>
+      <span class="muted">파란 글씨: 추정값 · 굵은 행: 현재 나이 · – : 가입 불가 또는 자료 없음</span>
+    </div>
+    <div class="tbl-wrap"><table id="atbl"><thead></thead><tbody></tbody></table></div>
+  </div>
 
- <div id="t-dsg" hidden>
- <div class="sec-h"><span class="muted">메트 달러 경정기 실제 가입설계서 (35세 남). 외부 비교 데이터 비교값과 별개인 확정 수치입니다.</span><span class="badge ok">확정 데이터</span></div>
- <div class="tbl-wrap"><table id="dsg"><thead><tr><th class="l">심사</th><th>가입금액</th><th>월보험료</th><th>경과</th><th>누적 납입</th><th>해지환급금</th><th>환급률</th></tr></thead><tbody></tbody></table></div>
- </div>
+  <div id="t-dsg" hidden>
+    <div class="sec-h"><span class="muted">메트 달러 경정기 실제 가입설계서 (35세 남). 외부 비교 데이터 비교값과 별개인 확정 수치입니다.</span><span class="badge ok">확정 데이터</span></div>
+    <div class="tbl-wrap"><table id="dsg"><thead><tr><th class="l">심사</th><th>가입금액</th><th>월보험료</th><th>경과</th><th>누적 납입</th><th>해지환급금</th><th>환급률</th></tr></thead><tbody></tbody></table></div>
+  </div>
 </section>
 
 <div class="note">
@@ -163,7 +163,7 @@ const D={"prods": {"MGR-DB": {"co": "DB생명", "name": "경영인정기보험",
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const YEARS=[5,7,10,20,30,40];
 const st={age:45,sex:'남',uw:'일반',mode:'amt',amt:10,bud:300,netY:10,sort:'rN',dir:1,okOnly:false,sel:null,tab:'cmp',
- prods:new Set(Object.keys(D.prods)),years:new Set([5,7,10,20]),uwOn:false,inc:20000,grade:'클래식',prior:0,young:false,ageMetric:'prem',ageStep:5};
+  prods:new Set(Object.keys(D.prods)),years:new Set([5,7,10,20]),uwOn:false,inc:20000,grade:'클래식',prior:0,young:false,ageMetric:'prem',ageStep:5};
 const won=v=>v==null||isNaN(v)?'–':Math.round(v).toLocaleString('ko-KR');
 const eok=v=>{if(v==null||isNaN(v))return'–';const e=v/1e8;return (e>=10?e.toFixed(0):e.toFixed(1)).replace(/\.0$/,'')+'억'};
 const pct=v=>v==null||isNaN(v)?'–':v.toFixed(1)+'%';
@@ -173,170 +173,170 @@ const E=(txt,est)=>est?`<i class="e">${txt}</i>`:txt;
 function bracket(A,age){const n=A.length;if(age<=A[0].age)return[A[0],A[1]];if(age>=A[n-1].age)return[A[n-2],A[n-1]];for(let i=0;i<n-1;i++)if(age>=A[i].age&&age<=A[i+1].age)return[A[i],A[i+1]]}
 function validRate(a,y){const v=a.y[y];return v!=null&&v>0&&a.age+y<90}
 function maleAt(pid,uw,age){
- const A=(D.anchors[`남|${uw}`]||{})[pid];if(!A)return null;
- const ex=A.find(a=>a.age===age);if(ex)return{per1:ex.per1,y:{...ex.y},est:false,rate:ex.rate};
- if(A.length<2)return null;
- const[lo,hi]=bracket(A,age);const t=(age-lo.age)/(hi.age-lo.age);
- const per1=Math.exp(Math.log(lo.per1)+t*(Math.log(hi.per1)-Math.log(lo.per1)));
- const y={};
- YEARS.forEach(yr=>{const reach=age+yr;if(reach>90)return;if(reach===90){y[yr]=0;return}
- if(validRate(lo,yr)&&validRate(hi,yr)){y[yr]=Math.min(99.9,Math.max(0,lo.y[yr]+t*(hi.y[yr]-lo.y[yr])))}});
- return{per1,y,est:true,rate:lo.rate};
+  const A=(D.anchors[`남|${uw}`]||{})[pid];if(!A)return null;
+  const ex=A.find(a=>a.age===age);if(ex)return{per1:ex.per1,y:{...ex.y},est:false,rate:ex.rate};
+  if(A.length<2)return null;
+  const[lo,hi]=bracket(A,age);const t=(age-lo.age)/(hi.age-lo.age);
+  const per1=Math.exp(Math.log(lo.per1)+t*(Math.log(hi.per1)-Math.log(lo.per1)));
+  const y={};
+  YEARS.forEach(yr=>{const reach=age+yr;if(reach>90)return;if(reach===90){y[yr]=0;return}
+    if(validRate(lo,yr)&&validRate(hi,yr)){y[yr]=Math.min(99.9,Math.max(0,lo.y[yr]+t*(hi.y[yr]-lo.y[yr])))}});
+  return{per1,y,est:true,rate:lo.rate};
 }
 function at(pid,sex,uw,age){
- if(sex==='남')return maleAt(pid,uw,age);
- const g=(D.grp3[uw]||{})[pid];if(!g||!g['여40']||!g['남40'])return null;
- if(age===40)return{per1:g['여40'].per1,y:{...g['여40'].y},est:false,rate:g['여40'].rate};
- const m=maleAt(pid,uw,age);if(!m)return null;
- const ratio=g['여40'].per1/g['남40'].per1;const y={};
- Object.entries(m.y).forEach(([yr,v])=>{yr=+yr;if(v===0){y[yr]=0;return}const f=g['여40'].y[yr],mm=g['남40'].y[yr];if(f!=null&&mm!=null&&f>0&&mm>0)y[yr]=Math.min(99.9,Math.max(0,v+(f-mm)))});
- return{per1:m.per1*ratio,y,est:true,rate:m.rate};
+  if(sex==='남')return maleAt(pid,uw,age);
+  const g=(D.grp3[uw]||{})[pid];if(!g||!g['여40']||!g['남40'])return null;
+  if(age===40)return{per1:g['여40'].per1,y:{...g['여40'].y},est:false,rate:g['여40'].rate};
+  const m=maleAt(pid,uw,age);if(!m)return null;
+  const ratio=g['여40'].per1/g['남40'].per1;const y={};
+  Object.entries(m.y).forEach(([yr,v])=>{yr=+yr;if(v===0){y[yr]=0;return}const f=g['여40'].y[yr],mm=g['남40'].y[yr];if(f!=null&&mm!=null&&f>0&&mm>0)y[yr]=Math.min(99.9,Math.max(0,v+(f-mm)))});
+  return{per1:m.per1*ratio,y,est:true,rate:m.rate};
 }
 function uwMultiple(age){const R=D.uw[0];const g=R.promoAllClassic&&st.grade==='일반'?st.grade:st.grade;const tb=R.multiples[g];for(const[mx,mul]of tb)if(age<=mx)return mul;return tb[tb.length-1][1]}
 function uwCap(age){return st.inc*1e4*uwMultiple(age)}
 
 function evalRow(pid,age){
- const p=D.prods[pid];const d=at(pid,st.sex,st.uw,age);if(!d)return null;
- const amt=st.mode==='amt'?st.amt*1e8:st.bud*1e4/d.per1*1e8;
- const prem=st.mode==='amt'?d.per1*st.amt:st.bud*1e4;
- const ar=st.uw==='일반'?p.ageG:p.ageS;let lim=st.uw==='일반'?p.limG:p.limS;if(st.uw==='간편'&&p.limS65&&age>65)lim=p.limS65;
- const nt=p.limNote&&p.limNote.startsWith(st.uw)?p.limNote:'';
- const ageOk=!ar||(age>=ar[0]&&age<=ar[1]);const limOk=!lim||amt<=lim;
- const uwOk=!st.uwOn||(st.prior*1e8+amt)<=uwCap(age);
- const cum=y=>prem*12*y,rf=y=>d.y[y]==null?null:cum(y)*d.y[y]/100,net=y=>d.y[y]==null?null:cum(y)-rf(y);
- const low=d.est&&(age>65||age<35);
- return{pid,p,d,amt,prem,lim,nt,ageOk,limOk,uwOk,low,ok:ageOk&&limOk,est:d.est,cum,rf,net,rN:d.y[st.netY],nN:net(st.netY),amtx:amt};
+  const p=D.prods[pid];const d=at(pid,st.sex,st.uw,age);if(!d)return null;
+  const amt=st.mode==='amt'?st.amt*1e8:st.bud*1e4/d.per1*1e8;
+  const prem=st.mode==='amt'?d.per1*st.amt:st.bud*1e4;
+  const ar=st.uw==='일반'?p.ageG:p.ageS;let lim=st.uw==='일반'?p.limG:p.limS;if(st.uw==='간편'&&p.limS65&&age>65)lim=p.limS65;
+  const nt=p.limNote&&p.limNote.startsWith(st.uw)?p.limNote:'';
+  const ageOk=!ar||(age>=ar[0]&&age<=ar[1]);const limOk=!lim||amt<=lim;
+  const uwOk=!st.uwOn||(st.prior*1e8+amt)<=uwCap(age);
+  const cum=y=>prem*12*y,rf=y=>d.y[y]==null?null:cum(y)*d.y[y]/100,net=y=>d.y[y]==null?null:cum(y)-rf(y);
+  const low=d.est&&(age>65||age<35);
+  return{pid,p,d,amt,prem,lim,nt,ageOk,limOk,uwOk,low,ok:ageOk&&limOk,est:d.est,cum,rf,net,rN:d.y[st.netY],nN:net(st.netY),amtx:amt};
 }
 
 /* ---------- UI 바인딩 ---------- */
 $('#srcline').textContent=`${D.meta.src} · 수집 ${D.meta.collected}`;$('#srcNote').textContent=D.meta.src;
 $('#netY').innerHTML=[5,7,10,20].map(y=>`<option value="${y}" ${y===10?'selected':''}>${y}년</option>`).join('');
-function seg(id,fn){$$(`#${id} button`).forEach(b=>b.onclick==>{$$(`#${id} button`).forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);render})}
+function seg(id,fn){$$(`#${id} button`).forEach(b=>b.onclick=()=>{$$(`#${id} button`).forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);render()})}
 seg('sex',v=>st.sex=v);seg('uw',v=>st.uw=v);
 seg('mode',v=>{st.mode=v;$('#inAmt').hidden=v!=='amt';$('#inBud').hidden=v!=='bud'});
 seg('okOnly',v=>st.okOnly=v==='ok');
 seg('uwOn',v=>{st.uwOn=v==='on';$('#uwPanel').hidden=!st.uwOn});
 seg('grade',v=>st.grade=v);seg('young',v=>st.young=v==='y');
-const setAge=v=>{v=Math.max(20,Math.min(75,Math.round(+v||20)));st.age=v;$('#ageR').value=v;$('#ageN').value=v;render};
+const setAge=v=>{v=Math.max(20,Math.min(75,Math.round(+v||20)));st.age=v;$('#ageR').value=v;$('#ageN').value=v;render()};
 $('#ageR').oninput=e=>setAge(e.target.value);$('#ageN').onchange=e=>setAge(e.target.value);
 $('#budChips').innerHTML=[100,200,300,500,1000,2000].map(v=>`<button class="chip" data-b="${v}">${v>=1000?(v/1000)+'천':v}만</button>`).join('');
-$$('#budChips .chip').forEach(c=>c.onclick==>{st.bud=+c.dataset.b;$('#bud').value=st.bud;render});
-$('#amt').oninput=e=>{st.amt=+e.target.value||0;render};$('#bud').oninput=e=>{st.bud=+e.target.value||0;render};
-$('#netY').onchange=e=>{st.netY=+e.target.value;render};
-$('#sortSel').onchange=e=>{st.sort=e.target.value;st.dir=1;render};
-$('#inc').oninput=e=>{st.inc=+e.target.value||0;render};$('#prior').oninput=e=>{st.prior=+e.target.value||0;render};
-$('#ageMetric').onchange=e=>{st.ageMetric=e.target.value;render};$('#ageStep').onchange=e=>{st.ageStep=+e.target.value;render};
-$$('.tab').forEach(t=>t.onclick==>{st.tab=t.dataset.t;$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['cmp','age','dsg'].forEach(k=>$('#t-'+k).hidden=k!==st.tab)});
+$$('#budChips .chip').forEach(c=>c.onclick=()=>{st.bud=+c.dataset.b;$('#bud').value=st.bud;render()});
+$('#amt').oninput=e=>{st.amt=+e.target.value||0;render()};$('#bud').oninput=e=>{st.bud=+e.target.value||0;render()};
+$('#netY').onchange=e=>{st.netY=+e.target.value;render()};
+$('#sortSel').onchange=e=>{st.sort=e.target.value;st.dir=1;render()};
+$('#inc').oninput=e=>{st.inc=+e.target.value||0;render()};$('#prior').oninput=e=>{st.prior=+e.target.value||0;render()};
+$('#ageMetric').onchange=e=>{st.ageMetric=e.target.value;render()};$('#ageStep').onchange=e=>{st.ageStep=+e.target.value;render()};
+$$('.tab').forEach(t=>t.onclick=()=>{st.tab=t.dataset.t;$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['cmp','age','dsg'].forEach(k=>$('#t-'+k).hidden=k!==st.tab)});
 $('#pchips').innerHTML=Object.entries(D.prods).map(([id,p])=>`<button class="chip on" data-id="${id}">${p.co.replace('생명','')}${p.cur==='USD'?'(USD)':''}${id.endsWith('VIP')?' VIP':''}</button>`).join('');
-$$('#pchips .chip').forEach(c=>c.onclick==>{const id=c.dataset.id;st.prods.has(id)?st.prods.delete(id):st.prods.add(id);c.classList.toggle('on');render});
+$$('#pchips .chip').forEach(c=>c.onclick=()=>{const id=c.dataset.id;st.prods.has(id)?st.prods.delete(id):st.prods.add(id);c.classList.toggle('on');render()});
 $('#ychips').innerHTML=YEARS.map(y=>`<button class="chip ${st.years.has(y)?'on':''}" data-y="${y}">${y}년</button>`).join('');
-$$('#ychips .chip').forEach(c=>c.onclick==>{const y=+c.dataset.y;st.years.has(y)?st.years.delete(y):st.years.add(y);c.classList.toggle('on');render});
+$$('#ychips .chip').forEach(c=>c.onclick=()=>{const y=+c.dataset.y;st.years.has(y)?st.years.delete(y):st.years.add(y);c.classList.toggle('on');render()});
 
 const SORTS={rfN:[r=>r.rf(st.netY),-1],cumN:[r=>r.prem,1],rN:[r=>r.rN,-1],nN:[r=>r.nN,1],prem:[r=>r.prem,1],amtx:[r=>r.amt,-1],co:[r=>r.p.co,1]};
 function sortRows(rs){const[f,d0]=SORTS[st.sort];const d=d0*st.dir;return rs.sort((a,b)=>{if(a.ok!==b.ok)return a.ok?-1:1;const x=f(a),y=f(b);if(x==null)return 1;if(y==null)return-1;return(x>y?1:x<y?-1:0)*d})}
 
-function render{
- const ids=[...st.prods];let rs=ids.map(id=>evalRow(id,st.age)).filter(Boolean);
- if(st.okOnly)rs=rs.filter(r=>r.ok);sortRows(rs);
- const ok=rs.filter(r=>r.ok);
- const best=(f,better)=>ok.filter(r=>f(r)!=null).reduce((m,r)=>!m||better(f(r),f(m))?r:m,null);
- const bR=best(r=>r.rN,(a,b)=>a>b),bN=best(r=>r.nN,(a,b)=>a<b),bP=best(r=>r.prem,(a,b)=>a<b),bA=best(r=>r.amt,(a,b)=>a>b);
- const estAny=rs.some(r=>r.est);
- $('#cmpNote').innerHTML=`${st.sex} ${st.age}세 · ${st.uw}심사 · ${st.mode==='amt'?st.amt+'억 가입':'월 보험료 '+st.bud.toLocaleString+'만원 (연 '+(st.bud*12).toLocaleString+'만원) → 상품별 가입금액'} ${estAny?'<span class="badge est">추정 포함</span>':'<span class="badge ok">원자료</span>'}${rs.some(r=>r.low)?' <span class="badge warn">추정 신뢰도 낮음 (35세 미만·65세 초과)</span>':''}`;
- const k=[{t:`${st.netY}년 환급률 최고`,r:bR,v:bR&&E(pct(bR.rN),bR.est)},
- st.mode==='amt'?{t:'최저 월 보험료',r:bP,v:bP&&E(won(bP.prem)+'원',bP.est)}:{t:'같은 보험료로 최대 가입금액',r:bA,v:bA&&E(eok(bA.amt),bA.est)},
- {t:`${st.netY}년 순비용 최저`,r:bN,v:bN&&E(won(bN.nN)+'원',bN.est)},
- {t:'가입 가능 상품',r:null,v:`${ok.length} / ${rs.length}`,s:st.uwOn?`재정심사 참고 한도 ${eok(uwCap(st.age))}`:'나이·상품 한도 기준'}];
- $('#kpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="t">${x.t}</div><div class="v">${x.v||'–'}</div><div class="s">${x.s||(x.r?x.r.p.co+' '+x.r.p.name:'해당 없음')}</div></div>`).join('');
- const ys=YEARS.filter(y=>st.years.has(y));
- const cols=[['co','상품',1],['prem','월 보험료'],['amtx','가입금액'],...ys.map(y=>['y'+y,y+'년']),['cumN',st.netY+'년 누적 납입'],['rfN',st.netY+'년 해지환급금'],['nN',st.netY+'년 순비용'],['lim','상품 최대한도'],['ok','상태',1]];
- $('#tbl thead').innerHTML='<tr>'+cols.map(([k,t,l])=>`<th class="${l?'l':''} ${st.sort===k?'sorted':''}" data-k="${k}">${t}</th>`).join('')+'</tr>';
- $$('#tbl th').forEach(th=>th.onclick==>{const k=th.dataset.k;if(!SORTS[k])return;if(st.sort===k)st.dir*=-1;else{st.sort=k;st.dir=1}$('#sortSel').value=k;render});
- $('#tbl tbody').innerHTML=rs.map(r=>{
- const b=o=>o&&o.pid===r.pid?'best':'';
- const stt=!r.ageOk?'<span class="badge bad">나이 불가</span>':!r.limOk?'<span class="badge warn">한도 초과</span>':'<span class="badge ok">가능</span>';
- const uwB=st.uwOn?(r.uwOk?'':' <span class="badge warn">재정 초과(참고)</span>'):'';
- const yv=y=>{const v=r.d.y[y];return v===0?'<span class="muted">만기</span>':E(pct(v),r.est)};
- return `<tr data-pid="${r.pid}" class="${st.sel===r.pid?'sel':''} ${r.ok?'':'dim'}">
- <td class="l"><div class="pname">${r.p.name}${r.p.cur==='USD'?' <span class="badge">USD</span>':''}</div><div class="pco">${r.p.co}</div></td>
- <td class="${st.mode==='amt'?b(bP):''}">${E(won(r.prem),r.est&&st.mode==='amt')}</td><td class="${st.mode==='bud'?b(bA):''}">${E(eok(r.amt),r.est&&st.mode==='bud')}</td>
- ${ys.map(y=>`<td class="${y===st.netY?b(bR):''}">${yv(y)}</td>`).join('')}
- <td>${won(r.cum(st.netY))}</td><td>${E(won(r.rf(st.netY)),r.est)}</td>
- <td class="${b(bN)}">${E(won(r.nN),r.est)}</td>
- <td title="${r.nt}">${r.lim?eok(r.lim):'–'}${r.nt?' <span class="badge warn">주의</span>':''}</td><td class="l">${stt}${uwB}</td></tr>`}).join('')||`<tr><td class="l muted" colspan="12">선택한 조건의 데이터가 없습니다.</td></tr>`;
- $$('#tbl tbody tr[data-pid]').forEach(tr=>tr.onclick==>{st.sel=st.sel===tr.dataset.pid?null:tr.dataset.pid;render});
- detail(rs);ageTable;uwPanel;
+function render(){
+  const ids=[...st.prods];let rs=ids.map(id=>evalRow(id,st.age)).filter(Boolean);
+  if(st.okOnly)rs=rs.filter(r=>r.ok);sortRows(rs);
+  const ok=rs.filter(r=>r.ok);
+  const best=(f,better)=>ok.filter(r=>f(r)!=null).reduce((m,r)=>!m||better(f(r),f(m))?r:m,null);
+  const bR=best(r=>r.rN,(a,b)=>a>b),bN=best(r=>r.nN,(a,b)=>a<b),bP=best(r=>r.prem,(a,b)=>a<b),bA=best(r=>r.amt,(a,b)=>a>b);
+  const estAny=rs.some(r=>r.est);
+  $('#cmpNote').innerHTML=`${st.sex} ${st.age}세 · ${st.uw}심사 · ${st.mode==='amt'?st.amt+'억 가입':'월 보험료 '+st.bud.toLocaleString()+'만원 (연 '+(st.bud*12).toLocaleString()+'만원) → 상품별 가입금액'} ${estAny?'<span class="badge est">추정 포함</span>':'<span class="badge ok">원자료</span>'}${rs.some(r=>r.low)?' <span class="badge warn">추정 신뢰도 낮음 (35세 미만·65세 초과)</span>':''}`;
+  const k=[{t:`${st.netY}년 환급률 최고`,r:bR,v:bR&&E(pct(bR.rN),bR.est)},
+    st.mode==='amt'?{t:'최저 월 보험료',r:bP,v:bP&&E(won(bP.prem)+'원',bP.est)}:{t:'같은 보험료로 최대 가입금액',r:bA,v:bA&&E(eok(bA.amt),bA.est)},
+    {t:`${st.netY}년 순비용 최저`,r:bN,v:bN&&E(won(bN.nN)+'원',bN.est)},
+    {t:'가입 가능 상품',r:null,v:`${ok.length} / ${rs.length}`,s:st.uwOn?`재정심사 참고 한도 ${eok(uwCap(st.age))}`:'나이·상품 한도 기준'}];
+  $('#kpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="t">${x.t}</div><div class="v">${x.v||'–'}</div><div class="s">${x.s||(x.r?x.r.p.co+' '+x.r.p.name:'해당 없음')}</div></div>`).join('');
+  const ys=YEARS.filter(y=>st.years.has(y));
+  const cols=[['co','상품',1],['prem','월 보험료'],['amtx','가입금액'],...ys.map(y=>['y'+y,y+'년']),['cumN',st.netY+'년 누적 납입'],['rfN',st.netY+'년 해지환급금'],['nN',st.netY+'년 순비용'],['lim','상품 최대한도'],['ok','상태',1]];
+  $('#tbl thead').innerHTML='<tr>'+cols.map(([k,t,l])=>`<th class="${l?'l':''} ${st.sort===k?'sorted':''}" data-k="${k}">${t}</th>`).join('')+'</tr>';
+  $$('#tbl th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORTS[k])return;if(st.sort===k)st.dir*=-1;else{st.sort=k;st.dir=1}$('#sortSel').value=k;render()});
+  $('#tbl tbody').innerHTML=rs.map(r=>{
+    const b=o=>o&&o.pid===r.pid?'best':'';
+    const stt=!r.ageOk?'<span class="badge bad">나이 불가</span>':!r.limOk?'<span class="badge warn">한도 초과</span>':'<span class="badge ok">가능</span>';
+    const uwB=st.uwOn?(r.uwOk?'':' <span class="badge warn">재정 초과(참고)</span>'):'';
+    const yv=y=>{const v=r.d.y[y];return v===0?'<span class="muted">만기</span>':E(pct(v),r.est)};
+    return `<tr data-pid="${r.pid}" class="${st.sel===r.pid?'sel':''} ${r.ok?'':'dim'}">
+      <td class="l"><div class="pname">${r.p.name}${r.p.cur==='USD'?' <span class="badge">USD</span>':''}</div><div class="pco">${r.p.co}</div></td>
+      <td class="${st.mode==='amt'?b(bP):''}">${E(won(r.prem),r.est&&st.mode==='amt')}</td><td class="${st.mode==='bud'?b(bA):''}">${E(eok(r.amt),r.est&&st.mode==='bud')}</td>
+      ${ys.map(y=>`<td class="${y===st.netY?b(bR):''}">${yv(y)}</td>`).join('')}
+      <td>${won(r.cum(st.netY))}</td><td>${E(won(r.rf(st.netY)),r.est)}</td>
+      <td class="${b(bN)}">${E(won(r.nN),r.est)}</td>
+      <td title="${r.nt}">${r.lim?eok(r.lim):'–'}${r.nt?' <span class="badge warn">주의</span>':''}</td><td class="l">${stt}${uwB}</td></tr>`}).join('')||`<tr><td class="l muted" colspan="12">선택한 조건의 데이터가 없습니다.</td></tr>`;
+  $$('#tbl tbody tr[data-pid]').forEach(tr=>tr.onclick=()=>{st.sel=st.sel===tr.dataset.pid?null:tr.dataset.pid;render()});
+  detail(rs);ageTable();uwPanel();
 }
 
 function detail(rs){
- const r=rs.find(x=>x.pid===st.sel);$('#detail').hidden=!r;if(!r)return;const p=r.p;
- $('#dTitle').textContent=`${p.co} ${p.name}`;
- $('#dBadges').innerHTML=(r.low?'<span class="badge warn">추정 신뢰도 낮음</span> ':'')+(r.est?'<span class="badge est">추정값</span> ':'<span class="badge ok">원자료</span> ')+(p.cur==='USD'?'<span class="badge warn">달러 · 환율 영향</span> ':'')+'<span class="badge">확인필요</span>';
- $('#ytbl tbody').innerHTML=YEARS.filter(y=>st.age+y<=90).map(y=>{const v=r.d.y[y];return`<tr><td class="l">${y}년</td><td>${st.age+y}세</td><td>${won(r.cum(y))}</td><td>${E(won(r.rf(y)),r.est)}</td><td>${v===0?'0% <span class="badge">90세 만기</span>':E(pct(v),r.est)}</td><td>${E(won(r.net(y)),r.est)}</td><td class="l">${convB(r,y)}</td></tr>`}).join('');
- const ar=st.uw==='일반'?p.ageG:p.ageS;
- const f=[['월 보험료',won(r.prem)+'원'],['연 보험료',won(r.prem*12)+'원'],['가입금액',eok(r.amt)],['1억당 월 보험료',won(r.d.per1)+'원'],['적용이율',r.d.rate],['가입나이',ar?ar.join('~')+'세':null],['상품 최대한도',(r.lim?eok(r.lim):'–')+' (재정심사 한도 아님)'],['한도 메모',r.nt],['체증형',p.step],['전환기능',p.conv],['납입면제',p.waiver],['추가납입',p.extra],['중도인출',p.withdraw],['해약환급금',p.refundType],['판매개시',p.since?'20'+p.since.slice(0,2)+'.'+p.since.slice(2):null]];
- $('#facts').innerHTML=f.filter(x=>x[1]).map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
- chartY(rs,r);chartA(r);
+  const r=rs.find(x=>x.pid===st.sel);$('#detail').hidden=!r;if(!r)return;const p=r.p;
+  $('#dTitle').textContent=`${p.co} ${p.name}`;
+  $('#dBadges').innerHTML=(r.low?'<span class="badge warn">추정 신뢰도 낮음</span> ':'')+(r.est?'<span class="badge est">추정값</span> ':'<span class="badge ok">원자료</span> ')+(p.cur==='USD'?'<span class="badge warn">달러 · 환율 영향</span> ':'')+'<span class="badge">확인필요</span>';
+  $('#ytbl tbody').innerHTML=YEARS.filter(y=>st.age+y<=90).map(y=>{const v=r.d.y[y];return`<tr><td class="l">${y}년</td><td>${st.age+y}세</td><td>${won(r.cum(y))}</td><td>${E(won(r.rf(y)),r.est)}</td><td>${v===0?'0% <span class="badge">90세 만기</span>':E(pct(v),r.est)}</td><td>${E(won(r.net(y)),r.est)}</td><td class="l">${convB(r,y)}</td></tr>`}).join('');
+  const ar=st.uw==='일반'?p.ageG:p.ageS;
+  const f=[['월 보험료',won(r.prem)+'원'],['연 보험료',won(r.prem*12)+'원'],['가입금액',eok(r.amt)],['1억당 월 보험료',won(r.d.per1)+'원'],['적용이율',r.d.rate],['가입나이',ar?ar.join('~')+'세':null],['상품 최대한도',(r.lim?eok(r.lim):'–')+' (재정심사 한도 아님)'],['한도 메모',r.nt],['체증형',p.step],['전환기능',p.conv],['납입면제',p.waiver],['추가납입',p.extra],['중도인출',p.withdraw],['해약환급금',p.refundType],['판매개시',p.since?'20'+p.since.slice(0,2)+'.'+p.since.slice(2):null]];
+  $('#facts').innerHTML=f.filter(x=>x[1]).map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
+  chartY(rs,r);chartA(r);
 }
 function convB(r,y){const c=r.p.convRule;if(!c)return'';if(r.d.y[y]==null)return'<span class="muted">자료 없음</span>';const rf=r.rf(y)||0;const b=[];
- if(y>=c.wholeY)b.push('<span class="badge ok">종신전환 가능</span>');
- if(y>=c.annY)b.push(rf>=c.annMin?'<span class="badge ok">연금전환 가능</span>':'<span class="badge warn">연금전환: 환급금 1천만 미만</span>');
- if(c.usdAnnMin&&y>=c.annY)b.push(rf>=c.usdAnnMin?'<span class="badge ok">달러연금전환 가능</span>':'<span class="badge warn">달러연금: 1만달러 미만</span>');
- if(y>=c.earlyY&&y<c.wholeY)b.push('<span class="badge">조기전환(사유 필요)</span>');return b.join(' ')}
-const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim;
+  if(y>=c.wholeY)b.push('<span class="badge ok">종신전환 가능</span>');
+  if(y>=c.annY)b.push(rf>=c.annMin?'<span class="badge ok">연금전환 가능</span>':'<span class="badge warn">연금전환: 환급금 1천만 미만</span>');
+  if(c.usdAnnMin&&y>=c.annY)b.push(rf>=c.usdAnnMin?'<span class="badge ok">달러연금전환 가능</span>':'<span class="badge warn">달러연금: 1만달러 미만</span>');
+  if(y>=c.earlyY&&y<c.wholeY)b.push('<span class="badge">조기전환(사유 필요)</span>');return b.join(' ')}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function chartY(rs,sel){
- const W=520,H=230,P={l:40,r:12,t:16,b:26};const ys=YEARS;
- const x=y=>P.l+(ys.indexOf(y)/(ys.length-1))*(W-P.l-P.r),yv=v=>P.t+(1-v/110)*(H-P.t-P.b);
- const line=(r,c,w,op)=>{const pts=ys.filter(y=>r.d.y[y]!=null).map(y=>`${x(y)},${yv(r.d.y[y])}`);return pts.length>1?`<polyline fill="none" stroke="${c}" stroke-width="${w}" opacity="${op}" stroke-linejoin="round" ${r.est?'stroke-dasharray="5 4"':''} points="${pts.join(' ')}"/>`:''};
- let g='';[0,25,50,75,100].forEach(v=>g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${yv(v)}" y2="${yv(v)}" stroke="${css('--line')}"/><text x="${P.l-6}" y="${yv(v)+4}" text-anchor="end" font-size="11" fill="${css('--sub')}">${v}%</text>`);
- ys.forEach(y=>g+=`<text x="${x(y)}" y="${H-6}" text-anchor="middle" font-size="11" fill="${css('--sub')}">${y}년</text>`);
- rs.filter(r=>r!==sel).forEach(r=>g+=line(r,css('--sub'),1.2,.3));g+=line(sel,css('--acc2'),3,1);
- ys.filter(y=>sel.d.y[y]!=null).forEach(y=>g+=`<circle cx="${x(y)}" cy="${yv(sel.d.y[y])}" r="4" fill="${css('--acc2')}"/><text x="${x(y)}" y="${yv(sel.d.y[y])-9}" text-anchor="middle" font-size="11" font-weight="600" fill="${css('--ink')}">${sel.d.y[y].toFixed(1)}</text>`);
- $('#chartY').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="환급률 추이">${g}</svg>`;
+  const W=520,H=230,P={l:40,r:12,t:16,b:26};const ys=YEARS;
+  const x=y=>P.l+(ys.indexOf(y)/(ys.length-1))*(W-P.l-P.r),yv=v=>P.t+(1-v/110)*(H-P.t-P.b);
+  const line=(r,c,w,op)=>{const pts=ys.filter(y=>r.d.y[y]!=null).map(y=>`${x(y)},${yv(r.d.y[y])}`);return pts.length>1?`<polyline fill="none" stroke="${c}" stroke-width="${w}" opacity="${op}" stroke-linejoin="round" ${r.est?'stroke-dasharray="5 4"':''} points="${pts.join(' ')}"/>`:''};
+  let g='';[0,25,50,75,100].forEach(v=>g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${yv(v)}" y2="${yv(v)}" stroke="${css('--line')}"/><text x="${P.l-6}" y="${yv(v)+4}" text-anchor="end" font-size="11" fill="${css('--sub')}">${v}%</text>`);
+  ys.forEach(y=>g+=`<text x="${x(y)}" y="${H-6}" text-anchor="middle" font-size="11" fill="${css('--sub')}">${y}년</text>`);
+  rs.filter(r=>r!==sel).forEach(r=>g+=line(r,css('--sub'),1.2,.3));g+=line(sel,css('--acc2'),3,1);
+  ys.filter(y=>sel.d.y[y]!=null).forEach(y=>g+=`<circle cx="${x(y)}" cy="${yv(sel.d.y[y])}" r="4" fill="${css('--acc2')}"/><text x="${x(y)}" y="${yv(sel.d.y[y])-9}" text-anchor="middle" font-size="11" font-weight="600" fill="${css('--ink')}">${sel.d.y[y].toFixed(1)}</text>`);
+  $('#chartY').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="환급률 추이">${g}</svg>`;
 }
 function chartA(r){
- const W=520,H=230,P={l:56,r:12,t:16,b:26};const ages=[];for(let a=20;a<=75;a++)ages.push(a);
- const pts=ages.map(a=>{const d=at(r.pid,st.sex,st.uw,a);if(!d)return null;const prem=st.mode==='amt'?d.per1*st.amt:d.per1;return{a,v:prem,est:d.est}}).filter(Boolean);
- if(!pts.length){$('#chartA').innerHTML='';return}
- const vmin=Math.min(...pts.map(p=>p.v))*0.95,vmax=Math.max(...pts.map(p=>p.v))*1.05;
- const x=a=>P.l+(a-20)/55*(W-P.l-P.r),y=v=>P.t+(1-(v-vmin)/(vmax-vmin))*(H-P.t-P.b);
- const ar=st.uw==='일반'?r.p.ageG:r.p.ageS;let g='';
- if(ar)g+=`<rect x="${x(Math.max(20,ar[0]))}" y="${P.t}" width="${x(Math.min(75,ar[1]))-x(Math.max(20,ar[0]))}" height="${H-P.t-P.b}" fill="${css('--chip')}"/>`;
- [0,.5,1].forEach(t=>{const v=vmin+t*(vmax-vmin);g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(v)}" y2="${y(v)}" stroke="${css('--line')}"/><text x="${P.l-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="${css('--sub')}">${Math.round(v/1e4).toLocaleString}만</text>`});
- [20,30,40,50,60,70,75].forEach(a=>g+=`<text x="${x(a)}" y="${H-6}" text-anchor="middle" font-size="11" fill="${css('--sub')}">${a}세</text>`);
- g+=`<polyline fill="none" stroke="${css('--acc2')}" stroke-width="2" stroke-dasharray="5 4" points="${pts.map(p=>`${x(p.a)},${y(p.v)}`).join(' ')}"/>`;
- pts.filter(p=>!p.est).forEach(p=>g+=`<circle cx="${x(p.a)}" cy="${y(p.v)}" r="4.5" fill="${css('--acc2')}"/>`);
- const cur=pts.find(p=>p.a===st.age);if(cur)g+=`<line x1="${x(cur.a)}" x2="${x(cur.a)}" y1="${P.t}" y2="${H-P.b}" stroke="${css('--warn')}" stroke-width="1.5"/><text x="${x(cur.a)+4}" y="${P.t+10}" font-size="11" font-weight="700" fill="${css('--warn')}">${cur.a}세 ${Math.round(cur.v/1e4).toLocaleString}만</text>`;
- $('#chartA').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="나이별 보험료">${g}</svg><div class="muted">${st.mode==='amt'?st.amt+'억 가입 기준':'1억당'} · 음영: 가입 가능 나이</div>`;
+  const W=520,H=230,P={l:56,r:12,t:16,b:26};const ages=[];for(let a=20;a<=75;a++)ages.push(a);
+  const pts=ages.map(a=>{const d=at(r.pid,st.sex,st.uw,a);if(!d)return null;const prem=st.mode==='amt'?d.per1*st.amt:d.per1;return{a,v:prem,est:d.est}}).filter(Boolean);
+  if(!pts.length){$('#chartA').innerHTML='';return}
+  const vmin=Math.min(...pts.map(p=>p.v))*0.95,vmax=Math.max(...pts.map(p=>p.v))*1.05;
+  const x=a=>P.l+(a-20)/55*(W-P.l-P.r),y=v=>P.t+(1-(v-vmin)/(vmax-vmin))*(H-P.t-P.b);
+  const ar=st.uw==='일반'?r.p.ageG:r.p.ageS;let g='';
+  if(ar)g+=`<rect x="${x(Math.max(20,ar[0]))}" y="${P.t}" width="${x(Math.min(75,ar[1]))-x(Math.max(20,ar[0]))}" height="${H-P.t-P.b}" fill="${css('--chip')}"/>`;
+  [0,.5,1].forEach(t=>{const v=vmin+t*(vmax-vmin);g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(v)}" y2="${y(v)}" stroke="${css('--line')}"/><text x="${P.l-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="${css('--sub')}">${Math.round(v/1e4).toLocaleString()}만</text>`});
+  [20,30,40,50,60,70,75].forEach(a=>g+=`<text x="${x(a)}" y="${H-6}" text-anchor="middle" font-size="11" fill="${css('--sub')}">${a}세</text>`);
+  g+=`<polyline fill="none" stroke="${css('--acc2')}" stroke-width="2" stroke-dasharray="5 4" points="${pts.map(p=>`${x(p.a)},${y(p.v)}`).join(' ')}"/>`;
+  pts.filter(p=>!p.est).forEach(p=>g+=`<circle cx="${x(p.a)}" cy="${y(p.v)}" r="4.5" fill="${css('--acc2')}"/>`);
+  const cur=pts.find(p=>p.a===st.age);if(cur)g+=`<line x1="${x(cur.a)}" x2="${x(cur.a)}" y1="${P.t}" y2="${H-P.b}" stroke="${css('--warn')}" stroke-width="1.5"/><text x="${x(cur.a)+4}" y="${P.t+10}" font-size="11" font-weight="700" fill="${css('--warn')}">${cur.a}세 ${Math.round(cur.v/1e4).toLocaleString()}만</text>`;
+  $('#chartA').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="나이별 보험료">${g}</svg><div class="muted">${st.mode==='amt'?st.amt+'억 가입 기준':'1억당'} · 음영: 가입 가능 나이</div>`;
 }
-function ageTable{
- const ids=[...st.prods].filter(id=>at(id,st.sex,st.uw,40)||at(id,st.sex,st.uw,70));
- const ages=[];for(let a=20;a<=75;a+=st.ageStep)ages.push(a);if(!ages.includes(st.age))ages.push(st.age);ages.sort((a,b)=>a-b);
- const fmt={prem:r=>won(r.prem),amtx:r=>eok(r.amt),rN:r=>r.rN===0?'만기':pct(r.rN),nN:r=>won(r.nN)}[st.ageMetric];
- $('#atbl thead').innerHTML='<tr><th class="l">나이</th>'+ids.map(id=>`<th>${D.prods[id].co.replace('생명','')}${D.prods[id].cur==='USD'?'(USD)':''}</th>`).join('')+'</tr>';
- $('#atbl tbody').innerHTML=ages.map(a=>`<tr class="${a===st.age?'cur':''}"><td class="l">${a}세</td>${ids.map(id=>{const r=evalRow(id,a);if(!r||!r.ok)return'<td class="muted">–</td>';return`<td>${E(fmt(r),r.est)}</td>`}).join('')}</tr>`).join('');
+function ageTable(){
+  const ids=[...st.prods].filter(id=>at(id,st.sex,st.uw,40)||at(id,st.sex,st.uw,70));
+  const ages=[];for(let a=20;a<=75;a+=st.ageStep)ages.push(a);if(!ages.includes(st.age))ages.push(st.age);ages.sort((a,b)=>a-b);
+  const fmt={prem:r=>won(r.prem),amtx:r=>eok(r.amt),rN:r=>r.rN===0?'만기':pct(r.rN),nN:r=>won(r.nN)}[st.ageMetric];
+  $('#atbl thead').innerHTML='<tr><th class="l">나이</th>'+ids.map(id=>`<th>${D.prods[id].co.replace('생명','')}${D.prods[id].cur==='USD'?'(USD)':''}</th>`).join('')+'</tr>';
+  $('#atbl tbody').innerHTML=ages.map(a=>`<tr class="${a===st.age?'cur':''}"><td class="l">${a}세</td>${ids.map(id=>{const r=evalRow(id,a);if(!r||!r.ok)return'<td class="muted">–</td>';return`<td>${E(fmt(r),r.est)}</td>`}).join('')}</tr>`).join('');
 }
-function uwPanel{
- if(!st.uwOn)return;const R=D.uw[0];const mul=uwMultiple(st.age);const cap=uwCap(st.age);
- const tot=st.prior*1e8+(st.mode==='amt'?st.amt*1e8:0);
- let band='';const t=tot/1e8;
- if(st.young)band='법인 설립 2년 미만: 가입금액 5억 이하 & 월납 300만 이하이면 소득서류 불필요';
- else if(t<=5)band='기계약 합산 5억 이하: 고지소득으로 심사 (재정질의서·소득서류 불필요)';
- else if(t<=7)band='5억 초과 ~ 7억 이하: 세븐종신은 재정질의서로 심사 (소득서류 불필요)';
- else band='7억 초과: 기준표에 구간 없음. 소득서류 필요 여부 보험사 확인 [추정]';
- $('#uwOut').innerHTML=`<div><span class="badge warn">유효기간 확인</span> ${R.validity}</div><div>${st.age}세 · ${st.grade}${R.promoAllClassic&&st.grade==='일반'?' (참고: 썸머 기간에는 전체 고객 클래식↑ 적용)':''} → 연간소득 × <b>${mul}배</b> = 인정 사망보험금 <b>${eok(cap)}</b></div>
- <div>${st.mode==='amt'?`기계약 ${st.prior}억 + 이번 ${st.amt}억 = ${eok(tot)} → `+(tot<=cap?'<span class="badge ok">범위 내</span>':'<span class="badge bad">초과</span>'):'예산 기준 보기에서는 상품별 가입금액으로 비교 표에 표시합니다.'}</div>
- <div>심사 구간: ${band}</div>
- <details class="mt"><summary>기준 원문 요약 · 하지 말아야 할 것</summary><div class="muted">${R.name} · ${R.scope}</div><ul class="tight">${R.bands.map(b=>`<li>${b}</li>`).join('')}</ul><div class="muted mt">NOT TO DO</div><ul class="tight">${R.notToDo.map(b=>`<li>${b}</li>`).join('')}</ul></details>`;
+function uwPanel(){
+  if(!st.uwOn)return;const R=D.uw[0];const mul=uwMultiple(st.age);const cap=uwCap(st.age);
+  const tot=st.prior*1e8+(st.mode==='amt'?st.amt*1e8:0);
+  let band='';const t=tot/1e8;
+  if(st.young)band='법인 설립 2년 미만: 가입금액 5억 이하 & 월납 300만 이하이면 소득서류 불필요';
+  else if(t<=5)band='기계약 합산 5억 이하: 고지소득으로 심사 (재정질의서·소득서류 불필요)';
+  else if(t<=7)band='5억 초과 ~ 7억 이하: 세븐종신은 재정질의서로 심사 (소득서류 불필요)';
+  else band='7억 초과: 기준표에 구간 없음. 소득서류 필요 여부 보험사 확인 [추정]';
+  $('#uwOut').innerHTML=`<div><span class="badge warn">유효기간 확인</span> ${R.validity}</div><div>${st.age}세 · ${st.grade}${R.promoAllClassic&&st.grade==='일반'?' (참고: 썸머 기간에는 전체 고객 클래식↑ 적용)':''} → 연간소득 × <b>${mul}배</b> = 인정 사망보험금 <b>${eok(cap)}</b></div>
+   <div>${st.mode==='amt'?`기계약 ${st.prior}억 + 이번 ${st.amt}억 = ${eok(tot)} → `+(tot<=cap?'<span class="badge ok">범위 내</span>':'<span class="badge bad">초과</span>'):'예산 기준 보기에서는 상품별 가입금액으로 비교 표에 표시합니다.'}</div>
+   <div>심사 구간: ${band}</div>
+   <details class="mt"><summary>기준 원문 요약 · 하지 말아야 할 것</summary><div class="muted">${R.name} · ${R.scope}</div><ul class="tight">${R.bands.map(b=>`<li>${b}</li>`).join('')}</ul><div class="muted mt">NOT TO DO</div><ul class="tight">${R.notToDo.map(b=>`<li>${b}</li>`).join('')}</ul></details>`;
 }
 $('#dsg tbody').innerHTML=D.design.map((d,i,a)=>{const f=i===0||a[i-1].uw!==d.uw;return`<tr><td class="l">${f?d.uw:''}</td><td>${f?eok(d.amt):''}</td><td>${f?won(d.prem)+'원<div class="pco">$'+(d.premUsd||0).toLocaleString('en-US')+'</div>':''}</td><td>${d.y}년</td><td>${won(d.prem*12*d.y)}</td><td>${won(d.prem*12*d.y*d.rate/100)}</td><td>${pct(d.rate)}</td></tr>`}).join('');
 /* 주소창 조건 받기: ?age=50&sex=남&uw=일반&amt=10 또는 &bud=300 */
-(function{try{const q=new URLSearchParams(location.search);const clk=(id,v)=>{const b=document.querySelector(`#${id} button[data-v="${v}"]`);if(b)b.click};
- if(q.get('sex'))clk('sex',q.get('sex'));if(q.get('uw'))clk('uw',q.get('uw'));
- if(q.get('bud')){clk('mode','bud');st.bud=+q.get('bud')||st.bud;$('#bud').value=st.bud}
- else if(q.get('amt')){st.amt=+q.get('amt')||st.amt;$('#amt').value=st.amt}
- if(q.get('age')){const v=Math.max(20,Math.min(75,+q.get('age')||45));st.age=v;$('#ageR').value=v;$('#ageN').value=v}}catch(e){}});
-render;
+(function(){try{const q=new URLSearchParams(location.search);const clk=(id,v)=>{const b=document.querySelector(`#${id} button[data-v="${v}"]`);if(b)b.click()};
+  if(q.get('sex'))clk('sex',q.get('sex'));if(q.get('uw'))clk('uw',q.get('uw'));
+  if(q.get('bud')){clk('mode','bud');st.bud=+q.get('bud')||st.bud;$('#bud').value=st.bud}
+  else if(q.get('amt')){st.amt=+q.get('amt')||st.amt;$('#amt').value=st.amt}
+  if(q.get('age')){const v=Math.max(20,Math.min(75,+q.get('age')||45));st.age=v;$('#ageR').value=v;$('#ageN').value=v}}catch(e){}})();
+render();
 </script>
 </body>
 </html>

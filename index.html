@@ -180,7 +180,7 @@ details.sit summary{cursor:pointer;font-weight:600}
   <nav id="nav" aria-label="주 메뉴">
     <a class="navl" data-r="home" href="#home">홈</a>
     <a class="navl" data-r="about" href="#about">이 사이트 이야기<span class="nd">처음이라면 여기부터</span></a>
-    <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석하기<span class="nd">업체 넣고 진단·스크립트·보고서·PPT</span></a>
+    <a class="navl" data-r="tool-ap" href="#tool-ap">AP 스크립트 자동작성<span class="nd">업체 넣으면 스크립트·보고서·PPT가 자동으로</span></a>
     <a class="navl" data-r="ask" href="#ask">물어보기<span class="nd">AI에게 컨셉·준비할 것 묻기</span></a>
     <a class="navl" data-r="learn" href="#learn">공부하기<span class="nd">컨셉·화법·상품 익히기</span></a>
     <div class="navs" id="learnSub" hidden></div>
@@ -197,7 +197,7 @@ details.sit summary{cursor:pointer;font-weight:600}
   <p class="lede">업체 분석, 첫 미팅 준비, 공부를 한곳에서 합니다.</p>
   <a class="row" href="#about" style="margin:0 0 14px;border-color:var(--accent)"><span class="t"><b>처음이세요?</b> 이 사이트 이야기 보기 (3분)</span><span class="d">→</span></a>
   <div class="cards four">
-    <a class="card main" href="#tool-ap"><span class="k">1. 미팅 전</span><b>업체 분석하기</b><span>업체 정보나 재무제표를 넣으면 컨셉 진단, 미팅 스크립트, 보고서, PPT까지 만듭니다.</span></a>
+    <a class="card main" href="#tool-ap"><span class="k">1. 미팅 전</span><b>AP 스크립트 자동작성</b><span>업체 정보나 재무제표를 넣으면 컨셉 진단, 미팅 스크립트, 보고서, PPT까지 만듭니다.</span></a>
     <a class="card" href="#ask"><span class="k">2. 궁금할 때</span><b>물어보기</b><span>"이 업체엔 어떤 컨셉부터?" AI에게 물어보세요.</span></a>
     <a class="card" href="#learn"><span class="k">3. 틈날 때</span><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 경정기 비교 계산기.</span></a>
     <a class="card" href="#together"><span class="k">4. 같이</span><b>함께 만들기</b><span>고칠 점, 자료, 아이디어를 보내 주세요.</span></a>
@@ -212,7 +212,7 @@ details.sit summary{cursor:pointer;font-weight:600}
   <p class="lede">메뉴는 다섯 개입니다. 필요한 것만 골라 보세요.</p>
   <div class="beta"><b>초안 · 보완 필요</b><span>쓰면서 불편한 점을 "보완 남기기"로 알려 주시면 계속 고칩니다.</span></div>
   <div class="cards">
-    <div class="card"><b>업체 분석하기</b><span>첫 미팅(AP) 전에 씁니다.</span>
+    <div class="card"><b>AP 스크립트 자동작성</b><span>첫 미팅(AP) 전에 씁니다.</span>
       <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
       <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
       <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li></ul>
@@ -250,7 +250,7 @@ details.sit summary{cursor:pointer;font-weight:600}
       <tr><td>보험을 컨설팅의 대가로 요구하지 않음</td><td>대가형 제안은 고액 계약이 안 되고 신뢰를 잃습니다. 보험은 PC에서 문제 해결 수단으로 따로 제안</td></tr>
       <tr><td>확정 수익·원금 보장 표현 금지</td><td>사실과 다르고 채점 −3, 규제 위반 소지</td></tr>
       <tr><td>세무 처리는 모두 "세무사 검토 사항"</td><td>비용처리·손금·익금·명의변경 평가는 해석이 갈려 확정해서 말하지 않습니다</td></tr>
-      <tr><td>고객 실명·연락처·주민번호 금지, 녹음은 동의 받은 것만</td><td>개인정보 보호. 녹취는 각자 PC에서만</td></tr>
+      <tr><td>고객 실명·연락처·주민번호는 쓰지 않기</td><td>개인정보 보호</td></tr>
       <tr><td>누락 매출·미신고 현금의 "출처 마련", 페이백 제안 금지</td><td>조세포탈 방조 소지</td></tr>
       <tr><td>상품 비교 수치는 내부 참고용</td><td>고객에게는 가입설계서·상품설명서 기준으로만</td></tr>
     </tbody></table></div>
@@ -262,7 +262,7 @@ details.sit summary{cursor:pointer;font-weight:600}
   <input class="cform-search" id="q" type="search" placeholder="문서 제목으로 찾기 (예: 법인전환, 사근복)" aria-label="문서 제목 검색" style="width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);margin:0 0 14px">
   <div id="qres" class="list" style="margin-bottom:18px"></div>
   <div class="cards" id="lcards"></div>
-  <p class="small">예시가 필요하면: <a href="#learn-example">업체 분석 예시 보기</a></p>
+  <p class="small">예시가 필요하면: <a href="#learn-example">자동작성 예시 보기</a></p>
 </template>
 
 <template id="tpl-concepts">
@@ -311,7 +311,7 @@ details.sit summary{cursor:pointer;font-weight:600}
     <div class="tw"><table><thead><tr><th>자료</th><th>어디에 쓰이나요</th></tr></thead><tbody>
       <tr><td>내가 쓴 AP 스크립트 (잘된 것, 안된 것 모두)</td><td>스크립트 생성 문장 다양화, 채점 기준 보정</td></tr>
       <tr><td>PC 제안서 PPT · 보고서</td><td>PC 자료 자동 생성 템플릿</td></tr>
-      <tr><td>AP·PC 녹취 텍스트 (고객 동의 받은 것, 익명)</td><td>성공 화법 패턴, 컨셉 진단 정확도</td></tr>
+      <tr><td>AP·PC 미팅 녹음 또는 녹취 글</td><td>성공 화법 패턴, 컨셉 진단 정확도</td></tr>
       <tr><td>청약 승인·거절 사례 (업종, 매출·이익 규모, 나이, 금액, 결과)</td><td>재정심사 사전 예측</td></tr>
       <tr><td>고객이 실제로 물어본 질문</td><td>상품 Q&amp;A, 반론 대응</td></tr>
       <tr><td>나만의 명분 사례 · 예화</td><td>AP 3단계·13단계 개인화</td></tr>
@@ -339,7 +339,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-ap':['업체 분석 (진단·스크립트·보고서·PPT)','tools/ap-generator.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html']};
+const TOOLS={'tool-ap':['AP 스크립트 자동작성 (진단·스크립트·보고서·PPT)','tools/ap-generator.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html']};
 const ALIAS={improve:'together',contribute:'together',concept:'concepts'};
 const LEARN=[
   {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},
@@ -349,7 +349,7 @@ const LEARN=[
   {h:'learn-prod',label:'상품 자료',desc:'상품 요약, 약관 정리, 비교표',gids:['prod','prodmet']},
   {h:'tool-sim',label:'경정기 비교 계산기',desc:'나이·금액별 상품 보험료와 환급률 비교',gids:[]},
 ];
-const EXTRA={'learn-example':{h:'learn-example',label:'예시',desc:'업체 분석 결과 예시',gids:['example']}};
+const EXTRA={'learn-example':{h:'learn-example',label:'자동작성 예시',desc:'AP 스크립트 자동작성 결과 예시',gids:['example']}};
 const KINDS=['보완 멘트','자료','새 컨셉','오류','아이디어'];
 const catOfDoc=d=>LEARN.find(c=>c.gids.includes(d.gid))||Object.values(EXTRA).find(c=>c.gids.includes(d.gid));
 const catByHash=h=>LEARN.find(c=>c.h===h)||EXTRA[h];
@@ -379,7 +379,7 @@ function contribBox(target,opt={}){
   box.innerHTML=`<form class="cform" novalidate>
     <div class="frow">
       <label>종류<select name="kind">${KINDS.map(k=>`<option ${k===kind?'selected':''}>${k}</option>`).join('')}</select></label>
-      ${target?`<label>대상<input value="${esc(target)}" disabled></label>`:`<label>어느 문서·도구에 대한 건가요? <input name="tgt" list="dlTitles" placeholder="비워 두면 전체"><datalist id="dlTitles"><option>업체 분석하기</option><option>경정기 비교 계산기</option><option>물어보기</option>${titles.map(t=>`<option>${esc(t)}</option>`).join('')}</datalist></label>`}
+      ${target?`<label>대상<input value="${esc(target)}" disabled></label>`:`<label>어느 문서·도구에 대한 건가요? <input name="tgt" list="dlTitles" placeholder="비워 두면 전체"><datalist id="dlTitles"><option>AP 스크립트 자동작성</option><option>경정기 비교 계산기</option><option>물어보기</option>${titles.map(t=>`<option>${esc(t)}</option>`).join('')}</datalist></label>`}
       <label>닉네임 (선택)<input name="alias" maxlength="30" placeholder="예: 세무사 A"></label>
     </div>
     <label style="margin-top:10px">내용 <span class="hint">${esc(opt.hint||'무엇을, 어떻게 바꾸면 좋을지 적어 주세요. 근거가 있으면 함께.')}</span><textarea name="content" maxlength="5000" required></textarea></label>
@@ -447,7 +447,7 @@ async function show(){
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
     main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><button class="btn p" type="button" id="tpBtn">보완 남기기</button></span></div><div class="toolpanel" id="tp" hidden></div><iframe class="frame" src="${src}" title="${t}"></iframe>`;
-    const name=h==='tool-ap'?'업체 분석하기':'경정기 비교 계산기';
+    const name=h==='tool-ap'?'AP 스크립트 자동작성':'경정기 비교 계산기';
     $('#tp').appendChild(contribBox(name,{kind:'오류',hint:'어느 탭에서 무엇이 이상했는지, 어떻게 바뀌면 좋을지 적어 주세요.'}));
     $('#tpBtn').onclick=()=>{$('#tp').hidden=!$('#tp').hidden;$('#tpBtn').textContent=$('#tp').hidden?'보완 남기기':'닫기'};return}
   if(h==='home'){tpl('tpl-home');$('#homeStat').innerHTML=`업데이트 ${esc(M.built||'')} · 문서 ${M.docs.length}개 · <a href="#manual">사용법 보기</a>`;return}
@@ -485,7 +485,7 @@ async function docText(d){if(TEXT.has(d.id))return TEXT.get(d.id);const r=await 
 const md=t=>marked.parse(t.replace(/~/g,'\\~'));
 const easyPart=t=>t.split('<details class="orig">')[0];
 async function showAbout(){tpl('tpl-rules');const a=M.about;
-  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span>${a?`<span>수정 ${esc(a.updated)}</span>`:''}<span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#tool-ap">업체 분석하기 바로 열기</a></div>`;
+  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span>${a?`<span>수정 ${esc(a.updated)}</span>`:''}<span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#tool-ap">AP 스크립트 자동작성 바로 열기</a></div>`;
   if(!a){$('#doc').textContent='준비 중입니다.';return}
   try{const r=await fetch(a.file,{cache:'no-store'});const t=await r.text();if(location.hash.slice(1)!=='about')return;
     $('#doc').innerHTML=md(t);enhanceDoc($('#doc'),{id:'about',readable:true});document.title='이 사이트 이야기 · 4&7 NEXT 허브'}

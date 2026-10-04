@@ -7,7 +7,7 @@
 <title>4&7 NEXT 허브</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* 레이아웃: 왼쪽 목차(카테고리·문서) + 오른쪽 본문. 좁은 화면에서는 목차가 위로 접힘 */
+/* 레이아웃: 왼쪽 메뉴(6개) + 오른쪽 본문. 좁은 화면에서는 메뉴가 위로 접힘 */
 :root{
   --bg:#f3f4f2; --panel:#ffffff; --ink:#1b2321; --sub:#5d6a66; --line:#dde2df;
   --accent:#1d5c55; --accent-ink:#ffffff; --tint:#e6efec; --warn:#a1560f; --bad:#a32d2d; --good:#2d6b3a;
@@ -18,80 +18,156 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0}
 a{color:var(--accent)}
-.shell{position:relative;display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh;transition:grid-template-columns .2s}
+[hidden]{display:none!important}
+.shell{position:relative;display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh;transition:grid-template-columns .2s}
 .shell.collapsed{grid-template-columns:0 minmax(0,1fr)}
 .shell.collapsed aside{visibility:hidden;padding-inline:0;border:0}
 .toggle{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;z-index:30;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:18px;line-height:1}
-.shell:not(.collapsed) .toggle{left:246px}
+.shell:not(.collapsed) .toggle{left:226px}
 .toggle:hover{background:var(--tint)}
-@media(max-width:860px){.shell{grid-template-columns:1fr}.shell.collapsed{grid-template-columns:1fr}.shell:not(.collapsed) .toggle{left:auto;right:12px}.toggle{left:auto;right:12px}}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.shell.collapsed{grid-template-columns:1fr}.shell:not(.collapsed) .toggle{left:auto;right:12px}.toggle{left:auto;right:12px}.shell.collapsed aside{display:none}}
 @media (prefers-reduced-motion:reduce){.shell{transition:none}}
-aside{border-right:1px solid var(--line);background:var(--panel);padding-block:20px;padding-inline:16px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;min-width:0}
+aside{border-right:1px solid var(--line);background:var(--panel);padding-block:20px;padding-inline:14px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;min-width:0;display:flex;flex-direction:column}
 @media(max-width:860px){aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}}
-.brand{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.brand{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;padding-inline:8px}
 .brand b{font-size:20px;letter-spacing:-.01em}.brand span{font-family:var(--f-mono);font-size:11px;color:var(--sub);letter-spacing:.08em}
-.built{font-size:12px;color:var(--sub);margin-bottom:14px}
-.search{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
-nav{margin-top:14px;display:flex;flex-direction:column;gap:2px}
-.navh{font-size:11px;letter-spacing:.1em;color:var(--sub);font-weight:600;margin:14px 0 4px;text-transform:uppercase}
-.navl{display:block;padding:6px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:14px}
-.navl:hover{background:var(--tint)}.navl.on{background:var(--accent);color:var(--accent-ink)}
-details.grp summary{cursor:pointer;padding:6px 10px;border-radius:7px;font-size:14px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
-details.grp summary::-webkit-details-marker{display:none}
-details.grp summary:hover{background:var(--tint)}
-details.grp summary .cnt{font-family:var(--f-mono);font-size:12px;color:var(--sub);font-weight:400}
-details.grp .navl{padding-left:20px;font-size:13px}
+.built{font-size:12px;color:var(--sub);margin-bottom:12px;padding-inline:8px}
+nav{display:flex;flex-direction:column;gap:3px}
+.navl{display:block;padding:8px 10px;border-radius:9px;color:var(--ink);text-decoration:none;font-size:15px;font-weight:600}
+.navl .nd{display:block;font-size:12px;font-weight:400;color:var(--sub);line-height:1.4;margin-top:1px}
+.navl:hover{background:var(--tint)}.navl.on{background:var(--accent);color:var(--accent-ink)}.navl.on .nd{color:inherit;opacity:.8}
+.navs{display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 12px;padding-left:8px;border-left:2px solid var(--line)}
+.navs .navl{font-size:14px;font-weight:500;padding:6px 10px}
+.navs .navl.on{background:var(--tint);color:var(--accent);font-weight:700}
+.navfoot{margin-top:auto;padding:18px 8px 0;font-size:12.5px;color:var(--sub)}
+.navfoot a{color:var(--sub);text-decoration:none}.navfoot a:hover,.navfoot a.on{color:var(--accent);text-decoration:underline}
+@media(max-width:860px){.navl .nd{display:none}.navfoot{margin-top:10px}}
 main{padding-block:28px 60px;padding-inline:clamp(16px,4vw,56px);min-width:0}
 main.toolmode{padding:0}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-block:10px;padding-inline:60px 16px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+@media(max-width:860px){.toolbar{padding-inline:16px 60px}}
 .toolbar b{font-size:15px}
+.toolpanel{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px}
+.toolpanel .cbox{max-width:760px}
 .frame{width:100%;height:calc(100vh - 54px);border:0;display:block;background:var(--bg)}
 .beta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed var(--accent);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;background:var(--panel)}
 .beta b{color:var(--accent)}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0;align-items:center}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none}
 .btn.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.sm{padding:4px 9px;font-size:12.5px;font-weight:500}
 .btn:hover{border-color:var(--accent)}
-.todo li{margin:4px 0;font-size:14px}
-.wrap{max-width:860px}
+.btn:disabled{opacity:.6;cursor:wait}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
+.wrap{max-width:900px}
 h1{font-size:28px;line-height:1.3;margin:0 0 6px;text-wrap:balance;letter-spacing:-.015em}
 h2{font-size:20px;margin:30px 0 10px;text-wrap:balance}
 h3{font-size:16px;margin:22px 0 8px}
-.lede{color:var(--sub);margin:0 0 22px;max-width:62ch}
-.notice{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel));border-radius:10px;padding:12px 14px;font-size:14px;margin:0 0 22px}
+.lede{color:var(--sub);margin:0 0 20px;max-width:62ch}
+.small{font-size:13px;color:var(--sub)}
+.crumb{font-size:13px;color:var(--sub);margin-bottom:8px}.crumb a{color:var(--sub)}
+.notice{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel));border-radius:10px;padding:11px 14px;font-size:14px;margin:0 0 20px}
 .notice b{color:var(--warn)}
-.flows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media(max-width:860px){.flows{grid-template-columns:1fr}}
-.flow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
-.flow .k{font-family:var(--f-mono);font-size:11px;color:var(--accent);letter-spacing:.08em}
-.flow h3{margin:4px 0 6px}.flow p{margin:0;font-size:14px;color:var(--sub)}
-.flow a.go{display:inline-block;margin-top:10px;font-weight:600;font-size:14px}
-.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-@media(max-width:600px){.tools{grid-template-columns:1fr}}
-.tool{display:block;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:16px;text-decoration:none}
-.tool b{font-size:17px;display:block}.tool span{font-size:13px;opacity:.85}
+/* 카드 */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:0 0 20px}
+.cards.four{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:600px){.cards.four{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:var(--ink);min-width:0}
+.card:hover{border-color:var(--accent)}
+.card .k{font-size:12px;font-weight:600;color:var(--accent)}
+.card b{font-size:18px}.card span{font-size:14px;color:var(--sub)}
+.card.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.card.main span,.card.main .k{color:inherit;opacity:.85}
+.card .cnt{font-family:var(--f-mono);font-size:12px;color:var(--sub);margin-top:auto;padding-top:6px}
+.card ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink)}.card li{margin:3px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chip{display:inline-block;font:inherit;font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none;text-align:left}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
 table{border-collapse:collapse;width:100%;font-size:14px}
-.tw{overflow-x:auto;margin:10px 0}
-th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+.tw{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 th{color:var(--sub);font-weight:600;font-size:13px;background:var(--tint)}
 code{font-family:var(--f-mono);font-size:13px;background:var(--tint);padding:1px 5px;border-radius:4px}
 pre{background:var(--tint);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px}
 pre code{background:none;padding:0}
 blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);background:var(--tint);border-radius:0 8px 8px 0}
-.doc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:clamp(16px,3vw,32px);min-width:0}
-.doc h1{font-size:24px}.doc img{max-width:100%}
-.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:14px}
-.meta span{background:var(--tint);padding:2px 8px;border-radius:999px}
 .list{display:flex;flex-direction:column;gap:6px}
-.row{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink);min-width:0}
-.row:hover{border-color:var(--accent)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:10px 13px;background:var(--panel);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink);min-width:0}
+a.row:hover{border-color:var(--accent)}
 .row .t{min-width:0;overflow-wrap:anywhere}.row .d{font-family:var(--f-mono);font-size:12px;color:var(--sub);white-space:nowrap}
 .steps{counter-reset:s;padding-left:0;list-style:none}
 .steps li{counter-increment:s;position:relative;padding-left:34px;margin:8px 0}
 .steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:13px;display:grid;place-items:center;font-weight:600}
-.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--tint);color:var(--sub)}
-.pill.bad{color:var(--bad)}.pill.good{color:var(--good)}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--tint);color:var(--sub);font-weight:500}
+.pill.bad{color:var(--bad)}.pill.good{color:var(--good)}.pill.warn{color:var(--warn)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* 문서 읽기 */
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3.5vw,40px);min-width:0;font-size:16px;line-height:1.75}
+.doc>*:not(.tw):not(details){max-width:68ch}
+.doc h1{font-size:25px;margin-bottom:14px}
+.doc h2{font-size:19px;margin:2.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line);position:relative}
+.doc h2::before{content:"";position:absolute;top:-1px;left:0;width:36px;height:3px;background:var(--accent);border-radius:2px}
+.doc h3{font-size:16.5px;margin:1.6em 0 .5em}
+.doc ul,.doc ol{padding-left:1.3em}.doc li{margin:.3em 0}
+.doc img{max-width:100%}
+.doc blockquote.glance{border:0;border-radius:12px;background:var(--tint);padding:16px 18px;font-size:17px;line-height:1.7;margin:4px 0 20px}
+.doc blockquote.glance p{margin:0}
+.doc blockquote.say{position:relative;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel);border-radius:4px 14px 14px 14px;padding:24px 14px 8px;margin:12px 0}
+.doc blockquote.say::before{content:"말하기 예시";position:absolute;left:14px;top:5px;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+.doc blockquote.say p{margin:.2em 0}
+.doc tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--tint) 55%,transparent)}
+.doc .tw{border:1px solid var(--line);border-radius:10px}
+.doc .tw table{font-size:14.5px;min-width:540px}.doc .tw th:first-child,.doc .tw td:first-child{padding-left:12px}
+.doc .tw tr:last-child td{border-bottom:0}
+.doc li.task{list-style:none;margin-left:-1.3em;display:flex;gap:10px;align-items:flex-start;padding:4px 0}
+.doc li.task input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin:4px 0 0;border:2px solid var(--accent);border-radius:5px;background:var(--panel);cursor:pointer;display:grid;place-items:center}
+.doc li.task input:checked{background:var(--accent)}
+.doc li.task input:checked::after{content:"";width:5px;height:10px;border:solid var(--accent-ink);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.doc li.task.done{color:var(--sub);text-decoration:line-through}
+.doc .warnl{color:var(--warn);font-weight:500}
+.doc details.orig{margin-top:2.5em;border-top:1px dashed var(--line);padding-top:12px;font-size:14px;line-height:1.65;color:var(--sub)}
+.doc details.orig>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--sub);padding:6px 0}
+.doc details.orig h1{font-size:19px}.doc details.orig h2{font-size:16px;border:0;padding:0;margin:1.4em 0 .4em}.doc details.orig h2::before{display:none}
+.doc details.orig .tw table{font-size:13px}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--sub);margin-bottom:12px}
+/* 보완 남기기 폼 */
+.cbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.cbox p{margin:0 0 6px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.cform label,.sitgrid label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--sub);min-width:0}
+.cform input,.cform select,.cform textarea,.sitgrid input,.sitgrid select,.askf textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.cform textarea{min-height:120px;resize:vertical;margin-top:10px}
+.cform input[type=file]{padding:6px;font-size:13px}
+.cform .hint{font-size:12.5px;color:var(--sub);font-weight:400}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.msg{font-size:14px;margin-top:8px}.msg.err{color:var(--bad)}.msg.ok{color:var(--good);font-weight:600}
+.citem{display:block;padding:10px 13px;background:var(--panel);border:1px solid var(--line);border-radius:9px}
+.citem .top{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--sub);margin-bottom:4px}
+.citem .c{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.citem .note{font-size:13px;color:var(--good);margin-top:4px}
+/* 탭 */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 18px}
+.tab{padding:9px 14px;text-decoration:none;color:var(--sub);font-weight:600;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+details.todo{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 13px;margin:6px 0}
+details.todo summary{cursor:pointer;font-weight:600}
+details.todo li{font-size:14px;margin:4px 0}
+/* 물어보기 */
+details.sit{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 12px}
+details.sit summary{cursor:pointer;font-weight:600}
+.sitgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+.sitgrid .wide{grid-column:1/-1}
+@media(max-width:600px){.sitgrid{grid-template-columns:1fr 1fr}}
+.chat{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.bub{max-width:100%;padding:12px 15px;border-radius:14px;min-width:0;overflow-wrap:anywhere}
+.bub.u{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-radius:14px 14px 4px 14px;max-width:85%;white-space:pre-wrap}
+.bub.a{align-self:stretch;background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;line-height:1.7}
+.bub.a h3{font-size:15.5px;margin:14px 0 6px}.bub.a p{margin:6px 0}.bub.a ul{padding-left:1.3em}
+.bub .refs{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;color:var(--sub)}
+.bub .refs .chip{font-size:12.5px}
+.bub.wait{color:var(--sub)}
+.askf{display:flex;gap:8px;align-items:flex-end;position:sticky;bottom:0;background:var(--bg);padding:8px 0}
+.askf textarea{resize:vertical;min-height:52px}
+.ref-snip{font-size:13px;color:var(--sub);margin-top:2px}
 </style>
 
 </head>
@@ -101,22 +177,16 @@ blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);ba
 <aside>
   <div class="brand"><b>4&amp;7 NEXT</b><span>HUB</span></div>
   <div class="built" id="built">불러오는 중</div>
-  <input class="search" id="q" type="search" placeholder="문서 제목 검색" aria-label="문서 제목 검색">
-  <nav id="nav">
-    <a class="navl" href="#home">홈</a>
-    <a class="navl" href="#manual">사용 매뉴얼</a>
-    <a class="navl" href="#rules">사용 원칙</a>
-    <a class="navl" href="#updates">최근 업데이트</a>
-    <a class="navl" href="#concepts">컨셉 라이브러리</a>
-    <a class="navl" href="#contribute">자료 보태기</a>
-    <a class="navl" href="#todo">보완 필요 목록</a>
-    <a class="navl" href="#improve">개선 제안 · 현황</a>
-    <div class="navh">도구</div>
-    <a class="navl" href="#tool-ap">AP 스크립트 생성기</a>
-    <a class="navl" href="#tool-sim">경정기 시뮬레이터</a>
-    <div class="navh">문서</div>
-    <div id="groups"></div>
+  <nav id="nav" aria-label="주 메뉴">
+    <a class="navl" data-r="home" href="#home">홈</a>
+    <a class="navl" data-r="about" href="#about">이 사이트 이야기<span class="nd">처음이라면 여기부터</span></a>
+    <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석하기<span class="nd">업체 넣고 진단·스크립트·보고서·PPT</span></a>
+    <a class="navl" data-r="ask" href="#ask">물어보기<span class="nd">AI에게 컨셉·준비할 것 묻기</span></a>
+    <a class="navl" data-r="learn" href="#learn">공부하기<span class="nd">컨셉·화법·상품 익히기</span></a>
+    <div class="navs" id="learnSub" hidden></div>
+    <a class="navl" data-r="together" href="#together">함께 만들기<span class="nd">보완 남기기 · 보완 필요 목록</span></a>
   </nav>
+  <div class="navfoot"><a href="#manual" data-f="manual">사용법</a> · <a href="#rules" data-f="rules">사용 원칙</a> · <a href="#updates" data-f="updates">최근 업데이트</a></div>
 </aside>
 
 <main id="main"><div class="wrap" id="view"></div></main>
@@ -124,67 +194,49 @@ blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);ba
 
 <template id="tpl-home">
   <h1>4&amp;7 NEXT 허브</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>모든 도구와 문서는 제작 단계입니다. 틀린 곳이나 더 좋은 방법이 보이면 각 화면의 "개선 제안"으로 알려 주세요.</span></div>
-  <p class="lede">4사업단과 7사업단이 함께 만드는 AI 세일즈 도구와 자료를 한곳에 모았습니다. 재무자료나 상황카드로 컨셉을 진단하고, AP 스크립트를 만들고, 상품 숫자를 확인하는 데 씁니다.</p>
-  <div class="notice"><b>내부용입니다.</b> 상품 비교 수치는 GA월드 등 참고 자료 기준이고, 고객에게 보여주는 숫자는 반드시 가입설계서로 확인합니다. 고객 실명은 어디에도 넣지 않습니다.</div>
-  <h2>무엇을 하시나요</h2>
-  <div class="flows">
-    <div class="flow"><div class="k">AP 전</div><h3>첫 미팅 준비</h3><p>업체 정보·재무제표를 넣으면 컨셉을 진단하고 15단계 스크립트를 만듭니다.</p><a class="go" href="#tool-ap">AP 스크립트 생성기 열기</a></div>
-    <div class="flow"><div class="k">PC 준비</div><h3>상품 숫자 확인</h3><p>대표 나이·금액·보험료로 경정기 13개 상품의 환급률과 순비용을 비교합니다.</p><a class="go" href="#tool-sim">경정기 시뮬레이터 열기</a></div>
-    <div class="flow"><div class="k">공부</div><h3>상품·컨셉 익히기</h3><p>지점원 가이드북, 상품 FAQ, 컨셉 라이브러리를 읽고, 아는 것을 보태 주세요.</p><a class="go" href="#concepts">컨셉 라이브러리 열기</a></div>
+  <p class="lede">업체 분석, 첫 미팅 준비, 공부를 한곳에서 합니다.</p>
+  <a class="row" href="#about" style="margin:0 0 14px;border-color:var(--accent)"><span class="t"><b>처음이세요?</b> 이 사이트 이야기 보기 (3분)</span><span class="d">→</span></a>
+  <div class="cards four">
+    <a class="card main" href="#tool-ap"><span class="k">1. 미팅 전</span><b>업체 분석하기</b><span>업체 정보나 재무제표를 넣으면 컨셉 진단, 미팅 스크립트, 보고서, PPT까지 만듭니다.</span></a>
+    <a class="card" href="#ask"><span class="k">2. 궁금할 때</span><b>물어보기</b><span>"이 업체엔 어떤 컨셉부터?" AI에게 물어보세요.</span></a>
+    <a class="card" href="#learn"><span class="k">3. 틈날 때</span><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 경정기 비교 계산기.</span></a>
+    <a class="card" href="#together"><span class="k">4. 같이</span><b>함께 만들기</b><span>고칠 점, 자료, 아이디어를 보내 주세요.</span></a>
   </div>
-  <h2>도구</h2>
-  <div class="tools">
-    <a class="tool" href="#tool-ap"><b>AP 스크립트 생성기</b><span>상황카드 → 컨셉 18종 진단 → 15단계 멘트 · 금지어 검사 · 재무제표 붙여넣기</span></a>
-    <a class="tool" href="#tool-sim"><b>경정기 시뮬레이터</b><span>13개 상품 · 나이 20~75세 · 가입금액/보험료 기준 · 재정심사 참고</span></a>
-  </div>
-  <h2>자료 현황</h2>
-  <div class="tw"><table id="stat"><thead><tr><th>분류</th><th>문서 수</th><th>최근 수정</th></tr></thead><tbody></tbody></table></div>
+  <div class="beta"><b>초안 · 보완 필요</b><span>모두 만드는 중입니다. 틀린 곳이 보이면 화면마다 있는 "보완 남기기"로 알려 주세요.</span></div>
+  <div class="notice"><b>꼭 지켜 주세요.</b> 고객 실명·연락처는 어디에도 넣지 않습니다. 상품 숫자는 내부 참고용이고, 고객에게는 가입설계서로 안내합니다. 세무 처리는 세무사 검토 사항입니다.</div>
+  <p class="small" id="homeStat"></p>
 </template>
 
 <template id="tpl-manual">
-  <h1>사용 매뉴얼</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>모든 내용은 제작 단계입니다. 쓰면서 고칠 점을 알려 주시면 계속 고도화합니다.</span></div>
-
-  <h2>1. 첫 미팅(AP) 준비</h2>
-  <ol class="steps">
-    <li>왼쪽 메뉴 <a href="#tool-ap">AP 스크립트 생성기</a>를 엽니다. "시연 사례 불러오기"로 예시를 볼 수 있습니다.</li>
-    <li>재무제표가 있으면 "재무자료 붙여넣기"에 재무상태표·손익계산서 텍스트를 붙여넣고 "읽어서 채우기"를 누릅니다. 읽은 값은 꼭 확인합니다.</li>
-    <li>상대 정보, 나와의 관계, 알고 있는 정보 3가지, 예상 저항을 채우고 해당하는 신호를 체크합니다.</li>
-    <li><b>컨셉 진단</b> 탭에서 1~3순위 컨셉과 근거를 봅니다. PC 방향과 상품 힌트는 머릿속에만 둡니다.</li>
-    <li><b>AP 15단계 스크립트</b> 탭의 멘트를 확인합니다. <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li>
-    <li><b>편집·금지어 검사</b> 탭에서 고치면 상품명(채점 −5)이 빨갛게 표시됩니다.</li>
-  </ol>
-
-  <h2>2. 내 스크립트 채점받기</h2>
-  <ol class="steps">
-    <li>AP 스크립트 생성기의 <b>스크립트 채점</b> 탭을 엽니다.</li>
-    <li>직접 쓴 스크립트나 AP 녹취 텍스트를 붙여넣고 "채점하기"를 누릅니다.</li>
-    <li>15단계별 점수, 근거로 본 문장, 먼저 고칠 3곳이 나옵니다. 문장 패턴으로 보는 <b>대략 점수</b>이니 참고용으로 씁니다.</li>
-  </ol>
-
-  <h2>3. PC 준비: 상품 숫자 보기</h2>
-  <ol class="steps">
-    <li><a href="#tool-sim">경정기 시뮬레이터</a>에서 대표 나이, 성별, 심사유형을 고릅니다.</li>
-    <li><b>가입금액 기준</b>은 "10억이면 월 얼마", <b>보험료 기준</b>은 "월 500만원이면 얼마까지"를 보여줍니다.</li>
-    <li>상품을 누르면 경과년수별 환급률, 나이별 보험료, 전환 조건이 나옵니다. 파란 글씨는 추정값입니다.</li>
-    <li>세무 처리(비용처리·손금·익금 등)는 모두 <b>세무사 검토 사항</b>입니다. 사이트의 숫자는 내부 참고용이고, 고객에게는 가입설계서 기준으로 안내합니다.</li>
-  </ol>
-
-  <h2>4. 공부하기</h2>
-  <ol class="steps">
-    <li><b>지점원 가이드북</b>: 보험용어, 수당과 분급제, 청약서 작성. 노세대·신세대 트랙이 따로 있습니다.</li>
-    <li><b>컨셉 라이브러리</b>: 컨셉별로 대상 신호, AP 질문, 화법, 반론 대응, 주의사항.</li>
-    <li><b>AP · 화법</b>: AP 15단계 표준, 화법·반론처리, 세일즈 프로세스.</li>
-    <li><b>상품 FAQ</b>: 한눈에 비교 → 상품별 Q&amp;A.</li>
-  </ol>
-
-  <h2>5. 함께 고도화하기</h2>
-  <ul>
-    <li>문서·도구 화면마다 <b>개선 제안</b> 버튼이 있습니다. 컨셉 문서에는 <b>이 컨셉 보완하기</b> 버튼이 있어서 신호, 질문, 화법, 반론, 익명 사례를 항목별로 보탤 수 있습니다.</li>
-    <li>스크립트, PPT, 녹취 같은 실제 자료는 <a href="#contribute">자료 보태기</a>에서 올려 주세요. 자료가 많이 모일수록 진단과 채점이 정확해집니다.</li>
-    <li>접수된 제안은 <a href="#improve">개선 제안 · 현황</a>에서 보고, 반영되면 "반영 완료"로 바뀝니다.</li>
-  </ul>
+  <h1>사용법</h1>
+  <p class="lede">메뉴는 다섯 개입니다. 필요한 것만 골라 보세요.</p>
+  <div class="beta"><b>초안 · 보완 필요</b><span>쓰면서 불편한 점을 "보완 남기기"로 알려 주시면 계속 고칩니다.</span></div>
+  <div class="cards">
+    <div class="card"><b>업체 분석하기</b><span>첫 미팅(AP) 전에 씁니다.</span>
+      <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
+      <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
+      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li></ul>
+      <a class="btn p" style="margin-top:10px;align-self:flex-start" href="#tool-ap">열기</a></div>
+    <div class="card"><b>물어보기</b><span>AI 상담입니다.</span>
+      <ul><li>업체 상황(업종, 매출, 순이익, 대표 나이)을 적고 질문합니다.</li>
+      <li>답과 함께 참고한 컨셉 문서가 나옵니다.</li>
+      <li>고객 이름·회사명은 쓰지 않습니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#ask">열기</a></div>
+    <div class="card"><b>경정기 비교 계산기</b><span>제안(PC) 준비할 때.</span>
+      <ul><li>대표 나이·성별·금액을 넣으면 상품별 보험료와 환급률을 비교합니다.</li>
+      <li>파란 글씨는 추정값입니다. 고객에게는 가입설계서 기준으로 안내합니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-sim">열기</a></div>
+    <div class="card"><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 신입 가이드.</span>
+      <ul><li>문서 맨 위 "한눈에"만 읽어도 핵심이 잡힙니다.</li>
+      <li>"꼭 확인할 것"은 눌러서 체크할 수 있습니다.</li>
+      <li>자세한 원문은 맨 아래 "원문 전체 보기"에 접혀 있습니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#learn">열기</a></div>
+    <div class="card"><b>함께 만들기</b><span>누구나 보낼 수 있습니다.</span>
+      <ul><li>화면마다 있는 "보완 남기기"를 누릅니다. 지금은 카톡용 문구를 복사해 단톡방에 보내고, 연결되면 로그인 없이 바로 보낼 수 있습니다.</li>
+      <li>보낸 내용은 접수 → 검토 중 → 반영 완료로 바뀝니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#together">열기</a></div>
+  </div>
+  <p class="small">지킬 것은 <a href="#rules">사용 원칙</a>에 모아 두었습니다.</p>
 </template>
 
 <template id="tpl-rules">
@@ -204,50 +256,75 @@ blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);ba
     </tbody></table></div>
 </template>
 
-<template id="tpl-improve">
-  <h1>개선 제안 · 현황</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>이 사이트는 함께 고쳐 가며 키웁니다. 제안은 GitHub 이슈로 모이고, 개발팀이 반영한 뒤 닫습니다.</span></div>
-  <h2>제안하는 방법</h2>
-  <ol class="steps">
-    <li>고칠 문서나 도구 화면에서 <b>개선 제안</b> 버튼을 누릅니다. 제목과 위치가 채워진 제안서가 열립니다.</li>
-    <li>무엇이 문제인지, 어떻게 바뀌면 좋을지, 근거가 있으면 근거를 적고 제출합니다. GitHub 계정(무료)이 필요합니다.</li>
-    <li>계정이 없으면 <b>카톡용 문구 복사</b>를 눌러 개발팀 단톡방에 붙여넣으세요.</li>
-  </ol>
-  <div class="notice"><b>고객 정보는 절대 쓰지 마세요.</b> 제안은 공개 게시판에 올라갑니다. 고객 이름, 회사명, 연락처, 재무 숫자는 빼고 적어 주세요.</div>
-  <div class="btnrow"><a class="btn p" id="newIssue" target="_blank" rel="noopener">새 개선 제안 쓰기</a><button class="btn" type="button" data-copy="전체">카톡용 문구 복사</button></div>
-  <h2>접수된 제안</h2>
-  <div id="issues" class="list"><div class="row"><span class="t">불러오는 중</span></div></div>
+<template id="tpl-learn">
+  <h1>공부하기</h1>
+  <p class="lede">무엇을 익히고 싶으세요? 카드를 고르거나 제목으로 찾아보세요.</p>
+  <input class="cform-search" id="q" type="search" placeholder="문서 제목으로 찾기 (예: 법인전환, 사근복)" aria-label="문서 제목 검색" style="width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);margin:0 0 14px">
+  <div id="qres" class="list" style="margin-bottom:18px"></div>
+  <div class="cards" id="lcards"></div>
+  <p class="small">예시가 필요하면: <a href="#learn-example">업체 분석 예시 보기</a></p>
 </template>
+
 <template id="tpl-concepts">
-  <h1>컨셉 라이브러리</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>컨셉마다 대상 신호, AP 질문, 화법, 반론, 주의사항을 모았습니다. 같은 컨셉의 카드가 둘이면 둘 다 보여줍니다. 아는 것을 보태 주세요.</span></div>
-  <div class="btnrow" style="margin:0 0 10px"><a class="btn p" id="newConcept" target="_blank" rel="noopener">새 컨셉 제안</a></div>
+  <div class="crumb"><a href="#learn">공부하기</a> › 컨셉 사전</div>
+  <h1>컨셉 사전</h1>
+  <p class="lede">업체 상황에 맞는 컨설팅 컨셉을 분야별로 모았습니다. 같은 컨셉의 카드가 둘이면 둘 다 보여줍니다.</p>
+  <div class="beta"><b>초안 · 보완 필요</b><span>아는 신호, 질문, 화법, 반론 대응이 있으면 각 컨셉에서 "보완 남기기"로 보태 주세요.</span><button class="btn sm" type="button" id="newConcept">새 컨셉 제안</button></div>
+  <div id="newConceptBox"></div>
   <div id="clist"></div>
 </template>
-<template id="tpl-contribute">
-  <h1>자료 보태기</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>이 시스템은 많은 분의 실제 자료가 모일수록 정확해집니다. 아래 자료를 보내 주시면 컨셉 카드, 스크립트 생성, 채점 기준에 반영합니다.</span></div>
-  <h2>이런 자료가 필요합니다</h2>
-  <div class="tw"><table><thead><tr><th>자료</th><th>어디에 쓰이나요</th></tr></thead><tbody>
-    <tr><td>내가 쓴 AP 스크립트 (잘된 것, 안된 것 모두)</td><td>스크립트 생성 문장 다양화, 채점 기준 보정</td></tr>
-    <tr><td>PC 제안서 PPT · 보고서</td><td>PC 자료 자동 생성 템플릿</td></tr>
-    <tr><td>AP·PC 녹취 텍스트 (고객 동의 받은 것, 익명)</td><td>성공 화법 패턴, 컨셉 진단 정확도</td></tr>
-    <tr><td>청약 승인·거절 사례 (업종, 매출·이익 규모, 나이, 금액, 결과)</td><td>재정심사 사전 예측</td></tr>
-    <tr><td>고객이 실제로 물어본 질문</td><td>상품 FAQ, 반론 대응</td></tr>
-    <tr><td>나만의 명분 사례 · 예화</td><td>AP 3단계·13단계 개인화</td></tr>
-  </tbody></table></div>
-  <h2>보내는 방법</h2>
-  <ol class="steps">
-    <li><b>자료 보내기</b> 버튼을 누르면 제출 양식이 열립니다. 파일(PPT, PDF, 텍스트)은 본문 칸에 끌어다 놓으면 첨부됩니다. GitHub 계정이 필요합니다.</li>
-    <li>계정이 없으면 <b>카톡용 문구 복사</b> 후 개발팀 단톡방에 파일과 함께 올려 주세요.</li>
-  </ol>
-  <div class="notice"><b>보내기 전에 꼭 지워 주세요.</b> 고객 이름, 회사명, 사업자번호, 연락처, 주소. 숫자는 범위(예: 매출 10~20억)로 바꿔도 됩니다. 녹취는 고객 동의를 받은 것만 보냅니다. 보험사 내부 교육용 자료는 올리지 마세요.</div>
-  <div class="btnrow"><a class="btn p" id="giveIssue" target="_blank" rel="noopener">자료 보내기</a><button class="btn" type="button" data-copy="자료 보태기">카톡용 문구 복사</button></div>
+
+<template id="tpl-ask">
+  <h1>물어보기</h1>
+  <p class="lede">업체 상황을 적고 물어보면 어떤 컨셉부터 볼지, 무엇을 확인할지 알려 드립니다.</p>
+  <div class="beta" id="askState"><b>확인 중</b><span>AI 연결 상태를 확인하고 있습니다.</span></div>
+  <div class="notice"><b>고객 이름·회사명·연락처는 쓰지 마세요.</b> 숫자는 대략(예: 매출 30억대)이면 충분합니다.</div>
+  <details class="sit" open><summary>업체 상황 (선택, 적으면 더 정확해요)</summary>
+    <div class="sitgrid">
+      <label>업종<input data-s="업종" placeholder="예: 제조업"></label>
+      <label>개인/법인<select data-s="형태"><option value="">선택</option><option>개인사업자</option><option>법인</option></select></label>
+      <label>매출<input data-s="매출" placeholder="예: 50억"></label>
+      <label>순이익<input data-s="순이익" placeholder="예: 3억"></label>
+      <label>대표 나이<input data-s="대표 나이" placeholder="예: 52세"></label>
+      <label>잉여금 등<input data-s="잉여금" placeholder="예: 이익잉여금 15억"></label>
+      <label class="wide">특이사항<input data-s="특이사항" placeholder="예: 가지급금 있음, 자녀 승계 고민, 직원 30명"></label>
+    </div>
+  </details>
+  <div class="small">이렇게 물어보세요</div>
+  <div class="chips" id="exq"></div>
+  <div class="chat" id="chat" aria-live="polite"></div>
+  <form class="askf" id="askf">
+    <textarea id="askq" rows="2" placeholder="질문을 적어 주세요 (Enter 보내기, Shift+Enter 줄바꿈)" aria-label="질문"></textarea>
+    <button class="btn p" id="askBtn" type="submit">보내기</button>
+  </form>
+  <div class="btnrow" style="margin-top:4px"><button class="btn sm" type="button" id="askReset">대화 새로 시작</button><span class="small">AI 답은 참고용입니다. 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확인하세요.</span></div>
 </template>
-<template id="tpl-todo">
-  <h1>보완 필요 목록</h1>
-  <div class="beta"><b>초안 · 보완 필요</b><span>문서 안에서 "확인필요"로 표시된 항목을 자동으로 모았습니다. 자료를 가진 분이 채워 주시면 반영합니다.</span></div>
-  <div id="todolist"></div>
+
+<template id="tpl-together">
+  <h1>함께 만들기</h1>
+  <p class="lede">이 사이트는 지점원 모두가 함께 고쳐 가며 키웁니다. 누구나 보낼 수 있습니다.</p>
+  <div class="tabs" role="tablist"><a class="tab" id="tabGive" href="#together" role="tab">보완 남기기</a><a class="tab" id="tabTodo" href="#todo" role="tab">보완 필요 목록 <span class="pill" id="todoCnt"></span></a></div>
+  <section id="secGive">
+    <div class="beta"><b>초안 · 보완 필요</b><span>고칠 점, 실제 자료, 아이디어 모두 환영합니다. 모이는 만큼 진단과 스크립트가 정확해집니다.</span></div>
+    <div id="gform"></div>
+    <h2>이런 자료가 필요합니다</h2>
+    <div class="tw"><table><thead><tr><th>자료</th><th>어디에 쓰이나요</th></tr></thead><tbody>
+      <tr><td>내가 쓴 AP 스크립트 (잘된 것, 안된 것 모두)</td><td>스크립트 생성 문장 다양화, 채점 기준 보정</td></tr>
+      <tr><td>PC 제안서 PPT · 보고서</td><td>PC 자료 자동 생성 템플릿</td></tr>
+      <tr><td>AP·PC 녹취 텍스트 (고객 동의 받은 것, 익명)</td><td>성공 화법 패턴, 컨셉 진단 정확도</td></tr>
+      <tr><td>청약 승인·거절 사례 (업종, 매출·이익 규모, 나이, 금액, 결과)</td><td>재정심사 사전 예측</td></tr>
+      <tr><td>고객이 실제로 물어본 질문</td><td>상품 Q&amp;A, 반론 대응</td></tr>
+      <tr><td>나만의 명분 사례 · 예화</td><td>AP 3단계·13단계 개인화</td></tr>
+    </tbody></table></div>
+    <div class="notice"><b>보내기 전에 꼭 지워 주세요.</b> 고객 이름, 회사명, 사업자번호, 연락처, 주소. 숫자는 범위(예: 매출 10~20억)로 바꿔도 됩니다. 녹취는 고객 동의를 받은 것만, 보험사 내부 교육용 자료는 올리지 마세요.</div>
+    <h2>최근 들어온 보완</h2>
+    <div id="recent" class="list"></div>
+    <p class="small" style="margin-top:18px">다른 방법: <a id="ghLink" target="_blank" rel="noopener">GitHub 제안 게시판 (계정 필요)</a> · <button class="linkbtn" type="button" data-copy="전체">카톡용 문구 복사</button></p>
+  </section>
+  <section id="secTodo" hidden>
+    <p class="lede">문서 안에 "확인 필요"로 표시된 항목을 모았습니다. 아는 내용이 있으면 해당 문서를 열어 "보완 남기기"로 채워 주세요.</p>
+    <div id="todolist"></div>
+  </section>
 </template>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
@@ -258,52 +335,271 @@ const narrow=()=>window.matchMedia('(max-width:860px)').matches;
 function setCollapsed(c){$('#shell').classList.toggle('collapsed',c);store.set('hub-collapsed',c?'1':'0')}
 $('#toggle').addEventListener('click',()=>setCollapsed(!$('#shell').classList.contains('collapsed')));
 if(store.get('hub-collapsed')==='1')$('#shell').classList.add('collapsed');
-const TOOLS={'tool-ap':['AP 스크립트 생성기','tools/ap-generator.html'],'tool-sim':['경정기 시뮬레이터','tools/simulator.html']};
-function issueURL(title,where){const repo=M.repo||'xdrygv1-lab/4and7-next-hub';const body=`### 위치\n${where}\n\n### 무엇이 문제인가요\n\n\n### 어떻게 바뀌면 좋을까요\n\n\n### 근거 (있으면)\n\n\n> 고객 이름·회사명·연락처·재무 숫자는 쓰지 마세요.`;return `https://github.com/${repo}/issues/new?title=${encodeURIComponent('[개선] '+title)}&body=${encodeURIComponent(body)}`}
-function conceptURL(name){const repo=M.repo||'xdrygv1-lab/4and7-next-hub';const body=`### 컨셉\n${name}\n\n### 추가할 대상 업체 신호\n\n\n### AP에서 던질 질문\n\n\n### 제안 화법\n\n\n### 반론과 대응\n\n\n### 주의사항\n\n\n### 익명 사례 (업종·규모·나이대·결과만)\n\n\n> 고객 이름·회사명·연락처는 쓰지 마세요.`;return `https://github.com/${repo}/issues/new?title=${encodeURIComponent('[컨셉] '+name)}&labels=${encodeURIComponent('개선')}&body=${encodeURIComponent(body)}`}
-function giveURL(){const repo=M.repo||'xdrygv1-lab/4and7-next-hub';const body=`### 자료 종류\n(AP 스크립트 / PC PPT / 녹취 / 승인·거절 사례 / 고객 질문 / 명분 사례)\n\n### 관련 컨셉\n\n\n### 간단한 설명\n\n\n### 파일\n여기에 파일을 끌어다 놓으세요.\n\n> 고객 이름·회사명·사업자번호·연락처를 지웠는지 확인해 주세요. 녹취는 동의 받은 것만.`;return `https://github.com/${repo}/issues/new?title=${encodeURIComponent('[자료] ')}&labels=${encodeURIComponent('자료요청')}&body=${encodeURIComponent(body)}`}
-let _issues=null;async function getIssues(){if(_issues)return _issues;try{const r=await fetch(`https://api.github.com/repos/${M.repo}/issues?state=all&per_page=100`);_issues=r.ok?(await r.json()).filter(i=>!i.pull_request):[]}catch(e){_issues=[]}return _issues}
-function kakao(title){return `[4&7 NEXT 개선 제안]\n위치: ${title}\n문제: \n제안: \n근거: `}
-async function copyText(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='복사했습니다'}catch(e){window.prompt?0:0;btn.textContent='복사 실패: 직접 적어 주세요'}}
-function improveRow(title,where){return `<div class="btnrow"><a class="btn p" target="_blank" rel="noopener" href="${issueURL(title,where)}">개선 제안</a><button class="btn" type="button" data-copy="${esc(title)}">카톡용 문구 복사</button></div>`}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+
+let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
+const REPO='xdrygv1-lab/4and7-next-hub';
+const TOOLS={'tool-ap':['업체 분석 (진단·스크립트·보고서·PPT)','tools/ap-generator.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html']};
+const ALIAS={improve:'together',contribute:'together',concept:'concepts'};
+const LEARN=[
+  {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},
+  {h:'learn-ap',label:'첫 미팅 화법',desc:'AP 15단계, 화법, 반론 대응',gids:['ap']},
+  {h:'learn-faq',label:'상품 Q&A',desc:'주력 상품 비교와 자주 묻는 질문',gids:['faq']},
+  {h:'learn-guide',label:'신입 가이드',desc:'보험용어, 수당, 청약서, 영업 흐름',gids:['guide']},
+  {h:'learn-prod',label:'상품 자료',desc:'상품 요약, 약관 정리, 비교표',gids:['prod','prodmet']},
+  {h:'tool-sim',label:'경정기 비교 계산기',desc:'나이·금액별 상품 보험료와 환급률 비교',gids:[]},
+];
+const EXTRA={'learn-example':{h:'learn-example',label:'예시',desc:'업체 분석 결과 예시',gids:['example']}};
+const KINDS=['보완 멘트','자료','새 컨셉','오류','아이디어'];
+const catOfDoc=d=>LEARN.find(c=>c.gids.includes(d.gid))||Object.values(EXTRA).find(c=>c.gids.includes(d.gid));
+const catByHash=h=>LEARN.find(c=>c.h===h)||EXTRA[h];
+
+/* ---------- 보조: GitHub·카톡 (작은 대안) ---------- */
+function issueURL(title,where){const body=`### 위치\n${where}\n\n### 무엇이 문제인가요\n\n\n### 어떻게 바뀌면 좋을까요\n\n\n> 고객 이름·회사명·연락처·재무 숫자는 쓰지 마세요.`;return `https://github.com/${REPO}/issues/new?title=${encodeURIComponent('[보완] '+title)}&body=${encodeURIComponent(body)}`}
+function kakao(title){return `[4&7 NEXT 보완]\n위치: ${title}\n내용: \n근거: `}
+async function copyText(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='복사했습니다'}catch(e){btn.textContent='복사 실패: 직접 적어 주세요'}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-copy]');if(b)copyText(kakao(b.dataset.copy),b)});
-let M={docs:[],tools:[]};
-const ORDER=['지점원 가이드북','컨셉 라이브러리','AP · 화법','상품 FAQ','상품 자료','예시'];
-function groups(filter){const g={};M.docs.filter(d=>!filter||d.title.toLowerCase().includes(filter)||d.name.toLowerCase().includes(filter)).forEach(d=>(g[d.group]=g[d.group]||[]).push(d));return ORDER.filter(k=>g[k]).map(k=>[k,g[k]]).concat(Object.keys(g).filter(k=>!ORDER.includes(k)).map(k=>[k,g[k]]))}
-function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function renderNav(){const f=$('#q').value.trim().toLowerCase();const cur=location.hash.slice(1);
-  $('#groups').innerHTML=groups(f).map(([k,ds])=>`<details class="grp" ${f||ds.some(d=>d.id===cur)?'open':''}><summary>${esc(k)}<span class="cnt">${ds.length}</span></summary>${ds.map(d=>`<a class="navl ${d.id===cur?'on':''}" href="#${d.id}">${esc(d.title)}</a>`).join('')}</details>`).join('')||'<div class="navl" style="color:var(--sub)">찾는 문서가 없습니다</div>';
-  document.querySelectorAll('#nav > .navl').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+(cur||'home')))}
-function tpl(id){if(!$('#view'))$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').innerHTML='';$('#view').appendChild($('#'+id).content.cloneNode(true))}
-async function show(){const h=location.hash.slice(1)||'home';renderNav();window.scrollTo(0,0);
-  if(narrow()&&h!=='home')setCollapsed(true);
-  const main=$('#main');main.classList.toggle('toolmode',!!TOOLS[h]);
-  if(TOOLS[h]){const[t,src]=TOOLS[h];main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><a class="btn p" target="_blank" rel="noopener" href="${issueURL(t,'도구: '+t)}">개선 제안</a></span></div><iframe class="frame" src="${src}" title="${t}"></iframe>`;return}
-  if(!$('#view'))main.innerHTML='<div class="wrap" id="view"></div>';
-  if(h==='concepts'){tpl('tpl-concepts');$('#newConcept').href=conceptURL('새 컨셉 이름');const cs=M.docs.filter(d=>d.gid==='concept');const cats=[...new Set(cs.map(d=>d.cat))];
-    $('#clist').innerHTML=cats.map(c=>`<h2>${esc(c)}</h2><div class="list">${cs.filter(d=>d.cat===c).sort((a,b)=>a.concept.localeCompare(b.concept,'ko')).map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.concept)}</span><span class="d" data-cn="${esc(d.concept)}"></span></a>`).join('')}</div>`).join('');
-    getIssues().then(is=>document.querySelectorAll('[data-cn]').forEach(el=>{const n=is.filter(i=>i.title.includes('[컨셉] '+el.dataset.cn)&&i.state==='open').length;if(n)el.innerHTML=`<span class="pill bad">보완 제안 ${n}</span>`}));return}
-  if(h==='contribute'){tpl('tpl-contribute');$('#giveIssue').href=giveURL();return}
-  if(h==='improve'){tpl('tpl-improve');$('#newIssue').href=issueURL('제목을 적어 주세요','');loadIssues();return}
-  if(h==='todo'){tpl('tpl-todo');const ds=M.docs.filter(d=>d.todo&&d.todo.length);$('#todolist').innerHTML=ds.length?ds.map(d=>`<h3><a href="#${d.id}">${esc(d.title)}</a> <span class="pill">${d.todo.length}건</span></h3><ul class="todo">${d.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join(''):'<p>표시된 항목이 없습니다.</p>';return}
-  if(h==='home'){tpl('tpl-home');const g=groups('');$('#stat tbody').innerHTML=g.map(([k,ds])=>`<tr><td>${esc(k)}</td><td>${ds.length}</td><td>${ds.map(d=>d.updated).sort().pop()}</td></tr>`).join('');return}
-  if(h==='manual'){tpl('tpl-manual');const fix=M.docs.find(d=>d.name.startsWith('00_정정사항'));document.querySelectorAll('[data-fix]').forEach(a=>{if(fix)a.href='#'+fix.id});return}
+
+/* ---------- 백엔드 ---------- */
+const PII=[[/\d{6}\s*-\s*[1-8]\d{6}/,'주민등록번호'],[/\d{3}\s*-\s*\d{2}\s*-\s*\d{5}/,'사업자등록번호'],[/01[016789][\s.-]?\d{3,4}[\s.-]?\d{4}/,'휴대전화번호'],[/\b0(?:2|[3-6][1-5]|70)[\s.-]?\d{3,4}[\s.-]?\d{4}\b/,'전화번호'],[/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/,'이메일 주소']];
+function piiFound(t){return PII.filter(([rx])=>rx.test(t)).map(p=>p[1])}
+async function api(body){const r=await fetch(CFG.endpoint,{method:'POST',body:JSON.stringify(body)});return r.json()}
+async function apiGet(q){const r=await fetch(CFG.endpoint+(CFG.endpoint.includes('?')?'&':'?')+q,{cache:'no-store'});return r.json()}
+async function aiReady(){if(!CFG.endpoint)return false;if(AI!==null)return AI;try{const r=await apiGet('action=ping');AI=!!(r&&r.ok&&r.ai)}catch(e){AI=false}return AI}
+
+/* ---------- 보완 남기기 상자 ---------- */
+function contribBox(target,opt={}){
+  const box=document.createElement('div');box.className='cbox';
+  const where=target||'전체';
+  if(!CFG.endpoint){
+    box.innerHTML=`<p><b>로그인 없이 바로 보내는 기능은 준비 중입니다.</b> (연결하면 켜집니다) 지금은 문구를 복사해 개발팀 단톡방에 보내 주세요. 파일도 단톡방에 함께 올리면 됩니다.</p><div class="btnrow" style="margin-top:8px"><button class="btn p" type="button" data-copy="${esc(where)}">카톡용 문구 복사</button><a class="btn sm" target="_blank" rel="noopener" href="${issueURL(where,where)}">GitHub로 보내기 (계정 필요)</a></div>`;
+    return box}
+  const kind=opt.kind||'보완 멘트';
+  const titles=M.docs.map(d=>d.title);
+  box.innerHTML=`<form class="cform" novalidate>
+    <div class="frow">
+      <label>종류<select name="kind">${KINDS.map(k=>`<option ${k===kind?'selected':''}>${k}</option>`).join('')}</select></label>
+      ${target?`<label>대상<input value="${esc(target)}" disabled></label>`:`<label>어느 문서·도구에 대한 건가요? <input name="tgt" list="dlTitles" placeholder="비워 두면 전체"><datalist id="dlTitles"><option>업체 분석하기</option><option>경정기 비교 계산기</option><option>물어보기</option>${titles.map(t=>`<option>${esc(t)}</option>`).join('')}</datalist></label>`}
+      <label>닉네임 (선택)<input name="alias" maxlength="30" placeholder="예: 세무사 A"></label>
+    </div>
+    <label style="margin-top:10px">내용 <span class="hint">${esc(opt.hint||'무엇을, 어떻게 바꾸면 좋을지 적어 주세요. 근거가 있으면 함께.')}</span><textarea name="content" maxlength="5000" required></textarea></label>
+    <div class="hint" style="text-align:right"><span data-n>0</span> / 5000</div>
+    <label style="margin-top:6px">파일 (선택, 8MB까지: PPT·PDF·엑셀·한글·이미지·텍스트)<input type="file" name="file"></label>
+    <div class="hp" aria-hidden="true"><label>웹사이트<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <p class="hint" style="margin-top:10px">⚠ 고객 이름·회사명·연락처·주민번호·사업자번호는 지워 주세요. 보낸 내용(파일 제외)은 이 사이트에 공개됩니다.</p>
+    <div class="btnrow" style="margin-top:8px"><button class="btn p" type="submit">보내기</button><span class="msg" data-msg role="status"></span></div>
+  </form>`;
+  const f=box.querySelector('form'),ta=f.content,msg=box.querySelector('[data-msg]');
+  ta.addEventListener('input',()=>box.querySelector('[data-n]').textContent=ta.value.length);
+  f.addEventListener('submit',async e=>{e.preventDefault();msg.className='msg';
+    const content=ta.value.trim(),alias=f.alias.value.trim(),tgt=target||(f.tgt&&f.tgt.value.trim())||'전체';
+    if(content.length<5){msg.className='msg err';msg.textContent='내용을 조금 더 적어 주세요. (5자 이상)';ta.focus();return}
+    const file=f.file.files[0];
+    const pii=piiFound([content,alias,tgt,file?file.name:''].join('\n'));
+    if(pii.length){msg.className='msg err';msg.textContent=`개인정보로 보이는 내용(${pii.join(', ')})이 있습니다. 지우고 다시 보내 주세요.`;return}
+    if(file&&file.size>8*1024*1024){msg.className='msg err';msg.textContent='파일은 8MB까지 보낼 수 있습니다.';return}
+    const btn=f.querySelector('button[type=submit]');btn.disabled=true;msg.textContent=file?'파일을 올리는 중입니다…':'보내는 중…';
+    try{
+      const body={action:'contrib',kind:f.kind.value,target:tgt,content,alias,website:f.website.value};
+      if(file)body.file={name:file.name,mimeType:file.type||'application/octet-stream',base64:await readB64(file)};
+      const r=await api(body);
+      if(r&&r.ok){box.innerHTML=`<p class="msg ok">${esc(r.message||'접수되었습니다. 고맙습니다!')}</p><p class="small">반영되면 상태가 "반영 완료"로 바뀝니다.</p><button class="btn sm" type="button">하나 더 남기기</button>`;
+        box.querySelector('button').onclick=()=>box.replaceWith(contribBox(target,opt));if(opt.onSent)opt.onSent()}
+      else{msg.className='msg err';msg.textContent=(r&&r.error)||'보내지 못했습니다.';btn.disabled=false}
+    }catch(err){msg.className='msg err';msg.innerHTML=`보내지 못했습니다. 인터넷 연결을 확인하거나 <button class="linkbtn" type="button" data-copy="${esc(tgt)}">카톡용 문구 복사</button>를 이용해 주세요.`;btn.disabled=false}
+  });
+  return box}
+function readB64(file){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=()=>no(r.error);r.readAsDataURL(file)})}
+function statusPill(s){const c={'반영 완료':'good','검토 중':'warn','보류':''}[s];return `<span class="pill ${c==null?'':c}">${esc(s||'접수')}</span>`}
+async function loadContribs(el,target,empty){
+  if(!el)return;
+  if(!CFG.endpoint){el.innerHTML='<div class="row"><span class="t small">바로 보내기 기능이 연결되면 들어온 내용이 여기에 보입니다.</span></div>';return}
+  el.innerHTML='<div class="row"><span class="t small">불러오는 중</span></div>';
+  try{const r=await apiGet('action=list'+(target?'&target='+encodeURIComponent(target):''));
+    const it=(r&&r.items)||[];
+    el.innerHTML=it.length?it.map(i=>`<div class="citem"><div class="top">${statusPill(i.status)}<span class="pill">${esc(i.kind)}</span>${target?'':`<span>${esc(i.target)}</span>`}<span>${esc(i.alias||'익명')} · ${esc(i.time)}</span>${i.hasFile?'<span>파일 첨부</span>':''}</div><div class="c">${esc(i.content.length>400?i.content.slice(0,400)+'…':i.content)}</div>${i.note?`<div class="note">${esc(i.note)}</div>`:''}</div>`).join('')
+      :`<div class="row"><span class="t small">${esc(empty||'아직 없습니다. 첫 보완을 남겨 주세요.')}</span></div>`}
+  catch(e){el.innerHTML='<div class="row"><span class="t small">목록을 불러오지 못했습니다. 잠시 후 다시 열어 보세요.</span></div>'}}
+
+/* ---------- 메뉴 ---------- */
+function familyOf(h){
+  if(h==='home'||h==='about'||h==='tool-ap'||h==='ask')return h;
+  if(h==='together'||h==='todo')return 'together';
+  if(h==='learn'||catByHash(h))return 'learn';
+  const d=M.docs.find(x=>x.id===h);if(d)return 'learn';
+  return ''}
+function renderNav(h){
+  const fam=familyOf(h),d=M.docs.find(x=>x.id===h),cur=d?(catOfDoc(d)||{}).h:h;
+  document.querySelectorAll('#nav > .navl').forEach(a=>a.classList.toggle('on',a.dataset.r===fam));
+  const sub=$('#learnSub');sub.hidden=fam!=='learn';
+  sub.innerHTML=LEARN.map(c=>`<a class="navl ${c.h===cur?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
+  document.querySelectorAll('.navfoot a').forEach(a=>a.classList.toggle('on',a.dataset.f===h))}
+
+function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}
+function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span><span class="d">${d.updated}</span></a>`).join('')}
+
+/* ---------- 화면 ---------- */
+async function show(){
+  let h=decodeURIComponent(location.hash.slice(1))||'home';
+  if(ALIAS[h]){location.replace('#'+ALIAS[h]);return}
+  renderNav(h);window.scrollTo(0,0);document.title='4&7 NEXT 허브';
+  if(narrow())setCollapsed(true);
+  const main=$('#main');
+  if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
+    main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><button class="btn p" type="button" id="tpBtn">보완 남기기</button></span></div><div class="toolpanel" id="tp" hidden></div><iframe class="frame" src="${src}" title="${t}"></iframe>`;
+    const name=h==='tool-ap'?'업체 분석하기':'경정기 비교 계산기';
+    $('#tp').appendChild(contribBox(name,{kind:'오류',hint:'어느 탭에서 무엇이 이상했는지, 어떻게 바뀌면 좋을지 적어 주세요.'}));
+    $('#tpBtn').onclick=()=>{$('#tp').hidden=!$('#tp').hidden;$('#tpBtn').textContent=$('#tp').hidden?'보완 남기기':'닫기'};return}
+  if(h==='home'){tpl('tpl-home');$('#homeStat').innerHTML=`업데이트 ${esc(M.built||'')} · 문서 ${M.docs.length}개 · <a href="#manual">사용법 보기</a>`;return}
+  if(h==='manual'){tpl('tpl-manual');return}
+  if(h==='about')return showAbout();
   if(h==='rules'){tpl('tpl-rules');return}
-  if(h==='updates'){const ds=[...M.docs].sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,30);$('#view').innerHTML=`<h1>최근 업데이트</h1><p class="lede">수정일 기준 최근 30개 문서입니다. 사이트 빌드: ${esc(M.built)}</p><div class="list">${ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)} <span class="pill">${esc(d.group)}</span></span><span class="d">${d.updated}</span></a>`).join('')}</div>`;return}
-  const d=M.docs.find(x=>x.id===h);if(!d){$('#view').innerHTML='<h1>문서를 찾을 수 없습니다</h1><p><a href="#home">홈으로</a></p>';return}
-  $('#view').innerHTML=`<div class="meta"><span class="pill">초안 · 보완 필요</span><span>${esc(d.group)}</span><span>수정 ${d.updated}</span>${d.todo&&d.todo.length?`<span>확인필요 ${d.todo.length}건</span>`:''}</div><div class="doc" id="doc">불러오는 중</div>${d.gid==='concept'?`<div class="btnrow"><a class="btn p" target="_blank" rel="noopener" href="${conceptURL(d.concept)}">이 컨셉 보완하기</a><a class="btn" target="_blank" rel="noopener" href="${issueURL(d.title,'컨셉: '+d.title)}">오류 알리기</a><button class="btn" type="button" data-copy="${esc('컨셉: '+d.concept)}">카톡용 문구 복사</button></div><h3>이 컨셉에 접수된 보완</h3><div class="list" id="cIssues"><div class="row"><span class="t">불러오는 중</span></div></div>`:improveRow(d.title,'문서: '+d.group+' / '+d.title)}`;
-  if(d.gid==='concept')getIssues().then(is=>{const m=is.filter(i=>i.title.includes('[컨셉] '+d.concept));const b=$('#cIssues');if(b)b.innerHTML=m.length?m.map(i=>`<a class="row" href="${i.html_url}" target="_blank" rel="noopener"><span class="t">${esc(i.title)}</span><span class="d">${i.state==='open'?'<span class="pill bad">검토 중</span>':'<span class="pill good">반영 완료</span>'}</span></a>`).join(''):'<div class="row"><span class="t">아직 없습니다. 첫 보완을 남겨 주세요.</span></div>'});
-  try{const r=await fetch(d.file);const t=await r.text();
-    $('#doc').innerHTML=d.file.endsWith('.md')&&window.marked?marked.parse(t):`<pre style="white-space:pre-wrap">${esc(t)}</pre>`;
-    $('#doc').querySelectorAll('table').forEach(tb=>{const w=document.createElement('div');w.className='tw';tb.parentNode.insertBefore(w,tb);w.appendChild(tb)});
-    $('#doc').querySelectorAll('a[href]').forEach(a=>{const href=a.getAttribute('href');if(/경정기_시뮬레이터_v1\.html/.test(href))a.setAttribute('href','tools/simulator.html'+(href.split('?')[1]?'?'+href.split('?')[1]:''));else if(/AP_스크립트_생성기/.test(href))a.setAttribute('href','tools/ap-generator.html')});
+  if(h==='learn')return showLearn();
+  if(h==='concepts')return showConcepts();
+  if(h==='ask')return showAsk();
+  if(h==='together'||h==='todo')return showTogether(h);
+  if(h==='updates'){tpl('tpl-rules');const ds=[...M.docs].sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,30);$('#view').innerHTML=`<h1>최근 업데이트</h1><p class="lede">수정일 기준 최근 30개 문서입니다. 사이트 빌드: ${esc(M.built)}</p><div class="list">${ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)} <span class="pill">${esc((catOfDoc(d)||{label:d.group}).label)}</span></span><span class="d">${d.updated}</span></a>`).join('')}</div>`;return}
+  const cat=catByHash(h);
+  if(cat){tpl('tpl-rules');const ds=M.docs.filter(d=>cat.gids.includes(d.gid));
+    $('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › ${esc(cat.label)}</div><h1>${esc(cat.label)}</h1><p class="lede">${esc(cat.desc)}</p><div class="list">${docRows(ds)||'<div class="row"><span class="t">문서가 없습니다.</span></div>'}</div>`;return}
+  const d=M.docs.find(x=>x.id===h);
+  if(!d){tpl('tpl-rules');$('#view').innerHTML='<h1>문서를 찾을 수 없습니다</h1><p><a href="#home">홈으로</a></p>';return}
+  return showDoc(d)}
+
+function showLearn(){tpl('tpl-learn');
+  $('#lcards').innerHTML=LEARN.map(c=>{const n=c.gids.length?M.docs.filter(d=>c.gids.includes(d.gid)).length:0;return `<a class="card" href="#${c.h}"><b>${esc(c.label)}</b><span>${esc(c.desc)}</span>${n?`<span class="cnt">문서 ${n}개</span>`:'<span class="cnt">계산기</span>'}</a>`}).join('');
+  const q=$('#q'),res=$('#qres');
+  q.addEventListener('input',()=>{const f=q.value.trim().toLowerCase();if(!f){res.innerHTML='';return}
+    const ds=M.docs.filter(d=>d.title.toLowerCase().includes(f)).slice(0,20);
+    res.innerHTML=ds.length?ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span><span class="d">${esc((catOfDoc(d)||{label:''}).label)}</span></a>`).join(''):'<div class="row"><span class="t small">찾는 문서가 없습니다. 다른 낱말로 찾거나 "물어보기"를 이용해 보세요.</span></div>'})}
+
+function showConcepts(){tpl('tpl-concepts');
+  const cs=M.docs.filter(d=>d.gid==='concept'),cats=[...new Set(cs.map(d=>d.cat))];
+  $('#clist').innerHTML=cats.map(c=>`<h2>${esc(c)}</h2><div class="list">${cs.filter(d=>d.cat===c).sort((a,b)=>a.concept.localeCompare(b.concept,'ko')).map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span></a>`).join('')}</div>`).join('');
+  $('#newConcept').onclick=()=>{const b=$('#newConceptBox');if(b.firstChild){b.innerHTML='';return}b.appendChild(contribBox('새 컨셉',{kind:'새 컨셉',hint:'컨셉 이름, 맞는 업체 신호, 첫 미팅 질문, 화법, 주의사항을 아는 만큼 적어 주세요.'}))}}
+
+/* ---------- 문서 ---------- */
+const TEXT=new Map();
+async function docText(d){if(TEXT.has(d.id))return TEXT.get(d.id);const r=await fetch(d.file);if(!r.ok)throw new Error(r.status);const t=await r.text();TEXT.set(d.id,t);return t}
+// 물결(~)은 범위 표시로 쓰므로 취소선으로 바뀌지 않게 막는다
+const md=t=>marked.parse(t.replace(/~/g,'\\~'));
+const easyPart=t=>t.split('<details class="orig">')[0];
+async function showAbout(){tpl('tpl-rules');const a=M.about;
+  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span>${a?`<span>수정 ${esc(a.updated)}</span>`:''}<span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#tool-ap">업체 분석하기 바로 열기</a></div>`;
+  if(!a){$('#doc').textContent='준비 중입니다.';return}
+  try{const r=await fetch(a.file,{cache:'no-store'});const t=await r.text();if(location.hash.slice(1)!=='about')return;
+    $('#doc').innerHTML=md(t);enhanceDoc($('#doc'),{id:'about',readable:true});document.title='이 사이트 이야기 · 4&7 NEXT 허브'}
+  catch(e){$('#doc').textContent='글을 불러오지 못했습니다. 새로고침해 보세요.'}}
+async function showDoc(d){tpl('tpl-rules');const cat=catOfDoc(d)||{h:'learn',label:d.group};
+  const isC=d.gid==='concept';
+  $('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › <a href="#${cat.h}">${esc(cat.label)}</a></div>
+    <div class="meta"><span class="pill">초안 · 보완 필요</span><span>수정 ${d.updated}</span><span id="rtime"></span>${d.todo&&d.todo.length?`<span>확인 필요 ${d.todo.length}건</span>`:''}</div>
+    <div class="toc" id="toc"></div>
+    <div class="doc" id="doc">불러오는 중</div>
+    <div class="btnrow"><button class="btn p" type="button" id="cBtn">보완 남기기</button><span class="small">틀린 곳, 더 좋은 화법, 실제 사례를 알려 주세요.</span></div>
+    <div id="cWrap"></div>
+    ${isC?`<h3>이 컨셉에 들어온 보완</h3><div class="list" id="cList"></div>`:''}`;
+  const hint=isC?'더할 신호, 첫 미팅 질문, 화법, 반론과 대응, 주의사항, 익명 사례(업종·규모·나이대·결과만)를 적어 주세요.':'';
+  const onSent=()=>loadContribs($('#cList'),d.title);
+  $('#cBtn').onclick=()=>{const w=$('#cWrap');if(w.firstChild){w.innerHTML='';$('#cBtn').textContent='보완 남기기';return}w.appendChild(contribBox(d.title,{kind:isC?'보완 멘트':'오류',hint,onSent}));$('#cBtn').textContent='닫기'};
+  if(isC)loadContribs($('#cList'),d.title);
+  try{const t=await docText(d);if(location.hash.slice(1)!==d.id)return;
+    const el=$('#doc');
+    el.innerHTML=d.file.endsWith('.md')&&window.marked?md(t):`<pre style="white-space:pre-wrap">${esc(t)}</pre>`;
+    enhanceDoc(el,d);
   }catch(e){$('#doc').textContent='문서를 불러오지 못했습니다. 새로고침해 보세요.'}}
-async function loadIssues(){const box=$('#issues');try{const is=await getIssues();
-  box.innerHTML=is.length?is.map(i=>`<a class="row" href="${i.html_url}" target="_blank" rel="noopener"><span class="t">${esc(i.title)}</span><span class="d">${i.state==='open'?'<span class="pill bad">진행 중</span>':'<span class="pill good">반영 완료</span>'} ${i.created_at.slice(0,10)}</span></a>`).join(''):'<div class="row"><span class="t">아직 접수된 제안이 없습니다. 첫 제안을 남겨 주세요.</span></div>'}
-  catch(e){box.innerHTML=`<a class="row" href="https://github.com/${M.repo}/issues" target="_blank" rel="noopener"><span class="t">이 화면에서는 목록을 불러올 수 없습니다. GitHub 제안 게시판에서 보기</span></a>`}}
-$('#q').addEventListener('input',renderNav);
+
+function enhanceDoc(el,d){
+  el.querySelectorAll('table').forEach(tb=>{const w=document.createElement('div');w.className='tw';tb.parentNode.insertBefore(w,tb);w.appendChild(tb)});
+  el.querySelectorAll('a[href]').forEach(a=>{const href=a.getAttribute('href');if(/경정기_시뮬레이터_v1\.html/.test(href))a.setAttribute('href','tools/simulator.html'+(href.split('?')[1]?'?'+href.split('?')[1]:''));else if(/AP_스크립트_생성기/.test(href))a.setAttribute('href','#tool-ap')});
+  const inOrig=n=>!!n.closest('details.orig');
+  // 한눈에 카드, 말하기 말풍선
+  let first=true;
+  el.querySelectorAll('blockquote').forEach(b=>{if(inOrig(b))return;if(first&&/한눈에/.test(b.textContent.slice(0,20))){b.classList.add('glance')}else b.classList.add('say');first=false});
+  // ⚠ 주의 줄
+  el.querySelectorAll('li,p').forEach(n=>{if(/^\s*⚠/.test(n.textContent))n.classList.add('warnl')});
+  // 체크리스트 (문서별 저장)
+  const key='hub-chk:'+d.id;let saved=[];try{saved=JSON.parse(store.get(key)||'[]')}catch(e){}
+  el.querySelectorAll('li input[type=checkbox]').forEach((cb,i)=>{cb.disabled=false;cb.removeAttribute('disabled');const li=cb.closest('li');li.classList.add('task');
+    cb.setAttribute('aria-label','확인 표시');cb.checked=saved.includes(i);li.classList.toggle('done',cb.checked);
+    cb.addEventListener('change',()=>{li.classList.toggle('done',cb.checked);const all=[...el.querySelectorAll('li.task input')];store.set(key,JSON.stringify(all.map((x,j)=>x.checked?j:-1).filter(j=>j>=0)))})});
+  // 목차
+  const hs=[...el.querySelectorAll('h2')].filter(h=>!inOrig(h));
+  if(hs.length>=3){$('#toc').innerHTML=hs.map((h,i)=>{h.id='sec-'+i;return `<button class="chip" type="button" data-sec="${i}">${esc(h.textContent)}</button>`}).join('');
+    $('#toc').onclick=e=>{const b=e.target.closest('[data-sec]');if(b){const t=document.getElementById('sec-'+b.dataset.sec);if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}}}
+  // 읽는 시간 (원문 접힘 제외, 분당 500자)
+  const c=el.cloneNode(true);c.querySelectorAll('details.orig').forEach(x=>x.remove());
+  const n=c.textContent.replace(/\s+/g,'').length;$('#rtime').textContent=`읽는 시간 약 ${Math.max(1,Math.ceil(n/500))}분`;
+  const o=el.querySelector('details.orig');if(o&&!d.readable)o.open=true}
+
+/* ---------- 함께 만들기 ---------- */
+function showTogether(h){tpl('tpl-together');
+  const todo=h==='todo';
+  $('#tabGive').classList.toggle('on',!todo);$('#tabTodo').classList.toggle('on',todo);
+  $('#secGive').hidden=todo;$('#secTodo').hidden=!todo;
+  const ds=M.docs.filter(d=>d.todo&&d.todo.length);
+  $('#todoCnt').textContent=ds.reduce((a,d)=>a+d.todo.length,0);
+  $('#ghLink').href=`https://github.com/${REPO}/issues`;
+  if(todo){$('#todolist').innerHTML=ds.length?ds.map(d=>`<details class="todo"><summary>${esc(d.title)} <span class="pill">${d.todo.length}건</span></summary><ul>${d.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><a class="btn sm" href="#${d.id}">문서 열고 보완하기</a></details>`).join(''):'<p>표시된 항목이 없습니다.</p>';return}
+  const rec=$('#recent');
+  $('#gform').appendChild(contribBox('',{kind:'아이디어',onSent:()=>loadContribs(rec,'')}));
+  loadContribs(rec,'')}
+
+/* ---------- 물어보기 ---------- */
+const EXQ=['순이익 2억 법인, 대표 52세, 잉여금 15억이면 어떤 컨셉부터?','개인사업자 순이익 1.2억, 법인전환 제안하려면 무엇부터 확인?','사근복 제안 전에 꼭 확인할 것?','대표 60세, 자녀 승계 고민인 제조 법인은 첫 미팅에서 무엇을 물어볼까?'];
+let HIST=[];
+function situation(){const parts=[...document.querySelectorAll('[data-s]')].map(x=>x.value.trim()?`${x.dataset.s}: ${x.value.trim()}`:'').filter(Boolean);return parts.length?'[업체 상황] '+parts.join(', '):''}
+function bigrams(s){const out=new Set();(String(s).toLowerCase().match(/[가-힣a-z0-9]+/g)||[]).forEach(w=>{if(/^[a-z0-9]+$/.test(w)){if(w.length>=2)out.add(w);return}for(let i=0;i<w.length-1;i++)out.add(w.slice(i,i+2))});return out}
+let IDX=null;
+async function buildIndex(){if(IDX)return IDX;
+  const cand=M.docs.filter(d=>['concept','ap','faq'].includes(d.gid));
+  const rows=await Promise.all(cand.map(async d=>{try{const t=easyPart(await docText(d));return {d,t,ti:bigrams(d.title+' '+(d.concept||'')),hd:bigrams(t.slice(0,2000))}}catch(e){return null}}));
+  const list=rows.filter(Boolean),df=new Map();
+  list.forEach(r=>new Set([...r.ti,...r.hd]).forEach(b=>df.set(b,(df.get(b)||0)+1)));
+  IDX={list,df,N:list.length};return IDX}
+async function retrieve(q){const ix=await buildIndex(),Q=bigrams(q);
+  const scored=ix.list.map(r=>{let s=0;Q.forEach(b=>{const idf=Math.log((ix.N+1)/((ix.df.get(b)||0)+1));if(idf<=0.2)return;if(r.ti.has(b))s+=3*idf;if(r.hd.has(b))s+=idf});return {r,s}}).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  const top=scored.slice(0,4);const best=top[0]?top[0].s:0;
+  return top.filter(x=>x.s>=best*0.35).map(x=>x.r)}
+function snippet(t){const m=t.match(/>\s*\*\*한눈에\*\*\s*([^\n]+)/);const s=(m?m[1]:t.replace(/^#.*$/m,'')).replace(/[#>*|`_]/g,' ').replace(/\s+/g,' ').trim();return s.length>120?s.slice(0,120)+'…':s}
+function addBub(cls,html){const b=document.createElement('div');b.className='bub '+cls;b.innerHTML=html;$('#chat').appendChild(b);b.scrollIntoView({behavior:'smooth',block:'nearest'});return b}
+function refsHtml(refs,label){return refs.length?`<div class="refs">${label}<div class="chips">${refs.map(r=>`<a class="chip" href="#${r.d.id}">${esc(r.d.title)}</a>`).join('')}</div></div>`:''}
+async function showAsk(){tpl('tpl-ask');HIST=[];
+  $('#exq').innerHTML=EXQ.map(q=>`<button class="chip" type="button">${esc(q)}</button>`).join('');
+  $('#exq').onclick=e=>{const b=e.target.closest('.chip');if(b){$('#askq').value=b.textContent;$('#askq').focus()}};
+  const st=$('#askState');
+  const ready=await aiReady();
+  if(!$('#askState'))return;
+  st.innerHTML=ready?'<b>AI 연결됨</b><span>답은 참고용입니다. 질문과 관련된 컨셉 문서를 함께 보여 드립니다.</span>'
+    :'<b>AI 상담은 준비 중 (연결하면 켜집니다)</b><span>지금은 질문과 관련 있는 컨셉·화법·상품 문서를 찾아 드립니다. 그것만으로도 시작하기 좋습니다.</span>';
+  const q=$('#askq');
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('#askf').requestSubmit()}});
+  $('#askReset').onclick=()=>{HIST=[];$('#chat').innerHTML=''};
+  $('#askf').addEventListener('submit',async e=>{e.preventDefault();const text=q.value.trim();if(!text)return;
+    const sit=situation(),full=(sit?sit+'\n':'')+text;
+    const pii=piiFound(full);if(pii.length){addBub('a',`<p class="msg err">개인정보로 보이는 내용(${esc(pii.join(', '))})이 있어 보내지 않았습니다. 지우고 다시 물어봐 주세요.</p>`);return}
+    q.value='';addBub('u',esc(full));const btn=$('#askBtn');btn.disabled=true;
+    const wait=addBub('a wait','관련 문서를 찾는 중…');
+    let refs=[];try{refs=await retrieve(full+' '+HIST.filter(m=>m.role==='user').slice(-1).map(m=>m.content).join(' '))}catch(err){}
+    if(!(await aiReady())){
+      wait.className='bub a';
+      wait.innerHTML=refs.length?`<p><b>AI 상담은 준비 중입니다.</b> (연결하면 켜집니다) 대신 질문과 관련 있는 문서를 찾았어요. 맨 위 "한눈에"와 "꼭 확인할 것"부터 보세요.</p><div class="list">${refs.map(r=>`<a class="row" href="#${r.d.id}"><span class="t">${esc(r.d.title)}<div class="ref-snip">${esc(snippet(r.t))}</div></span></a>`).join('')}</div>`
+        :'<p><b>AI 상담은 준비 중입니다.</b> 관련 문서를 찾지 못했어요. <a href="#concepts">컨셉 사전</a>에서 둘러보거나 낱말을 바꿔 물어봐 주세요.</p>';
+      btn.disabled=false;return}
+    wait.textContent='답을 만드는 중입니다… (10~30초)';
+    try{const r=await api({action:'ask',question:full,context:refs.map(x=>({title:x.d.title,text:x.t.slice(0,2500)})),history:HIST.slice(-6)});
+      wait.className='bub a';
+      if(r&&r.ok){wait.innerHTML=md(String(r.answer).replace(/</g,'&lt;'))+refsHtml(refs,'참고한 컨셉');HIST.push({role:'user',content:full},{role:'assistant',content:r.answer})}
+      else{if(r&&(r.code==='no_key'))AI=false;wait.innerHTML=`<p class="msg err">${esc((r&&r.error)||'답을 받지 못했습니다.')}</p>`+refsHtml(refs,'대신 이 문서를 보세요')}
+    }catch(err){wait.className='bub a';wait.innerHTML='<p class="msg err">연결에 실패했습니다. 잠시 후 다시 시도해 주세요.</p>'+refsHtml(refs,'대신 이 문서를 보세요')}
+    btn.disabled=false})}
+
 window.addEventListener('hashchange',show);
-fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).then(m=>{M=m;$('#built').textContent=`업데이트 ${m.built} · 문서 ${m.docs.length}개`;show()}).catch(()=>{$('#built').textContent='목록을 불러오지 못했습니다';show()});
+Promise.all([
+  fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>null),
+  fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
+]).then(([m,c])=>{if(m)M=m;CFG={endpoint:String((c&&c.endpoint)||'').trim()};
+  $('#built').textContent=m?`업데이트 ${m.built}`:'목록을 불러오지 못했습니다';show()});
 </script>
 
 </body>

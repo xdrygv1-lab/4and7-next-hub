@@ -276,7 +276,7 @@ async function loadIssues(){const box=$('#issues');try{const r=await fetch(`http
   catch(e){box.innerHTML=`<a class="row" href="https://github.com/${M.repo}/issues" target="_blank" rel="noopener"><span class="t">이 화면에서는 목록을 불러올 수 없습니다. GitHub 제안 게시판에서 보기</span></a>`}}
 $('#q').addEventListener('input',renderNav);
 window.addEventListener('hashchange',show);
-fetch('manifest.json').then(r=>r.json()).then(m=>{M=m;$('#built').textContent=`업데이트 ${m.built} · 문서 ${m.docs.length}개`;show()}).catch(()=>{$('#built').textContent='목록을 불러오지 못했습니다';show()});
+fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).then(m=>{M=m;$('#built').textContent=`업데이트 ${m.built} · 문서 ${m.docs.length}개`;show()}).catch(()=>{$('#built').textContent='목록을 불러오지 못했습니다';show()});
 </script>
 
 </body>

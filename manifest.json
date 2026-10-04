@@ -1,6 +1,6 @@
 {
  "repo": "xdrygv1-lab/4and7-next-hub",
- "built": "2026-10-04 14:51",
+ "built": "2026-10-04 14:55",
  "docs": [
   {
    "id": "da308dcb2",
@@ -1004,6 +1004,16 @@
    "group": "상품 자료",
    "gid": "prodmet",
    "title": "메트라이프 변액유니버셜 모두의상속종신보험 요약",
+   "updated": "2026-10-04",
+   "todo": [],
+   "readable": true
+  },
+  {
+   "id": "dbf2b4ef1",
+   "file": "docs/dbf2b4ef1.md",
+   "group": "자동작성 예시",
+   "gid": "example",
+   "title": "자동작성 예시 2: 강사 원장 A (법인전환 제안)",
    "updated": "2026-10-04",
    "todo": [],
    "readable": true

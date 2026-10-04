@@ -75,6 +75,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 .cl label{display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:14px;font-weight:500;margin:4px 0}
 .fcg h3{margin-top:14px}.fcg li{margin:4px 0}
 @media print{body *{visibility:hidden}#report,#report *{visibility:visible}#report{position:absolute;left:0;top:0;border:0;max-width:none}}
+.spk{margin-top:10px;padding:8px 12px;border-left:3px solid #4a7bd0;background:rgba(74,123,208,.07);border-radius:6px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+.spk b{display:block;font-size:12px;color:#4a7bd0;margin-bottom:2px}
+.aiout{white-space:pre-wrap;line-height:1.7;border:1px solid rgba(128,128,128,.3);border-radius:8px;padding:12px;margin-top:10px;max-height:640px;overflow:auto}
+@media print{.spk{display:none}}
 </style>
 </head>
 <body>
@@ -213,7 +217,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 <section class="card" id="out">
   <div class="tabs">
     <button class="tab on" data-t="dx">컨셉 진단</button><button class="tab" data-t="sc">AP 15단계 스크립트</button>
-    <button class="tab" data-t="ck">편집·금지어 검사</button><button class="tab" data-t="gr">스크립트 채점</button><button class="tab" data-t="am">제안 금액 · 체크리스트</button><button class="tab" data-t="rp">보고서</button><button class="tab" data-t="pp">PPT</button><button class="tab" data-t="fc">최종 점검</button><button class="tab" data-t="pr">Claude로 완성하기</button>
+    <button class="tab" data-t="ck">편집·금지어 검사</button><button class="tab" data-t="gr">스크립트 채점</button><button class="tab" data-t="am">제안 금액 · 체크리스트</button><button class="tab" data-t="rp">보고서</button><button class="tab" data-t="pp">PPT</button><button class="tab" data-t="fc">최종 점검</button><button class="tab" data-t="pr">AI 자동작성</button>
   </div>
   <div id="t-dx"></div>
   <div id="t-sc" hidden></div>
@@ -235,7 +239,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
   </div>
   <div id="t-pp" hidden>
     <div class="btns" style="margin-bottom:10px;align-items:center"><span class="muted">보기</span><select id="ppMode" style="width:auto"><option value="cust">고객에게 보여줄 판</option><option value="int">내부 검토판</option></select><button class="b p" id="ppDown">PPT 내려받기</button><span class="muted" id="ppMsg"></span></div>
-    <div class="muted" style="margin-bottom:8px">업체 정보·특이사항을 바꾸면 슬라이드도 바로 바뀝니다. 내려받은 뒤 PowerPoint에서 자유롭게 고쳐 쓰세요.</div>
+    <div class="muted" style="margin-bottom:8px">업체 정보·특이사항을 바꾸면 슬라이드와 <b>발표 스크립트</b>도 바로 바뀝니다. 발표 스크립트는 PPT 파일의 <b>발표자 메모</b>에도 들어갑니다 (발표 화면에서 나만 보임).</div><div class="btns" style="margin-bottom:8px"><button class="b" id="ppSay">발표 스크립트만 복사</button><span class="muted" id="ppSayMsg"></span></div>
     <div id="slides"></div>
   </div>
   <div id="t-fc" hidden>
@@ -245,9 +249,12 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
     <div id="final"></div>
   </div>
   <div id="t-pr" hidden>
-    <div class="muted" style="margin-bottom:6px">아래 내용을 Claude(ap-script-generator 스킬)에 붙여넣으면 지식베이스를 참고해 자연스러운 완성본을 씁니다.</div>
-    <div class="btns" style="margin-bottom:8px"><button class="b p" id="copy">복사</button><span class="muted" id="copied"></span></div>
-    <pre class="prompt" id="prompt"></pre>
+    <div class="muted" style="margin-bottom:8px">입력한 업체 정보와 위에서 만든 초안을 AI가 <b>사람이 쓴 것처럼 자연스럽게</b> 다시 써 줍니다. AI 연결 전에는 "요청문 복사"를 눌러 쓰고 계신 AI(Claude 등)에 붙여넣으면 같은 결과를 받을 수 있어요.</div>
+    <div class="btns" style="margin-bottom:8px;align-items:center"><span class="muted">만들 것</span><select id="aiKind" style="width:auto"><option value="all">한 번에 전부 (스크립트·보고서·PPT)</option><option value="ap">AP 15단계 스크립트</option><option value="rp">고객용 보고서</option><option value="pp">PPT 문구 + 발표 스크립트</option></select></div>
+    <textarea id="aiExtra" rows="3" placeholder="(선택) 추가 요청. 예: 말투를 더 부드럽게, 10분 분량으로, 대표님이 60대라 쉬운 말로"></textarea>
+    <div class="btns" style="margin:8px 0;align-items:center"><button class="b p" id="aiRun">AI로 작성하기</button><button class="b" id="copy">요청문 복사</button><span class="muted" id="copied"></span></div>
+    <div id="aiOut"></div>
+    <details style="margin-top:10px"><summary class="muted">AI에게 보내는 요청문 보기</summary><pre class="prompt" id="prompt"></pre></details>
   </div>
   <div class="note">
     · 고객 실명 대신 호칭으로 입력하세요. 입력값은 이 브라우저에만 저장됩니다.<br>
@@ -630,18 +637,38 @@ $('#rpCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#repor
 
 /* ---------- PPT ---------- */
 function slideData(mode){const{c,dx,top,kv,sig,notes}=reportData();if(!top)return[];const a=last.amount||proposeAmount(c,top);const S=[];
-  S.push({t:`${c.co||'우리 회사'} 대표님 검토 자료`,sub:`${new Date().toISOString().slice(0,10)} · 초안`,cover:true});
-  S.push({t:'지금 회사 상황',b:kv.filter(x=>x[1]!=='–').map(x=>`${x[0]}: ${x[1]}`)});
-  S.push({t:'눈에 띄는 점',b:[...sig.slice(0,4),...notes.slice(0,2).map(n=>'대표님 말씀: '+n)]});
-  dx.slice(0,2).forEach((k,i)=>S.push({t:`검토 방향 ${i+1}. ${mode==='int'?k.name:k.need}`,b:[k.alt,...(mode==='int'?['PC 방향: '+k.pc]:[])]}));
-  if(mode==='int'&&a&&!a.none)S.push({t:'제안 금액 가이드 (내부)',b:[`A안 월 ${man(a.low)} / 기준안 월 ${man(a.mid)} / B안 월 ${man(a.high)}`,'재정심사 확인 후 확정',...a.why.slice(0,3)]});
-  S.push({t:'다음 단계',b:[top.bring,`다음 미팅: ${c.day} ${c.time||''} (${c.dur})`,'준비해 주실 자료: '+top.ff.slice(0,3).join(', ')]});
-  S.push({t:'확인 사항',b:['이 자료는 검토용 초안입니다.','세무 처리는 세무사 검토 사항입니다.','상품 조건과 금액은 가입설계서·재정심사로 확정합니다.']});return S}
-function renderSlides(){const S=slideData($('#ppMode').value);$('#slides').innerHTML=S.length?S.map(s=>`<div class="slide">${s.cover?`<div class="cover"><div class="st" style="font-size:26px">${esc(s.t)}</div><div class="muted">${esc(s.sub)}</div></div>`:`<div class="st">${esc(s.t)}</div><ul>${s.b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}</div>`).join(''):'<div class="muted">업체 정보를 입력하면 슬라이드가 만들어집니다.</div>'}
+  const who=(c.name||'대표님').replace(/\s+/g,' ');const kv1=kv.filter(x=>x[1]!=='–');
+  S.push({t:`${c.co||'우리 회사'} 대표님 검토 자료`,sub:`${new Date().toISOString().slice(0,10)} · 초안`,cover:true,say:`${who}, 오늘 시간 내주셔서 감사합니다. 지난번 나눈 이야기를 바탕으로 회사 상황을 정리해 왔습니다. ${c.dur&&/분/.test(c.dur)?c.dur:'15분'} 정도면 충분합니다. 보시다가 궁금한 점은 바로 물어봐 주세요.`});
+  S.push({t:'지금 회사 상황',b:kv1.map(x=>`${x[0]}: ${x[1]}`),say:`먼저 숫자부터 보시죠. ${kv1.slice(0,3).map(x=>x[0]+'이 '+x[1]).join(', ')||'주신 자료를 정리했습니다'}입니다. 주신 자료 기준의 대략값이라, 실제와 다른 부분이 있으면 말씀해 주세요. 그 숫자로 다시 맞추겠습니다.`});
+  S.push({t:'눈에 띄는 점',b:[...sig.slice(0,4),...notes.slice(0,2).map(n=>'대표님 말씀: '+n)],say:`${sig[0]?'제가 가장 크게 본 건 "'+sig[0]+'" 입니다. ':''}${notes[0]?'지난번에 "'+notes[0]+'" 라고 하셨던 것도 같이 반영했습니다. ':''}대표님이 느끼시는 것과 비슷한가요? 다르게 보시는 부분이 있으면 그것부터 이야기하겠습니다.`});
+  dx.slice(0,2).forEach((k,i)=>S.push({t:`검토 방향 ${i+1}. ${mode==='int'?k.name:k.need}`,b:[k.alt,...(mode==='int'?['PC 방향: '+k.pc]:[])],say:`${i?'두 번째로':'첫 번째로'} 함께 볼 방향은 "${k.need}" 입니다. ${k.alt} ${i?'':'정답을 정해 드리기보다, 대표님께 맞는 쪽을 같이 고르려는 자료입니다. '}여기까지 들으시고 궁금한 점 있으세요?${mode==='int'?'\n(내부 메모: '+k.pc+')':''}`}));
+  if(mode==='int'&&a&&!a.none)S.push({t:'제안 금액 가이드 (내부)',b:[`A안 월 ${man(a.low)} / 기준안 월 ${man(a.mid)} / B안 월 ${man(a.high)}`,'재정심사 확인 후 확정',...a.why.slice(0,3)],say:`(내부용 장입니다. 고객에게 보여주지 않습니다.)\n처음에는 A안 월 ${man(a.low)} 또는 기준안 월 ${man(a.mid)}로 말씀드리세요. "부담 없는 선에서 시작하고, 매출을 보고 늘리셔도 됩니다." "하실래요?" 대신 "두 가지 중 어느 쪽이 편하세요?"로 고르게 합니다. 재정심사 확인 전에는 금액을 확정하지 않습니다.`});
+  S.push({t:'다음 단계',b:[top.bring,`다음 미팅: ${c.day} ${c.time||''} (${c.dur})`,'준비해 주실 자료: '+top.ff.slice(0,3).join(', ')],say:`오늘 정할 것은 다음 미팅 날짜 하나입니다. 다음에는 "${top.bring}" 자료를 준비해 오겠습니다. 날짜는 ${c.day||'다음 주'} ${c.time||''} 괜찮으세요? ${c.dur||''} 정도면 됩니다. 그때 ${top.ff.slice(0,3).join(', ')} 준비해 주시면 훨씬 정확하게 보여 드릴 수 있습니다.`});
+  S.push({t:'확인 사항',b:['이 자료는 검토용 초안입니다.','세무 처리는 세무사 검토 사항입니다.','상품 조건과 금액은 가입설계서·재정심사로 확정합니다.'],say:`마지막으로, 오늘 자료는 검토용 초안입니다. 세무 처리는 검토를 거쳐서, 조건과 금액은 정식 자료로 다시 확정해 드리겠습니다. 그리고 한 가지 부탁드려도 될까요? 주변에 비슷한 고민을 하시는 대표님이 계시면 ${c.introN||'두'} 분만 소개해 주세요. 같은 방식으로 정리해 드리겠습니다.`});return S}
+function renderSlides(){const S=slideData($('#ppMode').value);$('#slides').innerHTML=S.length?S.map(s=>`<div class="slide">${s.cover?`<div class="cover"><div class="st" style="font-size:26px">${esc(s.t)}</div><div class="muted">${esc(s.sub)}</div></div>`:`<div class="st">${esc(s.t)}</div><ul>${s.b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}${s.say?`<div class="spk"><b>🎤 이렇게 말하세요</b>${esc(s.say)}</div>`:''}</div>`).join(''):'<div class="muted">업체 정보를 입력하면 슬라이드가 만들어집니다.</div>'}
 $('#ppMode').onchange=renderSlides;
+function sayText(){return slideData($('#ppMode').value).map((s,i)=>`[${i+1}장] ${s.t}\n${s.say||''}`).join('\n\n')}
+$('#ppSay').onclick=async()=>{try{await navigator.clipboard.writeText(sayText());$('#ppSayMsg').textContent='복사했습니다'}catch(e){$('#ppSayMsg').textContent='복사 실패'}};
+const AIHEAD={all:'아래 상황카드로 ① AP 15단계 스크립트 ② 고객에게 보여줄 검토 보고서 ③ PPT 장별 화면 문구와 발표 스크립트를 차례로 만들어 줘.',ap:'아래 상황카드로 AP 15단계 스크립트를 만들어 줘.',rp:'아래 상황카드와 보고서 초안을 바탕으로, 고객에게 보여줄 검토 보고서를 읽기 쉽게 다시 써 줘. 핵심만 남기고 짧은 문장으로.',pp:'아래 상황카드와 슬라이드 초안을 바탕으로, PPT 장별 화면 문구(짧게)와 발표자가 실제로 말할 스크립트(장마다 3~5문장)를 자연스럽게 다시 써 줘.'};
+function aiTail(kind){let t='';if(kind==='all'||kind==='rp')t+='\n\n[보고서 초안]\n'+($('#report').innerText||'');
+  if(kind==='all'||kind==='pp')t+='\n\n[슬라이드 초안 (고객용)]\n'+slideData('cust').map((s,i)=>`[${i+1}장] ${s.t}${s.b?'\n- '+s.b.join('\n- '):''}\n말할 내용: ${s.say||''}`).join('\n\n');
+  if(kind!=='ap')t+='\n- 보고서·PPT는 고객이 보는 자료라 상품명·내부 금액은 넣지 마.';
+  const ex=($('#aiExtra')||{}).value;if(ex&&ex.trim())t+='\n\n[추가 요청]\n'+ex.trim();return t}
+let AICFG=null;async function aiEndpoint(){if(AICFG!==null)return AICFG;try{const r=await fetch('../config.json',{cache:'no-store'});const j=r.ok?await r.json():{};AICFG=String(j.endpoint||'').trim()}catch(e){AICFG=''}return AICFG}
+function aiOut(html){$('#aiOut').innerHTML=html}
+$('#aiKind').onchange=renderPrompt;$('#aiExtra').oninput=()=>{clearTimeout(window._ai);window._ai=setTimeout(renderPrompt,300)};
+$('#aiRun').onclick=async()=>{renderPrompt();const ep=await aiEndpoint();
+  if(!ep){aiOut('<div class="note">AI 연결은 <b>준비 중</b>이에요. 지금은 "요청문 복사"를 눌러 쓰고 계신 AI(Claude 등)에 붙여넣으면 같은 결과를 받을 수 있어요. 연결되면 이 버튼으로 바로 결과가 나옵니다.</div>');return}
+  aiOut('<div class="muted">AI가 쓰는 중입니다… (30초~1분)</div>');$('#aiRun').disabled=true;
+  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'write',kind:$('#aiKind').value,prompt:$('#prompt').textContent})});const j=await r.json();
+    if(!j.ok){aiOut('<div class="note">'+esc(j.error||'AI 응답을 받지 못했습니다.')+(j.code==='no_key'?' 지금은 "요청문 복사"로 이용해 주세요.':'')+'</div>');return}
+    aiOut('<div class="btns"><button class="b" id="aiCopy">결과 복사</button><span class="muted" id="aiMsg"></span></div><div class="aiout" id="aiText"></div><div class="muted" style="margin-top:6px">AI가 쓴 초안입니다. 숫자·세무 내용은 꼭 다시 확인하세요.</div>');
+    $('#aiText').textContent=j.text||j.answer||'';$('#aiCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#aiText').textContent);$('#aiMsg').textContent='복사했습니다'}catch(e){$('#aiMsg').textContent='복사 실패'}}}
+  catch(e){aiOut('<div class="note">AI에 연결하지 못했습니다. 잠시 후 다시 시도하거나 "요청문 복사"를 이용해 주세요.</div>')}
+  finally{$('#aiRun').disabled=false}};
 $('#ppDown').onclick=async()=>{const S=slideData($('#ppMode').value);if(!S.length)return;if(!window.PptxGenJS){$('#ppMsg').textContent='PPT 도구를 불러오지 못했습니다. 인터넷 연결을 확인하세요.';return}
   const pp=new PptxGenJS();pp.layout='LAYOUT_WIDE';const F='맑은 고딕',NAVY='1F3A68';
-  S.forEach(s=>{const sl=pp.addSlide();sl.background={color:'FFFFFF'};
+  S.forEach(s=>{const sl=pp.addSlide();sl.background={color:'FFFFFF'};if(s.say)sl.addNotes(s.say);
     if(s.cover){sl.background={color:NAVY};sl.addText(s.t,{x:.7,y:2.4,w:12,h:1.2,fontFace:F,fontSize:34,bold:true,color:'FFFFFF'});sl.addText(s.sub,{x:.7,y:3.6,w:12,h:.6,fontFace:F,fontSize:16,color:'C9D6EA'});return}
     sl.addShape(pp.ShapeType.rect,{x:0,y:0,w:13.33,h:.12,fill:{color:NAVY}});
     sl.addText(s.t,{x:.7,y:.4,w:12,h:.9,fontFace:F,fontSize:26,bold:true,color:NAVY});
@@ -750,7 +777,7 @@ function renderGrade(){const t=$('#grText').value.trim();if(!t){$('#grOut').inne
 $('#grRun').onclick=renderGrade;
 $('#grFill').onclick=()=>{$('#grText').value=$('#edit').value.replace(/^\[[^\]]+\][^\n]*\n/gm,'');renderGrade()};
 function renderPrompt(){const{c,dx,top,T}=last;const fl=FLAGS.filter(k=>c[k]).map(k=>$('#'+k).parentElement.textContent.trim());
-  const txt=`ap-script-generator 스킬로 아래 상황카드의 AP 15단계 스크립트를 만들어 줘.
+  const kind=($('#aiKind')||{}).value||'all';const txt=`${AIHEAD[kind]}
 
 [상황카드]
 ① 상대 정보: ${c.name||'대표'} / ${c.co||'회사'} / ${c.ind} / ${c.form}${nz(c.years)?' / 업력 '+c.years+'년':''}${nz(c.sales)?' / 매출 '+c.sales+'억':''}${nz(c.profit)?' / 당기순이익 '+c.profit+'억':''}${nz(c.emp)?' / 직원 '+c.emp+'명':''}${nz(c.age)?' / 대표 '+c.age+'세 '+c.sex:''}${nz(c.kids)?' / 자녀 '+c.kids+'명(승계 자녀 '+c.heir+')':''}${c.form==='법인'&&nz(c.equity)?' / 순자산 '+c.equity+'억, 지분 '+(c.share??100)+'%':''}${c.form==='법인'&&nz(c.cash)?' / 법인 유휴현금 '+c.cash+'억':''}
@@ -766,14 +793,15 @@ function renderPrompt(){const{c,dx,top,T}=last;const fl=FLAGS.filter(k=>c[k]).ma
 컨셉 순위: ${dx.slice(0,3).map((k,i)=>`${i+1}) ${k.name} (${k.sig.map(s=>s[1]).join('; ')})`).join(' / ')||'없음'}
 
 [요청]
-- 지식베이스의 AP15단계_표준, 화법_반론처리, 해당 컨셉카드를 근거로 단계별 실제 멘트를 써 줘.
+- AP 15단계 표준과 반론 처리 원칙에 맞춰 단계별로 실제 말할 문장을 써 줘.
 - 상품명·구조 용어는 AP 멘트에 절대 넣지 말고, PC 준비 메모에만 따로 정리해 줘.
 - 상대에게 물어서 받아야 할 숫자는 [ ]로 비워 두고, 내가 아는 숫자만 써 줘.
-- 마지막에 채점표 기준 자가 점검(각 단계 /5, 약속 /10, 소개 /5)과 금지어 점검을 붙여 줘.`;
+- 마지막에 채점표 기준 자가 점검(각 단계 /5, 약속 /10, 소개 /5)과 금지어 점검을 붙여 줘.
+- 세무 효과는 단정하지 말고 "세무사 검토 사항"으로 표시해 줘. 실명·회사명은 호칭으로만.${aiTail(kind)}`;
   $('#prompt').textContent=txt}
 $('#copy').onclick=async()=>{const t=$('#prompt').textContent;try{await navigator.clipboard.writeText(t);$('#copied').textContent='복사했습니다'}catch(e){const r=document.createRange();r.selectNodeContents($('#prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#copied').textContent='선택했습니다. Ctrl+C로 복사하세요'}};
 
-$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal()});
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal();if(t.dataset.t==='pr')renderPrompt()});
 $('#gen').onclick=()=>{run();$$('.tab')[1].click()};
 const SAMPLE2={name:'A 원장님',co:'A 강의',ind:'서비스',form_:'개인',years:'',emp:'',sales:4.25,profit:3.3,age:'',sex:'남',kids:2,heir:'모름',rel:'기장',relYears:2,cert:'세무사',occ:'단독',obs:'',k1:'소득이 대표 한 명에게 몰려 높은 세율 구간',k2:'배우자가 일부 업무를 함께 함',k3:'월 생활비 1,200만원 수준 필요',goal:'',day:'금요일',time:'오후 3시 30분',dur:'30분',introN:'두',apMin:'20',notes:'매출 5억 근접, 넘기 전에 법인 검토\n부부 월 생활비 약 1,200만원\n교재 집필·영상 콘텐츠로 확장 계획\n해외주식 등 투자 관심\n자녀 2명, 승계 관심',f_noRetire:1,f_reliefEnd:1,f_newBiz:1,f_highEarner:1};
 $('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE2,rs:['보험','나중']});toggle();run();document.querySelectorAll('.tab')[0].click()};

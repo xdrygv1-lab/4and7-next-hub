@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>4&7 NEXT 허브</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 레이아웃: 왼쪽 목차(카테고리·문서) + 오른쪽 본문. 좁은 화면에서는 목차가 위로 접힘 */
+:root{
+  --bg:#f3f4f2; --panel:#ffffff; --ink:#1b2321; --sub:#5d6a66; --line:#dde2df;
+  --accent:#1d5c55; --accent-ink:#ffffff; --tint:#e6efec; --warn:#a1560f; --bad:#a32d2d; --good:#2d6b3a;
+  --f-body:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--panel:#1a201e;--ink:#e3e9e6;--sub:#9aa8a3;--line:#2b3431;--accent:#6fb7aa;--accent-ink:#0f1513;--tint:#1f2b28;--warn:#e3a35f;--bad:#ef8a8a;--good:#7cc58a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121715;--panel:#1a201e;--ink:#e3e9e6;--sub:#9aa8a3;--line:#2b3431;--accent:#6fb7aa;--accent-ink:#0f1513;--tint:#1f2b28;--warn:#e3a35f;--bad:#ef8a8a;--good:#7cc58a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0}
+a{color:var(--accent)}
+.shell{position:relative;display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh;transition:grid-template-columns .2s}
+.shell.collapsed{grid-template-columns:0 minmax(0,1fr)}
+.shell.collapsed aside{visibility:hidden;padding-inline:0;border:0}
+.toggle{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;z-index:30;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:18px;line-height:1}
+.shell:not(.collapsed) .toggle{left:246px}
+.toggle:hover{background:var(--tint)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.shell.collapsed{grid-template-columns:1fr}.shell:not(.collapsed) .toggle{left:auto;right:12px}.toggle{left:auto;right:12px}}
+@media (prefers-reduced-motion:reduce){.shell{transition:none}}
+aside{border-right:1px solid var(--line);background:var(--panel);padding-block:20px;padding-inline:16px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;min-width:0}
+@media(max-width:860px){aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}}
+.brand{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.brand b{font-size:20px;letter-spacing:-.01em}.brand span{font-family:var(--f-mono);font-size:11px;color:var(--sub);letter-spacing:.08em}
+.built{font-size:12px;color:var(--sub);margin-bottom:14px}
+.search{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+nav{margin-top:14px;display:flex;flex-direction:column;gap:2px}
+.navh{font-size:11px;letter-spacing:.1em;color:var(--sub);font-weight:600;margin:14px 0 4px;text-transform:uppercase}
+.navl{display:block;padding:6px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:14px}
+.navl:hover{background:var(--tint)}.navl.on{background:var(--accent);color:var(--accent-ink)}
+details.grp summary{cursor:pointer;padding:6px 10px;border-radius:7px;font-size:14px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+details.grp summary::-webkit-details-marker{display:none}
+details.grp summary:hover{background:var(--tint)}
+details.grp summary .cnt{font-family:var(--f-mono);font-size:12px;color:var(--sub);font-weight:400}
+details.grp .navl{padding-left:20px;font-size:13px}
+main{padding-block:28px 60px;padding-inline:clamp(16px,4vw,56px);min-width:0}
+main.toolmode{padding:0}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-block:10px;padding-inline:60px 16px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.toolbar b{font-size:15px}
+.frame{width:100%;height:calc(100vh - 54px);border:0;display:block;background:var(--bg)}
+.beta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed var(--accent);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;background:var(--panel)}
+.beta b{color:var(--accent)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:hover{border-color:var(--accent)}
+.todo li{margin:4px 0;font-size:14px}
+.wrap{max-width:860px}
+h1{font-size:28px;line-height:1.3;margin:0 0 6px;text-wrap:balance;letter-spacing:-.015em}
+h2{font-size:20px;margin:30px 0 10px;text-wrap:balance}
+h3{font-size:16px;margin:22px 0 8px}
+.lede{color:var(--sub);margin:0 0 22px;max-width:62ch}
+.notice{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel));border-radius:10px;padding:12px 14px;font-size:14px;margin:0 0 22px}
+.notice b{color:var(--warn)}
+.flows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:860px){.flows{grid-template-columns:1fr}}
+.flow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.flow .k{font-family:var(--f-mono);font-size:11px;color:var(--accent);letter-spacing:.08em}
+.flow h3{margin:4px 0 6px}.flow p{margin:0;font-size:14px;color:var(--sub)}
+.flow a.go{display:inline-block;margin-top:10px;font-weight:600;font-size:14px}
+.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:600px){.tools{grid-template-columns:1fr}}
+.tool{display:block;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:16px;text-decoration:none}
+.tool b{font-size:17px;display:block}.tool span{font-size:13px;opacity:.85}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.tw{overflow-x:auto;margin:10px 0}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600;font-size:13px;background:var(--tint)}
+code{font-family:var(--f-mono);font-size:13px;background:var(--tint);padding:1px 5px;border-radius:4px}
+pre{background:var(--tint);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px}
+pre code{background:none;padding:0}
+blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--accent);background:var(--tint);border-radius:0 8px 8px 0}
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:clamp(16px,3vw,32px);min-width:0}
+.doc h1{font-size:24px}.doc img{max-width:100%}
+.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-bottom:14px}
+.meta span{background:var(--tint);padding:2px 8px;border-radius:999px}
+.list{display:flex;flex-direction:column;gap:6px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink);min-width:0}
+.row:hover{border-color:var(--accent)}
+.row .t{min-width:0;overflow-wrap:anywhere}.row .d{font-family:var(--f-mono);font-size:12px;color:var(--sub);white-space:nowrap}
+.steps{counter-reset:s;padding-left:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding-left:34px;margin:8px 0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:13px;display:grid;place-items:center;font-weight:600}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--tint);color:var(--sub)}
+.pill.bad{color:var(--bad)}.pill.good{color:var(--good)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+</head>
+<body>
+<div class="shell" id="shell">
+<button class="toggle" id="toggle" type="button" aria-label="메뉴 숨기기/보이기" title="메뉴 숨기기/보이기">☰</button>
+<aside>
+  <div class="brand"><b>4&amp;7 NEXT</b><span>HUB</span></div>
+  <div class="built" id="built">불러오는 중</div>
+  <input class="search" id="q" type="search" placeholder="문서 제목 검색" aria-label="문서 제목 검색">
+  <nav id="nav">
+    <a class="navl" href="#home">홈</a>
+    <a class="navl" href="#manual">사용 매뉴얼</a>
+    <a class="navl" href="#rules">사용 원칙</a>
+    <a class="navl" href="#updates">최근 업데이트</a>
+    <a class="navl" href="#todo">보완 필요 목록</a>
+    <a class="navl" href="#improve">개선 제안 · 현황</a>
+    <div class="navh">도구</div>
+    <a class="navl" href="#tool-ap">AP 스크립트 생성기</a>
+    <a class="navl" href="#tool-sim">경정기 시뮬레이터</a>
+    <div class="navh">문서</div>
+    <div id="groups"></div>
+  </nav>
+</aside>
+
+<main id="main"><div class="wrap" id="view"></div></main>
+</div>
+
+<template id="tpl-home">
+  <h1>4&amp;7 NEXT 허브</h1>
+  <div class="beta"><b>초안 · 보완 필요</b><span>모든 도구와 문서는 제작 단계입니다. 틀린 곳이나 더 좋은 방법이 보이면 각 화면의 "개선 제안"으로 알려 주세요.</span></div>
+  <p class="lede">4사업단과 7사업단이 함께 만드는 AI 세일즈 도구와 자료를 한곳에 모았습니다. 재무자료나 상황카드로 컨셉을 진단하고, AP 스크립트를 만들고, 상품 숫자를 확인하는 데 씁니다.</p>
+  <div class="notice"><b>내부용입니다.</b> 상품 비교 수치는 GA월드 등 참고 자료 기준이고, 고객에게 보여주는 숫자는 반드시 가입설계서로 확인합니다. 고객 실명은 어디에도 넣지 않습니다.</div>
+  <h2>무엇을 하시나요</h2>
+  <div class="flows">
+    <div class="flow"><div class="k">AP 전</div><h3>첫 미팅 준비</h3><p>업체 정보·재무제표를 넣으면 컨셉을 진단하고 15단계 스크립트를 만듭니다.</p><a class="go" href="#tool-ap">AP 스크립트 생성기 열기</a></div>
+    <div class="flow"><div class="k">PC 준비</div><h3>상품 숫자 확인</h3><p>대표 나이·금액·보험료로 경정기 13개 상품의 환급률과 순비용을 비교합니다.</p><a class="go" href="#tool-sim">경정기 시뮬레이터 열기</a></div>
+    <div class="flow"><div class="k">공부</div><h3>상품·컨셉 익히기</h3><p>지점원 가이드북, 메트 상품 FAQ, 컨셉 카드 54개를 읽습니다.</p><a class="go" href="#manual">어디서부터 읽을지 보기</a></div>
+  </div>
+  <h2>도구</h2>
+  <div class="tools">
+    <a class="tool" href="#tool-ap"><b>AP 스크립트 생성기</b><span>상황카드 → 컨셉 18종 진단 → 15단계 멘트 · 금지어 검사 · 재무제표 붙여넣기</span></a>
+    <a class="tool" href="#tool-sim"><b>경정기 시뮬레이터</b><span>13개 상품 · 나이 20~75세 · 가입금액/보험료 기준 · 재정심사 참고</span></a>
+  </div>
+  <h2>자료 현황</h2>
+  <div class="tw"><table id="stat"><thead><tr><th>분류</th><th>문서 수</th><th>최근 수정</th></tr></thead><tbody></tbody></table></div>
+</template>
+
+<template id="tpl-manual">
+  <h1>사용 매뉴얼</h1>
+  <p class="lede">처음 오셨다면 위에서부터 순서대로 보시면 됩니다. 도구는 인터넷 연결만 있으면 설치 없이 열립니다.</p>
+
+  <h2>1. 첫 미팅(AP) 준비하기</h2>
+  <ol class="steps">
+    <li><a href="#tool-ap">AP 스크립트 생성기</a>를 엽니다. "시연 사례 불러오기"를 누르면 예시가 채워집니다.</li>
+    <li>재무제표가 있으면 "재무자료 붙여넣기"를 열고 재무상태표·손익계산서 텍스트를 붙여넣은 뒤 "읽어서 채우기"를 누릅니다. 매출, 순이익, 자본, 잉여금, 현금, 가지급금, 토지·건물을 읽어 칸을 채웁니다. 읽은 값이 맞는지 꼭 확인합니다.</li>
+    <li>상대 정보, 나와의 관계, 알고 있는 정보 3가지, 예상 저항을 채웁니다. 알고 있는 신호는 해당하는 것만 체크합니다.</li>
+    <li><b>컨셉 진단</b> 탭에서 1~3순위 컨셉과 근거, PS리스트 유사 사례를 봅니다. "PC 방향"과 "상품 힌트"는 머릿속에만 둡니다.</li>
+    <li><b>AP 15단계 스크립트</b> 탭에서 멘트를 확인합니다. <code>[ ]</code>는 대표에게 물어서 받아야 할 숫자입니다.</li>
+    <li>스크립트를 고치려면 <b>편집·금지어 검사</b> 탭에서 고칩니다. 상품명이 들어가면 빨간색으로 표시됩니다(채점 −5).</li>
+    <li>더 자연스러운 완성본이 필요하면 <b>Claude로 완성하기</b> 탭의 내용을 복사해 Claude(ap-script-generator 스킬)에 붙여넣습니다.</li>
+  </ol>
+
+  <h2>2. PC 준비: 상품 숫자 보기</h2>
+  <ol class="steps">
+    <li><a href="#tool-sim">경정기 시뮬레이터</a>에서 대표 나이(슬라이더), 성별, 일반/간편 심사를 고릅니다.</li>
+    <li><b>가입금액 기준</b>은 "10억이면 월 얼마", <b>보험료 기준</b>은 "월 500만원이면 얼마까지"를 보여줍니다.</li>
+    <li>상품을 누르면 경과년수별 환급률, 나이별 보험료 곡선, 메트 전환 조건(7년 종신·연금 전환, 조기전환)이 나옵니다.</li>
+    <li><b>나이별 보기</b> 탭은 20~75세를 한 표로 비교합니다. 파란 글씨는 추정값입니다.</li>
+    <li>재정심사 참고를 켜면 대표 연간소득으로 인정 사망보험금 한도를 계산합니다. 지금은 신한 세븐플러스(종신) 26.07 기준이라 참고용입니다.</li>
+  </ol>
+  <h3>숫자를 읽을 때 주의할 점</h3>
+  <ul>
+    <li>원자료 나이는 남 40·50·60·70세, 여 40세뿐입니다. 그 외 나이는 보간 추정이고, 35세 미만과 65세 초과는 신뢰도가 낮습니다.</li>
+    <li>가입금액·보험료는 1억 기준 보험료를 비례 환산한 값입니다. 실제 보험료는 금액 구간에 따라 다를 수 있습니다.</li>
+    <li>"상품 최대한도"는 재정심사 한도가 아닙니다.</li>
+    <li>세무 문구는 <a href="#" data-fix>정정사항</a> 기준입니다. 비용처리 비율을 단정하지 않습니다.</li>
+  </ul>
+
+  <h2>3. AP를 한 뒤: 녹음으로 컨셉 체크</h2>
+  <p>AP 녹음이나 재무자료를 Claude에 주면 <b>concept-check 스킬</b>이 녹취(이 PC에서만), 신호 추출, 컨셉 진단, AP 15단계 채점, PC 준비안을 만듭니다. 예: "이 AP 녹음 컨셉 체크해줘". 결과 예시는 문서 목록의 <b>예시</b>에 있습니다.</p>
+  <ul>
+    <li>고객 녹음은 <b>동의를 받은 것만</b> 씁니다.</li>
+    <li>스킬은 팀 공유 드라이브의 <code>4&amp;7 넥스트 개발팀'\데모\skill_배포\</code>에 zip으로 있습니다. Claude 설정의 스킬 메뉴에서 올리면 됩니다.</li>
+  </ul>
+
+  <h2>4. 공부할 자료 읽는 순서</h2>
+  <ol class="steps">
+    <li><b>지점원 가이드북</b>: 보험용어, 수당과 2027 분급제, 청약서 작성. 노세대·신세대 트랙이 따로 있습니다.</li>
+    <li><b>메트 상품 FAQ</b>: 한눈에 비교 → 상품별 FAQ(지점원 질문, 고객 질문과 답변 화법, 세무, 하지 말아야 할 말).</li>
+    <li><b>지식베이스 · 7사업단</b>: AP15단계 표준 → 화법·반론처리 → 컨셉 카드.</li>
+    <li><b>지식베이스 · 드라이브 컨설팅</b>: 미팅 프로세스, PS리스트 신호표, 컨셉 카드 39개.</li>
+  </ol>
+
+  <h2>5. 자료가 갱신되는 방식</h2>
+  <ul>
+    <li>상품 데이터(GA월드 월간, 메트 공시)와 세무 검토는 리치지점장 쪽에서 갱신하고, 개발팀이 <code>build_all.py</code>로 도구와 이 사이트에 반영합니다.</li>
+    <li>새 산출물이 생기면 이 사이트의 목록에 자동으로 추가되고 "최근 업데이트"에 표시됩니다.</li>
+    <li>내용이 틀렸거나 바뀐 규정이 있으면 개발팀 단톡방에 알려 주세요. 정정은 <b>정정사항</b> 문서에 먼저 반영됩니다.</li>
+  </ul>
+</template>
+
+<template id="tpl-rules">
+  <h1>사용 원칙</h1>
+  <p class="lede">10/02 킥오프에서 정한 방향과 7사업단 AP 콘테스트 기준을 따릅니다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>원칙</th><th>왜</th></tr></thead>
+    <tbody>
+      <tr><td>AP의 산출물은 계약이 아니라 <b>다음 약속과 소개</b></td><td>상품을 AP에서 꺼내면 실패가 예약됩니다. 상품명·구조 언급은 채점 −5</td></tr>
+      <tr><td>상대 입에서 나온 숫자만 근거</td><td>내가 정한 숫자는 설득력이 없습니다</td></tr>
+      <tr><td>보험을 컨설팅의 대가로 요구하지 않음</td><td>대가형 제안은 고액 계약이 안 되고 신뢰를 잃습니다. 보험은 PC에서 문제 해결 수단으로 따로 제안</td></tr>
+      <tr><td>확정 수익·원금 보장 표현 금지</td><td>사실과 다르고 채점 −3, 규제 위반 소지</td></tr>
+      <tr><td>세무 문구는 정정사항 기준, "세무사 검토 필요"</td><td>경정기 손금, 해지 시 익금, 명의변경 평가는 해석이 갈립니다</td></tr>
+      <tr><td>고객 실명·연락처·주민번호 금지, 녹음은 동의 받은 것만</td><td>개인정보 보호. 녹취는 각자 PC에서만</td></tr>
+      <tr><td>누락 매출·미신고 현금의 "출처 마련", 페이백 제안 금지</td><td>조세포탈 방조 소지</td></tr>
+      <tr><td>상품 비교 수치는 내부 참고용</td><td>고객에게는 가입설계서·상품설명서 기준으로만</td></tr>
+    </tbody></table></div>
+</template>
+
+<template id="tpl-improve">
+  <h1>개선 제안 · 현황</h1>
+  <div class="beta"><b>초안 · 보완 필요</b><span>이 사이트는 함께 고쳐 가며 키웁니다. 제안은 GitHub 이슈로 모이고, 개발팀이 반영한 뒤 닫습니다.</span></div>
+  <h2>제안하는 방법</h2>
+  <ol class="steps">
+    <li>고칠 문서나 도구 화면에서 <b>개선 제안</b> 버튼을 누릅니다. 제목과 위치가 채워진 제안서가 열립니다.</li>
+    <li>무엇이 문제인지, 어떻게 바뀌면 좋을지, 근거가 있으면 근거를 적고 제출합니다. GitHub 계정(무료)이 필요합니다.</li>
+    <li>계정이 없으면 <b>카톡용 문구 복사</b>를 눌러 개발팀 단톡방에 붙여넣으세요.</li>
+  </ol>
+  <div class="notice"><b>고객 정보는 절대 쓰지 마세요.</b> 제안은 공개 게시판에 올라갑니다. 고객 이름, 회사명, 연락처, 재무 숫자는 빼고 적어 주세요.</div>
+  <div class="btnrow"><a class="btn p" id="newIssue" target="_blank" rel="noopener">새 개선 제안 쓰기</a><button class="btn" type="button" data-copy="전체">카톡용 문구 복사</button></div>
+  <h2>접수된 제안</h2>
+  <div id="issues" class="list"><div class="row"><span class="t">불러오는 중</span></div></div>
+</template>
+<template id="tpl-todo">
+  <h1>보완 필요 목록</h1>
+  <div class="beta"><b>초안 · 보완 필요</b><span>문서 안에서 "확인필요"로 표시된 항목을 자동으로 모았습니다. 자료를 가진 분이 채워 주시면 반영합니다.</span></div>
+  <div id="todolist"></div>
+</template>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const narrow=()=>window.matchMedia('(max-width:860px)').matches;
+function setCollapsed(c){$('#shell').classList.toggle('collapsed',c);store.set('hub-collapsed',c?'1':'0')}
+$('#toggle').addEventListener('click',()=>setCollapsed(!$('#shell').classList.contains('collapsed')));
+if(store.get('hub-collapsed')==='1')$('#shell').classList.add('collapsed');
+const TOOLS={'tool-ap':['AP 스크립트 생성기','tools/ap-generator.html'],'tool-sim':['경정기 시뮬레이터','tools/simulator.html']};
+function issueURL(title,where){const repo=M.repo||'xdrygv1-lab/4and7-next-hub';const body=`### 위치\n${where}\n\n### 무엇이 문제인가요\n\n\n### 어떻게 바뀌면 좋을까요\n\n\n### 근거 (있으면)\n\n\n> 고객 이름·회사명·연락처·재무 숫자는 쓰지 마세요.`;return `https://github.com/${repo}/issues/new?title=${encodeURIComponent('[개선] '+title)}&body=${encodeURIComponent(body)}`}
+function kakao(title){return `[4&7 NEXT 개선 제안]\n위치: ${title}\n문제: \n제안: \n근거: `}
+async function copyText(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='복사했습니다'}catch(e){window.prompt?0:0;btn.textContent='복사 실패: 직접 적어 주세요'}}
+function improveRow(title,where){return `<div class="btnrow"><a class="btn p" target="_blank" rel="noopener" href="${issueURL(title,where)}">개선 제안</a><button class="btn" type="button" data-copy="${esc(title)}">카톡용 문구 복사</button></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-copy]');if(b)copyText(kakao(b.dataset.copy),b)});
+let M={docs:[],tools:[]};
+const ORDER=['지점원 가이드북','메트 상품 FAQ','예시 (스크립트·컨셉 체크)','회의·로드맵','지식베이스 · 정정사항','지식베이스 · 7사업단','지식베이스 · 드라이브 컨설팅','상품 자료','세무 검토','그 밖의 산출물'];
+function groups(filter){const g={};M.docs.filter(d=>!filter||d.title.toLowerCase().includes(filter)||d.name.toLowerCase().includes(filter)).forEach(d=>(g[d.group]=g[d.group]||[]).push(d));return ORDER.filter(k=>g[k]).map(k=>[k,g[k]]).concat(Object.keys(g).filter(k=>!ORDER.includes(k)).map(k=>[k,g[k]]))}
+function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function renderNav(){const f=$('#q').value.trim().toLowerCase();const cur=location.hash.slice(1);
+  $('#groups').innerHTML=groups(f).map(([k,ds])=>`<details class="grp" ${f||ds.some(d=>d.id===cur)?'open':''}><summary>${esc(k)}<span class="cnt">${ds.length}</span></summary>${ds.map(d=>`<a class="navl ${d.id===cur?'on':''}" href="#${d.id}">${esc(d.title)}</a>`).join('')}</details>`).join('')||'<div class="navl" style="color:var(--sub)">찾는 문서가 없습니다</div>';
+  document.querySelectorAll('#nav > .navl').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+(cur||'home')))}
+function tpl(id){if(!$('#view'))$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').innerHTML='';$('#view').appendChild($('#'+id).content.cloneNode(true))}
+async function show(){const h=location.hash.slice(1)||'home';renderNav();window.scrollTo(0,0);
+  if(narrow()&&h!=='home')setCollapsed(true);
+  const main=$('#main');main.classList.toggle('toolmode',!!TOOLS[h]);
+  if(TOOLS[h]){const[t,src]=TOOLS[h];main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><a class="btn p" target="_blank" rel="noopener" href="${issueURL(t,'도구: '+t)}">개선 제안</a></span></div><iframe class="frame" src="${src}" title="${t}"></iframe>`;return}
+  if(!$('#view'))main.innerHTML='<div class="wrap" id="view"></div>';
+  if(h==='improve'){tpl('tpl-improve');$('#newIssue').href=issueURL('제목을 적어 주세요','');loadIssues();return}
+  if(h==='todo'){tpl('tpl-todo');const ds=M.docs.filter(d=>d.todo&&d.todo.length);$('#todolist').innerHTML=ds.length?ds.map(d=>`<h3><a href="#${d.id}">${esc(d.title)}</a> <span class="pill">${d.todo.length}건</span></h3><ul class="todo">${d.todo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join(''):'<p>표시된 항목이 없습니다.</p>';return}
+  if(h==='home'){tpl('tpl-home');const g=groups('');$('#stat tbody').innerHTML=g.map(([k,ds])=>`<tr><td>${esc(k)}</td><td>${ds.length}</td><td>${ds.map(d=>d.updated).sort().pop()}</td></tr>`).join('');return}
+  if(h==='manual'){tpl('tpl-manual');const fix=M.docs.find(d=>d.name.startsWith('00_정정사항'));document.querySelectorAll('[data-fix]').forEach(a=>{if(fix)a.href='#'+fix.id});return}
+  if(h==='rules'){tpl('tpl-rules');return}
+  if(h==='updates'){const ds=[...M.docs].sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,30);$('#view').innerHTML=`<h1>최근 업데이트</h1><p class="lede">수정일 기준 최근 30개 문서입니다. 사이트 빌드: ${esc(M.built)}</p><div class="list">${ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)} <span class="pill">${esc(d.group)}</span></span><span class="d">${d.updated}</span></a>`).join('')}</div>`;return}
+  const d=M.docs.find(x=>x.id===h);if(!d){$('#view').innerHTML='<h1>문서를 찾을 수 없습니다</h1><p><a href="#home">홈으로</a></p>';return}
+  $('#view').innerHTML=`<div class="meta"><span class="pill">초안 · 보완 필요</span><span>${esc(d.group)}</span><span>수정 ${d.updated}</span>${d.todo&&d.todo.length?`<span>확인필요 ${d.todo.length}건</span>`:''}</div><div class="doc" id="doc">불러오는 중</div>${improveRow(d.title,'문서: '+d.group+' / '+d.title)}`;
+  try{const r=await fetch(d.file);const t=await r.text();
+    $('#doc').innerHTML=d.file.endsWith('.md')&&window.marked?marked.parse(t):`<pre style="white-space:pre-wrap">${esc(t)}</pre>`;
+    $('#doc').querySelectorAll('table').forEach(tb=>{const w=document.createElement('div');w.className='tw';tb.parentNode.insertBefore(w,tb);w.appendChild(tb)});
+    $('#doc').querySelectorAll('a[href]').forEach(a=>{const href=a.getAttribute('href');if(/경정기_시뮬레이터_v1\.html/.test(href))a.setAttribute('href','tools/simulator.html'+(href.split('?')[1]?'?'+href.split('?')[1]:''));else if(/AP_스크립트_생성기/.test(href))a.setAttribute('href','tools/ap-generator.html')});
+  }catch(e){$('#doc').textContent='문서를 불러오지 못했습니다. 새로고침해 보세요.'}}
+async function loadIssues(){const box=$('#issues');try{const r=await fetch(`https://api.github.com/repos/${M.repo}/issues?state=all&per_page=50`);if(!r.ok)throw 0;const is=(await r.json()).filter(i=>!i.pull_request);
+  box.innerHTML=is.length?is.map(i=>`<a class="row" href="${i.html_url}" target="_blank" rel="noopener"><span class="t">${esc(i.title)}</span><span class="d">${i.state==='open'?'<span class="pill bad">진행 중</span>':'<span class="pill good">반영 완료</span>'} ${i.created_at.slice(0,10)}</span></a>`).join(''):'<div class="row"><span class="t">아직 접수된 제안이 없습니다. 첫 제안을 남겨 주세요.</span></div>'}
+  catch(e){box.innerHTML=`<a class="row" href="https://github.com/${M.repo}/issues" target="_blank" rel="noopener"><span class="t">이 화면에서는 목록을 불러올 수 없습니다. GitHub 제안 게시판에서 보기</span></a>`}}
+$('#q').addEventListener('input',renderNav);
+window.addEventListener('hashchange',show);
+fetch('manifest.json').then(r=>r.json()).then(m=>{M=m;$('#built').textContent=`업데이트 ${m.built} · 문서 ${m.docs.length}개`;show()}).catch(()=>{$('#built').textContent='목록을 불러오지 못했습니다';show()});
+</script>
+
+</body>
+</html>

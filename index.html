@@ -50,6 +50,8 @@ main.toolmode{padding:0}
 .toolpanel{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px}
 .toolpanel .cbox{max-width:760px}
 .frame{width:100%;height:calc(100vh - 54px);border:0;display:block;background:var(--bg)}
+@supports(height:100dvh){.frame{height:calc(100dvh - 54px)}}
+@media(max-width:600px){.toolbar{flex-wrap:nowrap;padding-block:8px}.toolbar b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toolbar b .pill{display:none}.toolbar .btnrow{flex-shrink:0;gap:6px}.toolbar .btn{padding:6px 10px;font-size:13px}}
 .beta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed var(--accent);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;background:var(--panel)}
 .beta b{color:var(--accent)}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0;align-items:center}
@@ -339,7 +341,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-ap':['AP 스크립트 자동작성 (진단·스크립트·보고서·PPT)','tools/ap-generator.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html']};
+const TOOLS={'tool-ap':['AP 스크립트 자동작성','tools/ap-generator.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html']};
 const ALIAS={improve:'together',contribute:'together',concept:'concepts'};
 const LEARN=[
   {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},

@@ -955,7 +955,14 @@ $('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),.
 $('#sample').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});run()};
 $('#reset').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'제조',form_:'개인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'결산',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각']});run()};
 $('#form').addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(run,250)});
-if(!load())write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});
+/* 외부에서 넘겨받은 업체 자료 (예: CRM 연동 스킬). 주소 # 뒤에만 담겨 서버로 전송되지 않으며, 읽은 뒤 주소에서 지운다. */
+function importFromHash(){const h=location.hash;if(!h.startsWith('#import='))return false;
+  try{const d=JSON.parse(decodeURIComponent(escape(atob(h.slice(8).replace(/-/g,'+').replace(/_/g,'/')))));
+    write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});
+    if(d.fs)lastFS={...lastFS,...d.fs};
+    history.replaceState(null,'',location.pathname+location.search);return true}
+  catch(e){console.error(e);return false}}
+if(!importFromHash()&&!load())write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});
 toggle();run();
 </script>
 </body>

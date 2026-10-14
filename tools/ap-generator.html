@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AP 스크립트 자동작성</title>
+<title>업체 분석 → 제안 준비</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--ink:#14171c;--sub:#5b6472;--line:#e3e6eb;--acc:#1f3a68;--acc2:#3d6cb9;--good:#1b7f4b;--warn:#b5590e;--bad:#b42318;--chip:#eef2f8;--hl:#f2f6fd;--onacc:#fff;--quote:#f4f6fa}
@@ -39,6 +39,8 @@ button.b.p{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
 .tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
 .tab{border:0;background:none;padding:8px 12px;border-radius:9px;font:inherit;font-weight:700;color:var(--sub);cursor:pointer}
 .tab.on{background:var(--chip);color:var(--acc)}
+.steps{display:grid;gap:6px;margin-bottom:14px}.step{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:6px 8px;border:1px solid var(--line,#e3e6e4);border-radius:10px}.step .sl{font-size:12.5px;font-weight:700;color:var(--sub);min-width:118px}
+@media(max-width:600px){.step .sl{width:100%}}
 .concept{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
 .concept.top{border-color:var(--acc2)}
 .concept .hd{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
@@ -84,7 +86,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 <body>
 <div class="wrap">
 <header>
-  <div><div class="eyebrow">4&7 NEXT · 초안</div><h1>AP 스크립트 자동작성</h1><div class="muted">업체 정보를 넣으면 컨셉 진단 · AP 스크립트 · 제안 금액 · 보고서 · PPT · 최종 점검까지 이어집니다.</div></div>
+  <div><div class="eyebrow">4&7 NEXT · 초안</div><h1>업체 분석 → 제안 준비</h1><div class="muted">사업자번호(공시)나 재무자료로 업체를 분석하고, ① 업체 분석 보고서 → ② 첫 미팅(AP) → ③ 제안(PC) → ④ 최종 점검까지 이어집니다.</div></div>
   <div class="muted">기준: 사업단 AP 15단계 · 채점 기준 · 컨셉 자료 (초안, 보완 중)</div>
 </header>
 
@@ -220,16 +222,19 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
       <label><input type="checkbox" class="rs" value="법인세금">"법인 하면 법인세도 소득세도 내잖아"</label>
     </div>
   </fieldset>
-  <div class="btns"><button class="b p" id="gen">스크립트 생성</button></div>
+  <div class="btns"><button class="b p" id="gen">분석 시작</button></div>
 </section>
 
 <!-- ===== 출력 ===== -->
 <section class="card" id="out">
-  <div class="tabs">
-    <button class="tab on" data-t="dx">컨셉 진단</button><button class="tab" data-t="sc">AP 15단계 스크립트</button>
-    <button class="tab" data-t="ck">편집·금지어 검사</button><button class="tab" data-t="gr">스크립트 채점</button><button class="tab" data-t="am">제안 금액 · 체크리스트</button><button class="tab" data-t="rp">보고서</button><button class="tab" data-t="pp">PPT</button><button class="tab" data-t="fc">최종 점검</button><button class="tab" data-t="pr">AI 자동작성</button>
+  <div class="steps">
+    <div class="step"><span class="sl">① 업체 분석</span><button class="tab on" data-t="rp">업체 분석 보고서</button><button class="tab" data-t="dx">컨셉 진단</button></div>
+    <div class="step"><span class="sl">② 첫 미팅(AP) 준비</span><button class="tab" data-t="sc">AP 15단계 스크립트</button><button class="tab" data-t="ck">편집·금지어 검사</button><button class="tab" data-t="gr">스크립트 채점</button></div>
+    <div class="step"><span class="sl">③ 제안(PC) 준비</span><button class="tab" data-t="pc">PC 준비</button><button class="tab" data-t="am">제안 금액 · 체크리스트</button><button class="tab" data-t="pp">PC 제안서 PPT</button></div>
+    <div class="step"><span class="sl">④ 마무리</span><button class="tab" data-t="fc">최종 점검</button><button class="tab" data-t="pr">AI 자동작성</button></div>
   </div>
-  <div id="t-dx"></div>
+  <div id="t-dx" hidden></div>
+  <div id="t-pc" hidden><div class="muted">PC 준비 표준을 학습하는 중입니다. 곧 컨셉별 제안서 목차, 준비 자료, 계산, 클로징, 반론이 여기에 나옵니다.</div></div>
   <div id="t-sc" hidden></div>
   <div id="t-ck" hidden>
     <div class="muted" style="margin-bottom:6px">생성된 스크립트를 고쳐 쓰면 바로 검사합니다. 빨강: 상품명·구조 직접 언급(채점 −5), 주황: 주의 표현.</div>
@@ -243,7 +248,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
     <div id="grOut" style="margin-top:12px"></div>
   </div>
   <div id="t-am" hidden></div>
-  <div id="t-rp" hidden>
+  <div id="t-rp">
     <div class="btns" style="margin-bottom:10px;align-items:center"><span class="muted">보기</span><select id="rpMode" style="width:auto"><option value="cust">고객에게 보여줄 판</option><option value="int">내부 검토판 (금액·상품 포함)</option></select><button class="b" id="rpCopy">본문 복사</button><button class="b" id="rpPrint">인쇄 · PDF 저장</button></div>
     <div id="report" class="report"></div>
   </div>
@@ -868,8 +873,8 @@ async function dartLoad(code){const ep=await dartEndpoint();dartMsg('공시 자�
   catch(e){dartMsg('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',1)}}
 $('#dartFind').onclick=dartFind;$('#dartQ').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();dartFind()}});
 
-$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal();if(t.dataset.t==='pr')renderPrompt()});
-$('#gen').onclick=()=>{run();$$('.tab')[1].click()};
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr','pc'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal();if(t.dataset.t==='pr')renderPrompt()});
+$('#gen').onclick=()=>{run();document.querySelector('.tab[data-t="rp"]').click();document.getElementById('out').scrollIntoView({behavior:'smooth'})};
 const SAMPLE2={name:'A 원장님',co:'A 강의',ind:'서비스',form_:'개인',years:'',emp:'',sales:4.25,profit:3.3,age:'',sex:'남',kids:2,heir:'모름',rel:'기장',relYears:2,cert:'세무사',occ:'단독',obs:'',k1:'소득이 대표 한 명에게 몰려 높은 세율 구간',k2:'배우자가 일부 업무를 함께 함',k3:'월 생활비 1,200만원 수준 필요',goal:'',day:'금요일',time:'오후 3시 30분',dur:'30분',introN:'두',apMin:'20',notes:'매출 5억 근접, 넘기 전에 법인 검토\n부부 월 생활비 약 1,200만원\n교재 집필·영상 콘텐츠로 확장 계획\n해외주식 등 투자 관심\n자녀 2명, 승계 관심',f_noRetire:1,f_reliefEnd:1,f_newBiz:1,f_highEarner:1};
 $('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE2,rs:['보험','나중']});toggle();run();document.querySelectorAll('.tab')[0].click()};
 $('#sample').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});run()};

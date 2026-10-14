@@ -660,10 +660,13 @@ async function showAsk(){tpl('tpl-ask');HIST=[];
     btn.disabled=false})}
 
 window.addEventListener('hashchange',show);
-function announce(){if(store.get('hub-ann-1014'))return;const el=document.createElement('div');el.className='ann';el.setAttribute('role','dialog');
-  el.innerHTML=`<b>새로 생겼어요 ✨</b><ul><li><b>바로 고치기</b>: 모든 문서 위 버튼으로 누구나 고치면 바로 반영돼요.</li><li><b>AI에게 가르치기</b>: 자료나 요청을 보내면 매일 밤 AI가 학습해서 사이트를 고쳐요.</li></ul><div class="btnrow"><a class="btn p sm" href="#together">가르치러 가기</a><button class="btn sm" type="button">확인</button></div>`;
-  const close=()=>{store.set('hub-ann-1014','1');el.remove()};el.querySelector('button').onclick=close;el.querySelector('a').addEventListener('click',close);document.body.appendChild(el)}
-setTimeout(announce,800);
+/* 새 기능 알림: 당분간 홈 화면에 들어올 때마다 표시 (닫으면 이번 방문에서만 숨김) */
+let ANN_CLOSED=false;
+function announce(){const home=['','home'].includes(location.hash.replace('#',''));let el=document.querySelector('.ann');
+  if(!home||ANN_CLOSED){if(el)el.remove();return}if(el)return;el=document.createElement('div');el.className='ann';el.setAttribute('role','dialog');
+  el.innerHTML=`<b>새로 생겼어요 ✨</b><ul><li><b>바로 고치기</b>: 모든 문서 위 버튼으로 누구나 고치면 바로 반영돼요.</li><li><b>AI에게 가르치기</b>: 자료나 요청을 보내면 매일 밤 AI가 학습해서 사이트를 고쳐요.</li></ul><div class="btnrow"><a class="btn p sm" href="#together">가르치러 가기</a><button class="btn sm" type="button">닫기</button></div>`;
+  const close=()=>{ANN_CLOSED=true;el.remove()};el.querySelector('button').onclick=close;el.querySelector('a').addEventListener('click',close);document.body.appendChild(el)}
+window.addEventListener('hashchange',()=>{ANN_CLOSED=false;announce()});setTimeout(announce,800);
 Promise.all([
   fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>null),
   fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))

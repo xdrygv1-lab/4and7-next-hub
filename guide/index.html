@@ -139,6 +139,12 @@ a.row:hover{border-color:var(--accent)}
 .cform label,.sitgrid label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--sub);min-width:0}
 .cform input,.cform select,.cform textarea,.sitgrid input,.sitgrid select,.askf textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
 .cform textarea{min-height:120px;resize:vertical;margin-top:10px}
+.ebox .etext{min-height:440px;font-family:var(--f-mono);font-size:13.5px;line-height:1.6}
+.etabs{display:flex;gap:6px;margin:8px 0 0}.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.epv{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:10px;max-height:560px;overflow:auto;background:var(--bg)}
+.ebox code{font-family:var(--f-mono);font-size:12px;background:var(--tint);padding:1px 5px;border-radius:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translateX(-50%)}
 .cform input[type=file]{padding:6px;font-size:13px}
 .cform .hint{font-size:12.5px;color:var(--sub);font-weight:400}
 .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}

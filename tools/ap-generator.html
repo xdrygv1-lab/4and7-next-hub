@@ -101,9 +101,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
     <div class="btns" style="margin:8px 0;align-items:center"><input type="text" id="dartQ" placeholder="회사명 (예: OO정밀) 또는 사업자번호 (예: 123-45-67890)" style="max-width:330px"><button class="b p" id="dartFind" type="button">불러오기</button><span id="dartMsg" class="muted"></span></div>
     <div id="dartList" class="btns" style="margin-bottom:6px"></div>
     <div id="crmBox" class="crmbox" hidden>
+      <div class="g2" style="margin-bottom:6px"><div><label>상호명 *</label><input type="text" id="crmCo" placeholder="예: OO정밀(주)"></div><div><label>대표자명 *</label><input type="text" id="crmCeo" placeholder="예: 김OO"></div></div>
       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="crmConsent"> 정보제공 동의를 받은 업체입니다 <span class="muted">(CRM에 없는 회사면 자동으로 등록합니다)</span></label>
       <div class="btns" style="margin-top:6px;align-items:center"><button class="b p" type="button" id="crmReq">리치 CRM에서 불러오기</button><span class="muted" id="crmMsg"></span></div>
-      <div class="muted" style="margin-top:4px">보통 1~3분, CRM에 새로 등록한 회사는 20분쯤 걸려요. 이 화면을 열어 두면 자동으로 채워집니다.</div>
+      <div class="muted" id="resMsg" style="margin-top:4px"></div><div id="resSrc" class="muted" style="font-size:12.5px"></div>
+      <div class="muted" style="margin-top:4px">CRM은 보통 1~3분, 새로 등록한 회사는 20분쯤 걸려요. 기다리는 동안 AI가 인터넷에서 회사 공개 정보(소개·제품·거래처·뉴스·대표 업무 경력)를 찾아 "회사 공개 정보"에 넣어 둡니다. 화면을 열어 두면 자동으로 채워집니다.</div>
     </div>
     <div class="muted">회사명을 넣으면 전자공시(상장사·외부감사 법인)에서, 사업자번호를 넣으면 리치 CRM에서 불러옵니다. 불러온 회사명은 보고서에 그대로 나오니 필요하면 호칭으로 바꾸세요.</div>
   </details>
@@ -977,8 +979,17 @@ async function dartLoad(code){const ep=await dartEndpoint();dartMsg('공시 자�
   catch(e){dartMsg('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',1)}}
 
 /* ---------- 사업자번호 → 리치 CRM 조회 요청 (관리자 PC의 조회 도우미가 처리) ---------- */
-function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
-let CRMT=null;
+function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
+let CRMT=null,RES=null;
+/* 인터넷 조사: 결과를 "회사 공개 정보"에 붙임 (CRM 자료가 나중에 와도 유지) */
+function mergeResearch(){if(!RES)return;const bi=$('#bizinfo');if(!bi.value.includes('[인터넷 조사'))bi.value=(bi.value?bi.value+'\n':'')+'[인터넷 조사 '+new Date().toISOString().slice(0,10)+']\n'+RES.text}
+async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('#resMsg').textContent='인터넷에서 회사 정보를 찾는 중… (약 1분)';
+  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'research',biz,co,ceo})}).then(x=>x.json());
+    if(!r.ok){$('#resMsg').textContent='인터넷 조사: '+(r.error||'하지 못했습니다');return}
+    RES=r;mergeResearch();if(!$('#co').value)$('#co').value=co;run();
+    $('#resMsg').textContent='인터넷 조사 완료'+(r.cached?' (최근 조사 재사용)':'')+': "회사 공개 정보"에 넣었습니다. 사실과 다르면 고쳐 주세요.';
+    $('#resSrc').innerHTML=(r.sources||[]).length?'출처: '+r.sources.map((s,i)=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+(i+1)+'. '+esc(s.title||s.url)+'</a>').join(' · '):''}
+  catch(e){$('#resMsg').textContent='인터넷 조사: 연결하지 못했습니다'}}
 function crmMsg(t,bad){$('#crmMsg').className='muted'+(bad?' bad':'');$('#crmMsg').textContent=t}
 async function crmPoll(ep,id,started){clearTimeout(CRMT);
   try{const r=await fetch(ep+'?action=crmget&id='+id+'&r='+Date.now()).then(x=>x.json());
@@ -990,9 +1001,11 @@ async function crmPoll(ep,id,started){clearTimeout(CRMT);
     if(Date.now()-started<45*60000)CRMT=setTimeout(()=>crmPoll(ep,id,started),10000);else crmMsg('시간이 오래 걸리고 있어요. 조회 도우미가 켜져 있는지 관리자에게 확인해 주세요.',1)}
   catch(e){CRMT=setTimeout(()=>crmPoll(ep,id,started),15000)}}
 $('#crmReq').onclick=async()=>{const dg=$('#dartQ').value.replace(/\D/g,'');if(dg.length!==10){crmMsg('사업자번호 10자리를 넣어 주세요.',1);return}
+  const co=$('#crmCo').value.trim(),ceo=$('#crmCeo').value.trim();if(co.length<2||ceo.length<2){crmMsg('상호명과 대표자명을 함께 넣어 주세요.',1);return}
   const ep=await dartEndpoint();if(!ep){crmMsg('사이트에서 열었을 때 쓸 수 있어요.',1);return}
   crmMsg('요청 보내는 중…');
-  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmreq',biz:dg,consent:$('#crmConsent').checked})}).then(x=>x.json());
+  runResearch(ep,dg,co,ceo);
+  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmreq',biz:dg,co,ceo,consent:$('#crmConsent').checked})}).then(x=>x.json());
     if(!r.ok){crmMsg(r.error||'요청하지 못했습니다.',1);return}
     if(r.status==='완료'&&r.result){applyImport(r.result);crmMsg('최근에 조회한 자료로 불러왔습니다.');return}
     crmPoll(ep,r.id,Date.now())}

@@ -274,7 +274,7 @@ function detail(rs){
   $('#dBadges').innerHTML=(r.low?'<span class="badge warn">추정 신뢰도 낮음</span> ':'')+(r.est?'<span class="badge est">추정값</span> ':'<span class="badge ok">원자료</span> ')+(p.cur==='USD'?'<span class="badge warn">달러 · 환율 영향</span> ':'')+'<span class="badge">확인필요</span>';
   $('#ytbl tbody').innerHTML=YEARS.filter(y=>st.age+y<=90).map(y=>{const v=r.d.y[y];return`<tr><td class="l">${y}년</td><td>${st.age+y}세</td><td>${won(r.cum(y))}</td><td>${E(won(r.rf(y)),r.est)}</td><td>${v===0?'0% <span class="badge">90세 만기</span>':E(pct(v),r.est)}</td><td>${E(won(r.net(y)),r.est)}</td><td class="l">${convB(r,y)}</td></tr>`}).join('');
   const ar=st.uw==='일반'?p.ageG:p.ageS;
-  const f=[['월 보험료',won(r.prem)+'원'],['연 보험료',won(r.prem*12)+'원'],['가입금액',eok(r.amt)],['1억당 월 보험료',won(r.d.per1)+'원'],['적용이율',r.d.rate],['가입나이',ar?ar.join('~')+'세':null],['상품 최대한도',(r.lim?eok(r.lim):'–')+' (재정심사 한도 아님)'],['한도 메모',r.nt],['체증형',p.step],['전환기능',p.conv],['납입면제',p.waiver],['추가납입',p.extra],['중도인출',p.withdraw],['해약환급금',p.refundType],['판매개시',p.since?'20'+p.since.slice(0,2)+'.'+p.since.slice(2):null]];
+  const f=[['사망보험금 (가입 시)',eok(r.amt)+(p.step&&/체증/.test(p.step)?' · 체증형은 경과에 따라 늘어남 (연도별 금액은 설계서 확인)':'')],['월 보험료',won(r.prem)+'원'],['연 보험료',won(r.prem*12)+'원'],['가입금액',eok(r.amt)],['1억당 월 보험료',won(r.d.per1)+'원'],['적용이율',r.d.rate],['가입나이',ar?ar.join('~')+'세':null],['상품 최대한도',(r.lim?eok(r.lim):'–')+' (재정심사 한도 아님)'],['한도 메모',r.nt],['체증형',p.step],['전환기능',p.conv],['납입면제',p.waiver],['추가납입',p.extra],['중도인출',p.withdraw],['해약환급금',p.refundType],['판매개시',p.since?'20'+p.since.slice(0,2)+'.'+p.since.slice(2):null]];
   $('#facts').innerHTML=f.filter(x=>x[1]).map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('');
   chartY(rs,r);chartA(r);
 }

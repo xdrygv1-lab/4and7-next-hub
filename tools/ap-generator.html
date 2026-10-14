@@ -181,6 +181,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
     <div class="muted" style="margin-top:4px">여기 적은 내용은 보고서·PPT·최종 점검에 반영됩니다.</div>
   </fieldset>
 
+  <fieldset><legend>회사 공개 정보 (기업분석 먼저)</legend>
+    <textarea id="bizinfo" rows="3" placeholder="홈페이지 소개, 최근 기사, 대표 이력, 주력 제품·거래처, 공시 요약 등 공개된 정보&#10;예: 2010년 설립 자동차 부품 2차 협력사 / 올해 공장 증설 기사 / 대표 업계 30년 경력"></textarea>
+    <div class="muted" style="margin-top:4px">AP 전에 회사를 먼저 알아보세요. 숫자만 보면 세무 이야기로만 흐르기 쉽습니다. 이 내용은 보고서의 "회사 이야기"와 AI 요청문에 들어갑니다.</div>
+  </fieldset>
+
   <fieldset><legend>③ 내가 실제로 알고 있는 정보 3가지</legend>
     <input type="text" id="k1" placeholder="추측 말고 실제로 파악한 것"><div style="height:6px"></div>
     <input type="text" id="k2"><div style="height:6px"></div><input type="text" id="k3">
@@ -269,7 +274,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const FIELDS=['notes','name','co','ind','form_','years','emp','sales','profit','age','sex','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','k1','k2','k3','goal','day','time','dur','introN','apMin'];
+const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','k1','k2','k3','goal','day','time','dur','introN','apMin'];
 const FLAGS=$$('input[id^=f_]').map(e=>e.id);
 const SAMPLE={name:'김 대표님',co:'OO정밀',ind:'제조',form_:'개인',years:15,emp:5,sales:12,profit:1.1,age:50,sex:'남',kids:2,heir:'모름',rel:'기장',relYears:5,cert:'세무사',occ:'결산',obs:'지게차가 바쁘네요. 작년엔 안 그랬는데',
   k1:'예전에 "법인이 유리하냐"고 물어본 적 있음',k2:'자녀 둘에게 각각 2천만원씩 증여한 적 있음',k3:'공장 설비가 대표 개인 명의',goal:'',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',
@@ -616,6 +621,7 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
    <div class="muted">계산 근거: ${a.why.join(' · ')} · 신뢰도 ${a.conf}</div>
    <ul class="t"><li>처음에는 <b>A안~기준안</b>으로 이야기하세요. 큰 금액을 먼저 말했다가 재정심사에서 안 나오면 세일즈가 어려워집니다.</li><li>가입 전 재정심사(연소득·기계약 합산)를 먼저 확인하고 금액을 확정합니다.</li><li>"하실래요?" 대신 "A안과 기준안 중 어느 쪽이 편하세요?"처럼 고르게 합니다.</li></ul>
    <div class="btns"><a class="b" href="simulator.html?age=${c.age||45}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}&bud=${Math.round(a.mid/1e4)}" target="_blank">기준안으로 경정기 비교 계산기 열기</a></div>`}
+   ${inhBlock(c,a)}
    <div style="margin-top:10px"><label>실제로 제안할 월 보험료 (만원, 최종 점검에 사용)</label><input type="number" id="planAmt" style="max-width:200px" value="${last.plan||''}"></div>
    <h2 style="margin-top:22px">제안 전 최소 체크리스트 <span class="badge">${done} / ${items.length}</span></h2>
    <div class="muted">컨셉: ${top?top.name:'-'}${dx[1]?' · '+dx[1].name:''} · 상품 후보: ${prods.join(', ')||'-'} (체크 상태는 이 브라우저에 업체별로 저장)</div>
@@ -623,6 +629,17 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
   document.querySelectorAll('[data-cl]').forEach(x=>x.onchange=()=>{clState[x.dataset.cl]=x.checked;saveCL();renderAmount()});
   const pa=$('#planAmt');if(pa)pa.oninput=()=>{last.plan=pa.value};
   last.amount=a;last.clItems=items}
+
+
+/* 상속세 대략 (주식만, 일괄공제 5억, 현행 누진세율) : 제안 명분용 내부 참고 */
+function inhTax(x){const B=[[1e8,.1,0],[5e8,.2,1e7],[10e8,.3,6e7],[30e8,.4,1.6e8],[Infinity,.5,4.6e8]];const b=B.find(r=>x<=r[0]);return Math.max(0,x*b[1]-b[2])}
+function inhBlock(c,a){const sv=stockVal(c);if(!sv)return '';const tax=inhTax(Math.max(0,sv-5)*1e8);
+  const fund=a&&!a.none?a.mid*120:null;const ratio=fund&&tax?Math.round(fund/tax*100):null;
+  return `<h3 style="margin-top:18px">상속세 대략과 제안 명분 <span class="badge warn">내부 참고 · 세무사 검토</span></h3>
+   <div>대표 지분 주식가치 약 <b>${eok(sv)}</b> (순자산 × 80% × 지분) → 일괄공제 5억 차감 → 상속세 약 <b>${eok(tax/1e8)}</b></div>
+   ${fund?`<div>기준안 월 ${man(a.mid)}를 10년 내면 누적 약 ${eok(fund/1e8)} → 예상 상속세의 <b>${ratio}%</b> 재원</div>`:''}
+   <div class="muted">다른 재산·배우자공제·가업상속공제는 빼고 계산한 대략값입니다. 세율은 현행 기준이며 개정 여부를 확인하세요.</div>
+   <div class="say" style="margin-top:6px">PC 명분 예시: "대표님 지분만으로도 상속세가 약 ${eok(tax/1e8)} 예상됩니다. 그때 회사 돈을 급하게 꺼내지 않도록, 지금부터 재원을 나눠 만들어 두시는 겁니다."</div>`}
 
 /* ---------- 보고서 ---------- */
 let lastFS={};
@@ -638,6 +655,7 @@ function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,sig,note
   $('#report').innerHTML=`<div class="muted">${today} · 초안</div><h1>${esc(c.co||'우리 회사')} 검토 보고서</h1><div class="muted">${esc(c.ind)} · ${c.form}${nz(c.years)?' · 업력 '+c.years+'년':''}${nz(c.emp)?' · 직원 '+c.emp+'명':''}</div>
    <h2>한눈에</h2><div class="sum"><ul class="t"><li>${kv.filter(x=>x[1]!=='–').slice(0,3).map(x=>x[0]+' '+x[1]).join(', ')}</li><li>지금 먼저 볼 과제: <b>${esc(mode==='int'?top.name:top.need)}</b></li><li>다음 단계: ${esc(top.bring)}</li></ul></div>
    <h2>재무 현황</h2><div class="kv">${kv.map(([k,v])=>`<div><span class="muted">${k}</span><b>${v}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
+   ${c.bizinfo?`<h2>회사 이야기</h2><p>${esc(c.bizinfo)}</p>`:''}
    <h2>눈에 띄는 점</h2><ul class="t">${sig.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
    ${notes.length?`<h2>대표님 상황</h2><ul class="t">${notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:''}
    <h2>함께 검토할 방향</h2>${dirs.map((k,i)=>`<h3>${i+1}. ${esc(mode==='int'?k.name:k.need)}</h3><p>${esc(k.alt)}</p>${mode==='int'?`<div class="muted">PC 방향: ${esc(k.pc)}</div>`:''}`).join('')}
@@ -662,7 +680,8 @@ function renderSlides(){const S=slideData($('#ppMode').value);$('#slides').inner
 $('#ppMode').onchange=renderSlides;
 function sayText(){return slideData($('#ppMode').value).map((s,i)=>`[${i+1}장] ${s.t}\n${s.say||''}`).join('\n\n')}
 $('#ppSay').onclick=async()=>{try{await navigator.clipboard.writeText(sayText());$('#ppSayMsg').textContent='복사했습니다'}catch(e){$('#ppSayMsg').textContent='복사 실패'}};
-const AIHEAD={all:'아래 상황카드로 ① AP 15단계 스크립트 ② 고객에게 보여줄 검토 보고서 ③ PPT 장별 화면 문구와 발표 스크립트를 차례로 만들어 줘.',ap:'아래 상황카드로 AP 15단계 스크립트를 만들어 줘.',rp:'아래 상황카드와 보고서 초안을 바탕으로, 고객에게 보여줄 검토 보고서를 읽기 쉽게 다시 써 줘. 핵심만 남기고 짧은 문장으로.',pp:'아래 상황카드와 슬라이드 초안을 바탕으로, PPT 장별 화면 문구(짧게)와 발표자가 실제로 말할 스크립트(장마다 3~5문장)를 자연스럽게 다시 써 줘.'};
+const AIHEAD0='먼저 회사와 대표에 대한 공개 정보(홈페이지, 기사, 대표 이력, 공시)를 찾을 수 있으면 찾아서 기업분석을 5줄 이내로 정리하고, 그 내용을 바탕으로 ';
+const AIHEAD={all:AIHEAD0+'아래 상황카드로 ① AP 15단계 스크립트 ② 고객에게 보여줄 검토 보고서 ③ PPT 장별 화면 문구와 발표 스크립트를 차례로 만들어 줘.',ap:AIHEAD0+'아래 상황카드로 AP 15단계 스크립트를 만들어 줘.',rp:'아래 상황카드와 보고서 초안을 바탕으로, 고객에게 보여줄 검토 보고서를 읽기 쉽게 다시 써 줘. 핵심만 남기고 짧은 문장으로.',pp:'아래 상황카드와 슬라이드 초안을 바탕으로, PPT 장별 화면 문구(짧게)와 발표자가 실제로 말할 스크립트(장마다 3~5문장)를 자연스럽게 다시 써 줘.'};
 function aiTail(kind){let t='';if(kind==='all'||kind==='rp')t+='\n\n[보고서 초안]\n'+($('#report').innerText||'');
   if(kind==='all'||kind==='pp')t+='\n\n[슬라이드 초안 (고객용)]\n'+slideData('cust').map((s,i)=>`[${i+1}장] ${s.t}${s.b?'\n- '+s.b.join('\n- '):''}\n말할 내용: ${s.say||''}`).join('\n\n');
   if(kind!=='ap')t+='\n- 보고서·PPT는 고객이 보는 자료라 상품명·내부 금액은 넣지 마.';
@@ -798,6 +817,7 @@ function renderPrompt(){const{c,dx,top,T}=last;const fl=FLAGS.filter(k=>c[k]).ma
 ② 나와의 관계: ${c.rel}${c.rel==='기장'&&nz(c.relYears)?' '+c.relYears+'년':''}${c.rel==='소개'?' (소개자: '+(c.referrer||'미입력')+')':''} / 내 자격: ${c.cert} / ${c.occ==='결산'?'가결산 미팅 겸':'AP 단독'} / 관찰: ${c.obs||'없음'}
 ③ 알고 있는 정보: 1) ${c.k1||'-'} 2) ${c.k2||'-'} 3) ${c.k3||'-'}
    업체 특이사항: ${c.notes||'-'}
+   회사 공개 정보: ${c.bizinfo||'-'}
 ④ 오늘 AP 목표: ${c.goal||(top?top.need:'-')} / 다음 약속: ${c.day} ${c.time} ${c.dur} / 소개 ${c.introN} 명 / AP ${c.apMin}분
 ⑤ 예상 저항: ${c.rs.join(', ')||'없음'}
 

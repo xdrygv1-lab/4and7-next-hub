@@ -559,7 +559,7 @@ async function showDoc(d){tpl('tpl-rules');const cat=catOfDoc(d)||{h:'learn',lab
     <div class="btnrow"><button class="btn p" type="button" id="cBtn">보완 남기기</button><span class="small">틀린 곳, 더 좋은 화법, 실제 사례를 알려 주세요.</span></div>
     <div id="cWrap"></div>
     ${isC?`<h3>이 컨셉에 들어온 보완</h3><div class="list" id="cList"></div>`:''}`;
-  const hint=isC?'더할 신호, 첫 미팅 질문, 화법, 반론과 대응, 주의사항, 익명 사례(업종·규모·나이대·결과만)를 적어 주세요.':'';
+  const hint=isC?'이 컨셉으로 실제 계약이 나온 후킹 포인트(대표의 마음이 움직인 한마디), 더할 신호, 첫 미팅 질문, 화법, 반론과 대응, 주의사항, 익명 사례(업종·규모·나이대·결과만)를 적어 주세요.':'';
   const onSent=()=>loadContribs($('#cList'),d.title);
   $('#cBtn').onclick=()=>{const w=$('#cWrap');if(w.firstChild){w.innerHTML='';$('#cBtn').textContent='보완 남기기';return}w.appendChild(contribBox(d.title,{kind:isC?'보완 멘트':'오류',hint,onSent}));$('#cBtn').textContent='닫기'};
   if(isC)loadContribs($('#cList'),d.title);

@@ -103,6 +103,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
     <div id="crmBox" class="crmbox" hidden>
       <div class="g2" style="margin-bottom:6px"><div><label>상호명 *</label><input type="text" id="crmCo" placeholder="예: OO정밀(주)"></div><div><label>대표자명 *</label><input type="text" id="crmCeo" placeholder="예: 김OO"></div></div>
       <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="crmConsent"> 정보제공 동의를 받은 업체입니다 <span class="muted">(CRM에 없는 회사면 자동으로 등록합니다)</span></label>
+      <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="resOpt"> 인터넷에서 회사 공개 정보도 찾기 <span class="muted">(AI 사용, 회사당 약 100~200원 · 같은 회사는 7일간 무료 재사용)</span></label>
       <div class="btns" style="margin-top:6px;align-items:center"><button class="b p" type="button" id="crmReq">리치 CRM에서 불러오기</button><span class="muted" id="crmMsg"></span></div>
       <div class="muted" id="resMsg" style="margin-top:4px"></div><div id="resSrc" class="muted" style="font-size:12.5px"></div>
       <div class="muted" style="margin-top:4px">CRM은 보통 1~3분, 새로 등록한 회사는 20분쯤 걸려요. 기다리는 동안 AI가 인터넷에서 회사 공개 정보(소개·제품·거래처·뉴스·대표 업무 경력)를 찾아 "회사 공개 정보"에 넣어 둡니다. 화면을 열어 두면 자동으로 채워집니다.</div>
@@ -1004,7 +1005,7 @@ $('#crmReq').onclick=async()=>{const dg=$('#dartQ').value.replace(/\D/g,'');if(d
   const co=$('#crmCo').value.trim(),ceo=$('#crmCeo').value.trim();if(co.length<2||ceo.length<2){crmMsg('상호명과 대표자명을 함께 넣어 주세요.',1);return}
   const ep=await dartEndpoint();if(!ep){crmMsg('사이트에서 열었을 때 쓸 수 있어요.',1);return}
   crmMsg('요청 보내는 중…');
-  runResearch(ep,dg,co,ceo);
+  if($('#resOpt').checked)runResearch(ep,dg,co,ceo);else{$('#resMsg').textContent='';$('#resSrc').innerHTML=''}
   try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmreq',biz:dg,co,ceo,consent:$('#crmConsent').checked})}).then(x=>x.json());
     if(!r.ok){crmMsg(r.error||'요청하지 못했습니다.',1);return}
     if(r.status==='완료'&&r.result){applyImport(r.result);crmMsg('최근에 조회한 자료로 불러왔습니다.');return}

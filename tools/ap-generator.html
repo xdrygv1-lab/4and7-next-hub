@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>업체 분석 → 제안 준비</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap">
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--ink:#14171c;--sub:#5b6472;--line:#e3e6eb;--acc:#1f3a68;--acc2:#3d6cb9;--good:#1b7f4b;--warn:#b5590e;--bad:#b42318;--chip:#eef2f8;--hl:#f2f6fd;--onacc:#fff;--quote:#f4f6fa}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--card:#171b23;--ink:#e8ebf0;--sub:#9aa3b2;--line:#2a303b;--acc:#8fb1ea;--acc2:#6f97dc;--good:#4cc38a;--warn:#f0a35e;--bad:#f97066;--chip:#1f2633;--hl:#1c2433;--onacc:#0f1218;--quote:#1b212c}}
@@ -72,7 +73,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 .report .kv div{border:1px solid var(--line);border-radius:10px;padding:10px}.report .kv b{display:block;font-size:18px}
 .report .disc{font-size:12px;color:var(--sub);margin-top:24px}
 .slide{aspect-ratio:16/9;max-width:640px;border:1px solid var(--line);border-radius:10px;padding:22px 26px;margin-bottom:12px;background:var(--card);display:flex;flex-direction:column;gap:8px;overflow:hidden}
-.slide .st{font-size:20px;font-weight:700;color:var(--acc)}.slide ul{margin:0;padding-left:18px}.slide .cover{margin:auto 0}
+.slide{background:linear-gradient(180deg,#0b1630,#070d1a)!important;color:#f5efe3;border:1px solid rgba(201,169,106,.45)!important;box-shadow:inset 0 0 0 6px #0b1630,inset 0 0 0 7px rgba(201,169,106,.3)}.slide .st{font-size:20px;font-weight:700;color:#ecd9ae;font-family:"Noto Serif KR","Batang",serif;border-bottom:1px solid rgba(201,169,106,.5);padding-bottom:6px}.slide .muted{color:#c9a96a!important}.slide .spk{background:rgba(255,255,255,.06)!important;color:#d6dae3;border-left-color:#c9a96a!important}.slide .spk b{color:#c9a96a!important}.slide ul{margin:0;padding-left:18px}.slide .cover{margin:auto 0}
 .amt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0}
 @media(max-width:700px){.amt{grid-template-columns:1fr}}
 .amt div{border:1px solid var(--line);border-radius:10px;padding:12px}.amt div.mid{border-color:var(--acc2)}.amt b{font-size:20px;display:block}
@@ -789,15 +790,36 @@ $('#aiRun').onclick=async()=>{renderPrompt();const ep=await aiEndpoint();
     $('#aiText').textContent=j.text||j.answer||'';$('#aiCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#aiText').textContent);$('#aiMsg').textContent='복사했습니다'}catch(e){$('#aiMsg').textContent='복사 실패'}}}
   catch(e){aiOut('<div class="note">AI에 연결하지 못했습니다. 잠시 후 다시 시도하거나 "요청문 복사"를 이용해 주세요.</div>')}
   finally{$('#aiRun').disabled=false}};
+/* PC 제안서 PPT: MAESTRO 네이비·골드 (단장님 발표 스타일) · 제목 Noto Serif KR · 본문 Pretendard (없으면 PC 기본 글꼴로 대체) */
+const PPT_C={ink:'070D1A',navy:'0B1630',navy2:'13254A',gold:'C9A96A',goldHi:'ECD9AE',goldLo:'8A6F3E',ivory:'F5EFE3',mute:'8D97AB',soft:'CFD4DE'};
+const PPT_F={serif:'Noto Serif KR',sans:'Pretendard',en:'Cormorant Garamond'};
+const PPT_SIG={c0392b:'FF6B5E',d9822b:'F2A541','2e8b57':'5FD68E','8a949e':'9AA4B2'};
 $('#ppDown').onclick=async()=>{const S=slideData($('#ppMode').value);if(!S.length)return;if(!window.PptxGenJS){$('#ppMsg').textContent='PPT 도구를 불러오지 못했습니다. 인터넷 연결을 확인하세요.';return}
-  const pp=new PptxGenJS();pp.layout='LAYOUT_WIDE';const F='맑은 고딕',NAVY='1F3A68';
-  S.forEach(s=>{const sl=pp.addSlide();sl.background={color:'FFFFFF'};if(s.say)sl.addNotes(s.say);
-    if(s.cover){sl.background={color:NAVY};sl.addText(s.t,{x:.7,y:2.4,w:12,h:1.2,fontFace:F,fontSize:34,bold:true,color:'FFFFFF'});sl.addText(s.sub,{x:.7,y:3.6,w:12,h:.6,fontFace:F,fontSize:16,color:'C9D6EA'});return}
-    sl.addShape(pp.ShapeType.rect,{x:0,y:0,w:13.33,h:.12,fill:{color:NAVY}});
-    sl.addText(s.t,{x:.7,y:.4,w:12,h:.9,fontFace:F,fontSize:26,bold:true,color:NAVY});
-    sl.addText(s.b.map(x=>typeof x==='string'?{text:x,options:{bullet:true,breakLine:true}}:{text:x.t,options:{bullet:true,breakLine:true,color:x.color}}),{x:.9,y:1.5,w:11.6,h:5.3,fontFace:F,fontSize:18,color:'14171C',valign:'top',paraSpaceAfter:10});
-    sl.addText('4&7 NEXT · 초안',{x:.7,y:7,w:6,h:.3,fontFace:F,fontSize:10,color:'8A94A3'})});
-  try{await pp.writeFile({fileName:`${(last.c.co||'검토자료').replace(/[\\/:*?"<>|]/g,'')}_검토자료.pptx`});$('#ppMsg').textContent='내려받았습니다'}catch(e){$('#ppMsg').textContent='내려받기 실패: '+e.message}};
+  const C=PPT_C,F=PPT_F,pp=new PptxGenJS();pp.layout='LAYOUT_WIDE';
+  const frame=sl=>{sl.addShape(pp.ShapeType.rect,{x:.32,y:.32,w:12.69,h:6.86,fill:{color:C.navy,transparency:100},line:{color:C.gold,width:.75,transparency:45}});
+    [[.22,.22,1,0],[.22,.22,0,1],[12.71,7.28,1,0],[13.11,6.88,0,1]].forEach(([x,y,w,h])=>sl.addShape(pp.ShapeType.line,{x,y,w:w*.4,h:h*.4,line:{color:C.gold,width:1.5}}))};
+  const brand=sl=>sl.addText([{text:'4&7 NEXT',options:{bold:true,color:C.gold}},{text:'  ·  초안',options:{color:C.mute}}],{x:.62,y:.46,w:5,h:.3,fontFace:F.sans,fontSize:10,charSpacing:3});
+  S.forEach((s,idx)=>{const sl=pp.addSlide();sl.background={color:s.cover?C.ink:C.navy};if(s.say)sl.addNotes(s.say);frame(sl);
+    if(s.cover){
+      sl.addShape(pp.ShapeType.ellipse,{x:3.2,y:.6,w:6.9,h:6.2,fill:{color:C.navy2,transparency:55},line:{color:C.navy2,transparency:100}});
+      sl.addText('PROPOSAL',{x:.7,y:1.85,w:11.93,h:.4,align:'center',fontFace:F.en,fontSize:16,color:C.goldHi,charSpacing:12});
+      sl.addText(s.t,{x:.9,y:2.35,w:11.53,h:1.5,align:'center',valign:'middle',fontFace:F.serif,fontSize:40,bold:true,color:C.ivory,fit:'shrink'});
+      sl.addShape(pp.ShapeType.line,{x:6.07,y:4.05,w:1.2,h:0,line:{color:C.gold,width:1.25}});
+      sl.addText(s.sub,{x:.7,y:4.25,w:11.93,h:.4,align:'center',fontFace:F.sans,fontSize:14,color:C.gold,charSpacing:4});
+      sl.addText('대표님 회사 진단과 해결 방향',{x:.7,y:4.75,w:11.93,h:.4,align:'center',fontFace:F.serif,fontSize:16,color:C.soft});
+      brand(sl);return}
+    brand(sl);
+    sl.addText(String(idx).padStart(2,'0'),{x:11.9,y:.42,w:.9,h:.35,align:'right',fontFace:F.en,fontSize:14,color:C.goldHi});
+    sl.addText(s.t,{x:.75,y:.95,w:11.8,h:.8,fontFace:F.serif,fontSize:28,bold:true,color:C.ivory,fit:'shrink'});
+    sl.addShape(pp.ShapeType.line,{x:.78,y:1.78,w:1.1,h:0,line:{color:C.gold,width:1.5}});
+    const items=s.b||[];const sig=items.some(x=>typeof x!=='string');
+    if(sig){const h=Math.min(.58,4.5/items.length);items.forEach((x,i)=>{const y=2.05+i*h;const col=PPT_SIG[(x.color||'').toLowerCase()]||C.ivory;
+        sl.addShape(pp.ShapeType.ellipse,{x:.95,y:y+h/2-.11,w:.22,h:.22,fill:{color:col},line:{color:col}});
+        const t=typeof x==='string'?x:x.t;const m=t.match(/^(.+?) · ([^:]+): (.*)$/);
+        sl.addText(m?[{text:m[2]+'  ',options:{bold:true,color:C.ivory}},{text:m[3],options:{color:C.soft}}]:[{text:t,options:{color:C.ivory}}],{x:1.35,y,w:11.1,h,fontFace:F.sans,fontSize:14,valign:'middle',fit:'shrink'})})}
+    else sl.addText(items.map(x=>({text:typeof x==='string'?x:x.t,options:{bullet:{code:'25AA',indent:18},breakLine:true,color:C.ivory,paraSpaceAfter:10}})),{x:.85,y:2.05,w:11.6,h:4.75,fontFace:F.sans,fontSize:20,valign:'top',fit:'shrink',lineSpacingMultiple:1.2});
+    sl.addText('세무 처리는 세무사 검토 사항 · 상품 조건과 금액은 가입설계서·재정심사로 확정',{x:.62,y:6.78,w:9,h:.28,fontFace:F.sans,fontSize:9,color:C.mute})});
+  try{await pp.writeFile({fileName:`${(last.c.co||'검토자료').replace(/[\\/:*?"<>|]/g,'')}_제안자료.pptx`});$('#ppMsg').textContent='내려받았습니다 (글꼴: Noto Serif KR·Pretendard, 없으면 기본 글꼴로 보입니다)'}catch(e){$('#ppMsg').textContent='내려받기 실패: '+e.message}};
 
 /* ---------- 최종 점검 ---------- */
 const TAXW=/비용처리|손금|익금|절세|세금을 (줄|아끼)|법인세(가|를)? (줄|감소|절감)|비과세/;

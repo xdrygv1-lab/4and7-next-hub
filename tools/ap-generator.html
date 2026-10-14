@@ -760,7 +760,7 @@ function slideData(mode){const{c,dx,top,kv,notes}=reportData();if(!top)return[];
   const sigItems=IS.map(i=>({t:`${LV[i.lv][0]} · ${i.name}: ${i.line}`,color:LV[i.lv][1].slice(1)}));
   S.push({t:`${c.co||'우리 회사'} 대표님 제안 자료`,sub:`${new Date().toISOString().slice(0,10)} · 초안`,cover:true,say:`${who}, 지난번에 말씀해 주신 내용을 바탕으로 회사 상황을 정리하고, 해결 방법을 준비해 왔습니다. ${c.dur&&/분/.test(c.dur)?c.dur:'한 시간'} 정도 걸립니다.`});
   if(notes.length)S.push({t:'지난번 말씀하신 것',b:notes.slice(0,3),say:`먼저 지난번에 하신 말씀을 그대로 적어 왔습니다. ${notes[0]?'"'+notes[0]+'" ':''}제가 맞게 이해했는지 확인하고 시작하겠습니다.`});
-  S.push({t:'한눈에 보는 진단',b:sigItems,say:`회사 상황을 여덟 가지로 나눠 봤습니다. 빨간색이 ${IS.filter(i=>i.lv==='r').length}개, 주황색이 ${IS.filter(i=>i.lv==='o').length}개입니다. 오늘은 빨간색부터 보겠습니다.`});
+  S.push({t:'한눈에 보는 진단',b:sigItems,say:`회사 상황을 여덟 가지로 나눠 봤습니다. 빨간색이 ${IS.filter(i=>i.lv==='r').length}개, 주황색이 ${IS.filter(i=>i.lv==='o').length}개입니다. ${IS.some(i=>i.lv==='r')?'오늘은 빨간색부터 보겠습니다.':IS.some(i=>i.lv==='o')?'급한 빨간색은 없고, 주황색부터 보겠습니다.':'당장 급한 이슈는 없어서, 미리 준비할 것 위주로 보겠습니다.'}`});
   S.push({t:'회사의 현재 모습',b:kv1.map(x=>`${x[0]}: ${x[1]}`),say:`숫자로 보면 ${kv1.slice(0,3).map(x=>x[0]+'이 '+x[1]).join(', ')}입니다. 주신 자료 기준의 대략값입니다.`});
   if(v)S.push({t:'회사 가치와 앞으로',b:[`대표 지분 가치 (추정): 지금 ${eok1(v.now)}`,...v.proj.map(([k,x])=>`${k}년 후: ${eok1(x)}`),`가정: 이익 매년 ${GROW*100}% 증가, 약식 추정 (정식 평가 아님)`],say:`회사가 지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(v.proj[3][1])}이 됩니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`});
   IS.filter(i=>i.lv==='r'||i.lv==='o').slice(0,3).forEach(i=>{const k=dx.find(d=>i.con.includes(d.id));S.push({t:`${i.name}`,b:[i.line,...(k?['검토 방향: '+k.alt]:[]),...(int&&k?['PC 방향: '+k.pc]:[])],say:`${i.line} ${k?k.alt:''} 가만히 두면 어떻게 되는지, 준비하면 무엇이 달라지는지 같이 보시죠.`})});
@@ -777,7 +777,7 @@ $('#ppSay').onclick=async()=>{try{await navigator.clipboard.writeText(sayText())
 const AIHEAD0='먼저 회사와 대표에 대한 공개 정보(홈페이지, 기사, 대표 이력, 공시)를 찾을 수 있으면 찾아서 기업분석을 5줄 이내로 정리하고, 그 내용을 바탕으로 ';
 const AIHEAD={all:AIHEAD0+'아래 상황카드로 ① AP 15단계 스크립트 ② 고객에게 보여줄 검토 보고서 ③ PPT 장별 화면 문구와 발표 스크립트를 차례로 만들어 줘.',ap:AIHEAD0+'아래 상황카드로 AP 15단계 스크립트를 만들어 줘.',rp:'아래 상황카드와 보고서 초안을 바탕으로, 고객에게 보여줄 검토 보고서를 읽기 쉽게 다시 써 줘. 핵심만 남기고 짧은 문장으로.',pp:'아래 상황카드와 슬라이드 초안을 바탕으로, PPT 장별 화면 문구(짧게)와 발표자가 실제로 말할 스크립트(장마다 3~5문장)를 자연스럽게 다시 써 줘.'};
 function aiTail(kind){let t='';if(kind==='all'||kind==='rp')t+='\n\n[보고서 초안]\n'+($('#report').innerText||'');
-  if(kind==='all'||kind==='pp')t+='\n\n[슬라이드 초안 (고객용)]\n'+slideData('cust').map((s,i)=>`[${i+1}장] ${s.t}${s.b?'\n- '+s.b.join('\n- '):''}\n말할 내용: ${s.say||''}`).join('\n\n');
+  if(kind==='all'||kind==='pp')t+='\n\n[슬라이드 초안 (고객용)]\n'+slideData('cust').map((s,i)=>`[${i+1}장] ${s.t}${s.b?'\n- '+s.b.map(x=>typeof x==='string'?x:x.t).join('\n- '):''}\n말할 내용: ${s.say||''}`).join('\n\n');
   if(kind!=='ap')t+='\n- 보고서·PPT는 고객이 보는 자료라 상품명·내부 금액은 넣지 마.';
   const ex=($('#aiExtra')||{}).value;if(ex&&ex.trim())t+='\n\n[추가 요청]\n'+ex.trim();return t}
 let AICFG=null;async function aiEndpoint(){if(AICFG!==null)return AICFG;try{const r=await fetch('../config.json',{cache:'no-store'});const j=r.ok?await r.json():{};AICFG=String(j.endpoint||'').trim()}catch(e){AICFG=''}return AICFG}

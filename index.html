@@ -71,6 +71,7 @@ h3{font-size:16px;margin:22px 0 8px}
 .notice{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel));border-radius:10px;padding:11px 14px;font-size:14px;margin:0 0 20px}
 .notice b{color:var(--warn)}
 /* 카드 */
+.grow h2{margin:26px 0 6px}.grow .lede{margin:0 0 12px}.need .card b{font-size:16px}.need .card .now{color:var(--mute,#6b7570);font-size:13px}.need .card ul{margin:6px 0 0;padding-left:1.1em}.need .card li{margin:3px 0}.need .card .gain{margin-top:8px;font-size:13.5px;border-top:1px dashed var(--line);padding-top:6px}.howto{counter-reset:st;display:grid;gap:10px;margin:0 0 14px}.howto>div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 50px;position:relative}.howto>div:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:13px}.ex{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}.ex code{white-space:normal;font-family:inherit;font-size:13px;background:var(--panel2,#eef3f1);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:0 0 20px}
 .cards.four{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:600px){.cards.four{grid-template-columns:1fr}}
 .card{display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:var(--ink);min-width:0}
@@ -218,6 +219,44 @@ details.sit summary{cursor:pointer;font-weight:600}
     <a class="card" href="#learn"><span class="k">3. 틈날 때</span><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 경정기 비교 계산기.</span></a>
     <a class="card" href="#together"><span class="k">4. 같이</span><b>함께 만들기</b><span>고칠 점, 자료, 아이디어를 보내 주세요.</span></a>
   </div>
+  <section class="grow">
+  <h2>이런 자료가 모이면 훨씬 좋아져요</h2>
+  <p class="lede">화면과 기능은 갖춰졌습니다. 이제 필요한 건 <b>잘하는 분들의 실제 자료</b>입니다. 지금은 한 사람 경험 수준이라, 여러분 자료가 들어갈수록 결과물이 바로 좋아집니다.</p>
+  <div class="cards need">
+    <div class="card"><b>제안 PPT</b><span class="now">지금: 코드로 그린 디자인이라 한계가 있어요</span>
+      <ul><li>실제로 쓰신 <b>제안 PPT 원본(.pptx)</b> 2~3개</li><li>반응이 좋았던 장표 캡처</li><li>즐겨 쓰는 글꼴·색</li></ul>
+      <div class="gain">→ 원본을 틀로 써서 <b>그 모양 그대로</b> 제안서가 나옵니다</div></div>
+    <div class="card"><b>업체 분석 보고서</b><span class="now">지금: 신호등 기준과 문장이 기본값이에요</span>
+      <ul><li>메트 기업분석 리포트 실물 (PDF)</li><li>고객에게 실제로 드린 보고서</li><li>고객이 고개를 끄덕인 문장</li></ul>
+      <div class="gain">→ 보고서 문장과 판단 기준이 <b>현장 수준</b>으로 바뀝니다</div></div>
+    <div class="card"><b>컨셉 진단</b><span class="now">지금: 규칙이 추정이라 덜 정교해요</span>
+      <ul><li>실제 <b>계약 사례</b>: 업종, 매출·이익 범위, 왜 했는지</li><li><b>보류·거절 사례</b>: 왜 안 됐는지</li><li>목표 20건 이상</li></ul>
+      <div class="gain">→ "이 회사는 이 컨셉" 판단과 <b>제안 전 경고</b>가 정확해집니다</div></div>
+    <div class="card"><b>상품 이해</b><span class="now">지금: 요약 수준이에요</span>
+      <ul><li>상품설명서·사업방법서</li><li>나이별 가입설계서</li><li><b>재정심사 기준표</b></li><li>현장에서 자주 헷갈리는 질문</li></ul>
+      <div class="gain">→ 금액 제안과 재정심사 예측이 <b>실제와 맞게</b> 됩니다</div></div>
+    <div class="card"><b>스크립트·화법</b><span class="now">지금: 표준 15단계 틀뿐이에요</span>
+      <ul><li><b>실제 AP·PC 녹음</b> (글보다 녹음 한 개가 훨씬 강해요)</li><li>반론이 나왔을 때 실제로 한 말</li><li>클로징 한 문장</li></ul>
+      <div class="gain">→ 영업 잘하는 분 말투와 흐름이 <b>스크립트에 그대로</b> 들어갑니다</div></div>
+  </div>
+
+  <h2>이런 학습 장치가 붙으면 더 좋아져요</h2>
+  <div class="cards">
+    <div class="card"><b>녹음 → 사례 카드 자동</b><span>AP 녹음을 올리면 글로 받아 적고, 니즈·숫자·반론을 뽑아 사례로 쌓고, 신호등 기준까지 고칩니다.</span></div>
+    <div class="card"><b>선배 스타일 고르기</b><span>같은 업체도 "OO님 스타일"로 스크립트·PPT가 나오게 합니다. 녹음이 쌓일수록 가능해집니다.</span></div>
+    <div class="card"><b>PPT 원본 틀</b><span>잘 만든 PPT 파일을 틀로 두고 내용만 채워 넣습니다.</span></div>
+    <div class="card"><b>매일 밤 학습</b><span>보내 주신 자료는 매일 밤 11시에 AI가 읽고 사이트에 반영합니다. <b>이미 돌아가고 있어요.</b></span></div>
+  </div>
+
+  <h2>자료 올리는 법 (AI를 몰라도 3번이면 끝)</h2>
+  <div class="howto">
+    <div><b>"함께 만들기 → AI에게 가르치기"를 엽니다.</b> 메뉴 맨 아래, 또는 <a href="#together">여기</a>를 누르세요.</div>
+    <div><b>한 줄로 무엇을 배우면 되는지 쓰고, 파일을 붙입니다.</b> 말하듯 쓰면 됩니다. PDF·PPT·엑셀·한글·사진·녹음 모두 되고 30MB까지예요. 더 큰 녹음은 구글 드라이브 공유 링크를 붙여 주세요.
+      <div class="ex"><code>이 PPT로 제안서 디자인 배워 줘</code><code>이 녹음에서 반론 대응 뽑아서 화법에 넣어 줘</code><code>이 사례 컨셉 진단에 반영해 줘</code><code>재정심사 기준표야, 금액 제안에 써 줘</code></div></div>
+    <div><b>보내기를 누르면 끝입니다.</b> AI가 바로 짧게 답하고, <b>그날 밤 11시</b>에 사이트에 반영합니다. 반영되면 "AI가 최근에 배운 것"에 보입니다.</div>
+  </div>
+  <p class="small">글을 바로 고치고 싶으면 문서 맨 위 <b>"바로 고치기"</b>를 누르세요. 고치고 저장하면 바로 모두에게 반영되고, 누가 고쳤는지는 표시되지 않습니다.</p>
+  </section>
   <div class="beta"><b>초안 · 보완 필요</b><span>모두 만드는 중입니다. 틀린 곳이 보이면 화면마다 있는 "AI에게 가르치기"로 알려 주세요.</span></div>
   <div class="notice"><b>꼭 지켜 주세요.</b> 고객 실명·연락처는 어디에도 넣지 않습니다. 상품 숫자는 내부 참고용이고, 고객에게는 가입설계서로 안내합니다. 세무 처리는 세무사 검토 사항입니다.</div>
   <p class="small" id="homeStat"></p>

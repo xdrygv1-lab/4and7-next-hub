@@ -1106,9 +1106,16 @@ async function resumePending(){let v=null;try{v=JSON.parse(localStorage.getItem(
 (async()=>{const ep=await dartEndpoint();if(!ep)return;if(!TP()){needPass();$('#histList').innerHTML='<span class="muted">팀 비밀번호를 넣으면 보여요.</span>';return}loadHist();resumePending()})();
 async function loadHist(){const el=$('#histList');if(!el)return;const ep=await dartEndpoint();if(!ep){el.innerHTML='<span class="muted">사이트에서 열었을 때 볼 수 있어요.</span>';return}
   try{const r=await fetch(ep+'?action=crmhist&pass='+encodeURIComponent(TP())+'&r='+Date.now()).then(x=>x.json());if(!r.ok&&r.code==='pass'){needPass();el.innerHTML='<span class="muted">팀 비밀번호를 넣으면 보여요.</span>';return}if(!r.ok||!r.items.length){el.innerHTML='<span class="muted">아직 조회한 회사가 없어요.</span>';return}
-    el.innerHTML=r.items.map(i=>`<button class="b" type="button" data-hid="${i.id}" data-biz="${i.biz}" data-co="${esc(i.co)}" title="${esc(i.status)}">${esc(i.co||'(상호 없음)')} <span class="muted">${bizFmt(i.biz)} · ${esc(i.time.slice(5,10))}${i.status==='완료'?(i.met?' · 메트✓':''):' · '+esc(i.status)}</span></button>`).join(' ');
-    $$('#histList [data-hid]').forEach(b=>b.onclick=()=>openHist(ep,b.dataset.hid,b.dataset.biz,b.dataset.co))}
+    el.innerHTML=r.items.map(i=>`<span style="display:inline-flex;gap:2px"><button class="b" type="button" data-hid="${i.id}" data-biz="${i.biz}" data-co="${esc(i.co)}" title="${esc(i.status)}">${esc(i.co||'(상호 없음)')} <span class="muted">${bizFmt(i.biz)} · ${esc(i.time.slice(5,10))}${i.status==='완료'?(i.met?' · 메트✓':''):' · '+esc(i.status)}</span></button><button class="b" type="button" data-del="${i.biz}" data-co="${esc(i.co)}" title="목록에서 지우기" style="padding-inline:8px">✕</button></span>`).join(' ');
+    $$('#histList [data-hid]').forEach(b=>b.onclick=()=>openHist(ep,b.dataset.hid,b.dataset.biz,b.dataset.co));
+    $$('#histList [data-del]').forEach(b=>b.onclick=()=>delHist(ep,b.dataset.del,b.dataset.co))}
   catch(e){el.innerHTML='<span class="muted">이력을 불러오지 못했어요.</span>'}}
+async function delHist(ep,biz,co){if(!confirm(`${co||bizFmt(biz)}을(를) 조회 목록에서 지울까요?
+(조회 중이었다면 조회도 멈춥니다. 다시 조회하면 새로 불러와요)`))return;
+  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmdel',biz,pass:TP()})}).then(x=>x.json());
+    if(!r.ok){if(r.code==='pass')needPass();crmMsg(r.error||'지우지 못했어요.',1);return}
+    let v=null;try{v=JSON.parse(localStorage.getItem('crm_pending')||'null')}catch(e){}if(v&&v.biz===biz){savePending(null);clearTimeout(CRMT);crmMsg('')}
+    loadHist()}catch(e){crmMsg('지우지 못했어요.',1)}}
 async function openHist(ep,id,biz,co){CRMBIZ=biz;$('#dartQ').value=bizFmt(biz);if(co)$('#crmCo').value=co;loadReady();crmMsg('조회 이력에서 여는 중…');
   try{const r=await fetch(ep+'?action=crmget&id='+id+'&biz='+biz+'&pass='+encodeURIComponent(TP())+'&r='+Date.now()).then(x=>x.json());
     if(r.ok&&r.status==='완료'&&r.result){applyImport(r.result);crmMsg('조회 이력에서 열었어요 (다시 조회하지 않음).')}

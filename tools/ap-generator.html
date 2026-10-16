@@ -110,6 +110,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
       <div class="muted" id="resMsg" style="margin-top:4px"></div><div id="resSrc" class="muted" style="font-size:12.5px"></div>
       <div class="muted" style="margin-top:4px">리치 CRM에서 불러옵니다. 보통 1~3분, 새로 등록한 회사는 20분쯤 걸려요. 인터넷 검색에 체크하면 기다리는 동안 회사 공개 정보(소개·제품·거래처·뉴스·대표 업무 경력)를 찾아 "회사 공개 정보"에 넣어 둡니다. 화면을 열어 두면 자동으로 채워집니다.</div>
     </div>
+    <details id="histBox" style="margin:6px 0"><summary style="cursor:pointer;font-weight:600">조회 이력 <span class="muted" style="font-weight:400">(누가 조회했든 다시 조회하지 않고 바로 열기)</span></summary><div id="histList" class="btns" style="margin-top:6px"><span class="muted">불러오는 중…</span></div></details>
     <div class="btns" style="margin:6px 0;align-items:center"><span class="muted">상장사·외부감사 법인이면</span><button class="b" id="dartFind" type="button">전자공시(DART)에서도 찾기</button><span id="dartMsg" class="muted"></span></div>
     <div id="dartList" class="btns" style="margin-bottom:6px"></div>
   </details>
@@ -682,12 +683,28 @@ function resNews(){const r=resParse();if(!r)return'';const it=r.items.find(([k,v
   return it?it[1].split(/(?<=[.다])\s/)[0].slice(0,90):''}
 /* CRM 3개년 재무 (도우미가 CRM 표에서 읽어 옴) */
 function histRows(){const h=lastFS&&lastFS.hist;if(!h||!h.years||!h.years.length)return null;
-  const R=[['매출',h.sales],['영업이익',h.op],['순이익',h.ni],['자본(순자산)',h.equity],['부채',h.debt]].filter(([,a])=>(a||[]).some(x=>x!=null));
+  const R=[['매출',h.sales],['영업이익',h.op],['순이익',h.ni],['자본(순자산)',h.equity],['부채',h.debt],['이익잉여금',h.retained],['가지급금',h.loan],['현금성 자산',h.cash]].filter(([,a])=>(a||[]).some(x=>x!=null&&x!==0));
   return R.length?{years:h.years,rows:R}:null}
 function histTable(){const H=histRows();if(!H)return'';const mx=Math.max(...H.rows.flatMap(([,a])=>a.filter(x=>x!=null).map(Math.abs)),0.01);
   const sa=(lastFS.hist.sales||[]).filter(x=>x!=null&&x>0);let g='';if(sa.length>=2){const n=sa.length-1,r=Math.pow(sa[sa.length-1]/sa[0],1/n)-1;g=`매출이 연평균 ${Math.round(r*1000)/10}% ${r>=0?'늘었':'줄었'}습니다 (${n+1}개년).`}
   const cell=x=>x==null?'<td class="muted">–</td>':`<td>${eok1(x)}<span class="bar${x<0?' neg':''}" style="width:${Math.round(Math.abs(x)/mx*60)}px"></span></td>`;
   return`<h3>최근 ${H.years.length}년 재무 흐름</h3><table class="mt trend"><tr><th>항목</th>${H.years.map(y=>`<th>${esc(y)}년</th>`).join('')}</tr>${H.rows.map(([k,a])=>`<tr><td>${k}</td>${H.years.map((_,i)=>cell(a[i])).join('')}</tr>`).join('')}</table>${g?`<div class="muted">${g}</div>`:''}`}
+/* 메트 리포트에서 읽은 숫자 (내부 참고, 고객 제시 불가) */
+function metBox(){const m=LASTMET||{},e=x=>x==null?'–':eok1(x),R=[];
+  if(m.value!=null)R.push(['기업가치 (메트 약식)',e(m.value)]);
+  if(m.ceoStake!=null)R.push(['대표 지분 가치',e(m.ceoStake)]);
+  if(m.inhTax!=null)R.push(['예상 상속세 (지분 기준)',e(m.inhTax)]);
+  if(m.ceoRiskNeed!=null)R.push(['CEO 유고 최소 필요자금',e(m.ceoRiskNeed)]);
+  if(m.retained10!=null)R.push(['미처분이익잉여금 5년·10년 후',`${e(m.retained5)} · ${e(m.retained10)}`]);
+  if(m.noDividend!=null)R.push(['최근 3년 배당',m.noDividend?'없음':'있음']);
+  if(m.grade)R.push(['신용등급',esc(m.grade)]);
+  if(m.ebitda)R.push(['EBITDA',Object.entries(m.ebitda).map(([y,v])=>`${y} ${e(v)}`).join(' · ')]);
+  if(m.execPay!=null)R.push(['임원 급여 (최근)',e(m.execPay)]);
+  if(m.retireRes!=null)R.push(['퇴직급여충당부채',e(m.retireRes)]);
+  if(m.insurance!=null)R.push(['보험료 비용 (최근)',e(m.insurance)]);
+  if(m.borrow!=null)R.push(['차입금',e(m.borrow)]);
+  const P=m.valueProj?`<div class="muted" style="margin-top:6px">기업가치 추정 (메트): 현재 ${m.valueProj.map((v,i)=>['','1년','2년','3년','5년','10년'][i]+(i?' ':'')+e(v)).join(' → ')}</div>`:'';
+  return R.length?`<h2>메트 리포트 숫자 <span class="badge warn">내부 참고 · 고객 제시 불가</span></h2><div class="kv">${R.map(([k,v])=>`<div><span class="muted">${k}</span><b>${v}</b></div>`).join('')}</div>${P}<div class="muted">CRM의 메트 기업분석·컨셉제안서·M&A 진단 화면에서 숫자만 읽어 왔습니다${m.years?` (결산 ${m.years[m.years.length-1]}년 기준)`:''}.</div>`:''}
 /* 이슈별 한 장: 그대로 두면 / 필요한 자료 */
 const ISSUE_X={1:['회사 가치가 오를수록 증여·상속 때 세금과 지분을 옮기는 비용이 함께 커집니다.','최근 3년 재무제표, 주주명부'],
   2:['쌓인 잉여금은 결국 배당·퇴직·상속 때 세금으로 나갑니다. 꺼내는 길이 없으면 주식가치만 올라갑니다.','재무상태표(이익잉여금), 최근 배당 내역'],
@@ -753,7 +770,7 @@ function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,notes}=r
   const pick=[...red,...org].slice(0,4);
   $('#report').innerHTML=`<div class="muted">${today} · 업체 분석 보고서 (초안)</div><h1>${esc(c.co||'우리 회사')} 업체 분석</h1><div class="muted">${esc(c.ind)} · ${c.form}${nz(c.years)?' · 업력 '+c.years+'년':''}${nz(c.emp)?' · 직원 '+c.emp+'명':''}</div>
    <h2>한눈에 보는 진단 <span class="muted" style="font-size:13px">빨강 ${red.length} · 주황 ${org.length}</span></h2>${sigGrid(IS)}
-   <h2>재무 현황</h2>${histTable()}<div class="kv">${kv.map(([k,val])=>`<div><span class="muted">${k}</span><b>${val}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
+   ${int&&LASTMET?metBox():''}<h2>재무 현황</h2>${histTable()}<div class="kv">${kv.map(([k,val])=>`<div><span class="muted">${k}</span><b>${val}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
    ${(()=>{if(!c.bizinfo)return'';const rp=resParse(),base=c.bizinfo.split('[인터넷 조사')[0].trim();
      return`<h2>회사 이야기</h2>${base?`<p>${esc(base).replace(/\n/g,'<br>')}</p>`:''}${rp&&rp.items.length?`<h3>인터넷에서 찾은 회사 정보</h3><ul class="t">${rp.items.map(([k,v])=>`<li><b>${esc(k)}</b>: ${esc(v)}</li>`).join('')}</ul><div class="muted">공개 자료 기준이며 "확인 필요" 항목은 미팅에서 확인합니다.</div>`:''}`})()}
    ${v?`<h2>회사 가치와 앞으로</h2><table class="mt"><tr><th>시점</th><th>지금</th>${v.proj.map(([k])=>`<th>${k}년 후</th>`).join('')}</tr><tr><td>대표 지분 가치 (추정)</td><td>${eok1(v.now)}</td>${v.proj.map(([,x])=>`<td>${eok1(x)}</td>`).join('')}</tr></table><div class="muted">순손익가치(순이익 ÷ 10%)와 순자산을 3:2로 가중한 약식 추정입니다${v.re?' (부동산 비중이 높아 순자산 기준)':''}. 이익은 매년 ${GROW*100}% 늘고 모두 쌓인다고 가정했습니다. 상증법 정식 평가가 아닙니다.</div>`:''}
@@ -1035,8 +1052,8 @@ async function dartLoad(code){const ep=await dartEndpoint();dartMsg('공시 자�
   catch(e){dartMsg('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',1)}}
 
 /* ---------- 사업자번호 → 리치 CRM 조회 요청 (관리자 PC의 조회 도우미가 처리) ---------- */
-function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
-let CRMT=null,RES=null,CRMBIZ='';
+function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};LASTMET=d.met||null;mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
+let CRMT=null,RES=null,CRMBIZ='',LASTMET=null;
 /* 인터넷 조사: 결과를 "회사 공개 정보"에 붙임 (CRM 자료가 나중에 와도 유지) */
 function mergeResearch(){if(!RES)return;const bi=$('#bizinfo');if(!bi.value.includes('[인터넷 조사'))bi.value=(bi.value?bi.value+'\n':'')+'[인터넷 조사 '+new Date().toISOString().slice(0,10)+']\n'+RES.text}
 async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('#resMsg').textContent='인터넷에서 회사 정보를 찾는 중… (약 1분)';
@@ -1051,11 +1068,22 @@ async function crmState(){const el=$('#crmState');if(!el)return;const ep=await d
     const [c,t]=r.login?['#d9822b','● CRM 로그인 대기 중 (관리자가 확인해요)']:r.alive?['#2e8b57','● CRM 조회 가능']:['#8a949e','● 조회 도우미 쉬는 중 (요청은 저장되고 켜지면 처리돼요)'];
     el.style.color=c;el.textContent=t}catch(e){}}
 crmState();setInterval(crmState,60000);
+async function loadHist(){const el=$('#histList');if(!el)return;const ep=await dartEndpoint();if(!ep){el.innerHTML='<span class="muted">사이트에서 열었을 때 볼 수 있어요.</span>';return}
+  try{const r=await fetch(ep+'?action=crmhist&r='+Date.now()).then(x=>x.json());if(!r.ok||!r.items.length){el.innerHTML='<span class="muted">아직 조회한 회사가 없어요.</span>';return}
+    el.innerHTML=r.items.map(i=>`<button class="b" type="button" data-hid="${i.id}" data-biz="${i.biz}" data-co="${esc(i.co)}" title="${esc(i.status)}">${esc(i.co||'(상호 없음)')} <span class="muted">${bizFmt(i.biz)} · ${esc(i.time.slice(5,10))}${i.status==='완료'?(i.met?' · 메트✓':''):' · '+esc(i.status)}</span></button>`).join(' ');
+    $$('#histList [data-hid]').forEach(b=>b.onclick=()=>openHist(ep,b.dataset.hid,b.dataset.biz,b.dataset.co))}
+  catch(e){el.innerHTML='<span class="muted">이력을 불러오지 못했어요.</span>'}}
+async function openHist(ep,id,biz,co){CRMBIZ=biz;$('#dartQ').value=bizFmt(biz);if(co)$('#crmCo').value=co;loadReady();crmMsg('조회 이력에서 여는 중…');
+  try{const r=await fetch(ep+'?action=crmget&id='+id+'&biz='+biz+'&r='+Date.now()).then(x=>x.json());
+    if(r.ok&&r.status==='완료'&&r.result){applyImport(r.result);crmMsg('조회 이력에서 열었어요 (다시 조회하지 않음).')}
+    else if(r.ok)crmPoll(ep,id,Date.now());else crmMsg(r.error||'열지 못했어요.',1)}
+  catch(e){crmMsg('열지 못했어요.',1)}}
+$('#histBox').addEventListener('toggle',e=>{if(e.target.open)loadHist()});
 function crmMsg(t,bad){$('#crmMsg').className='muted'+(bad?' bad':'');$('#crmMsg').textContent=t}
 async function crmPoll(ep,id,started){clearTimeout(CRMT);
   try{const r=await fetch(ep+'?action=crmget&id='+id+'&biz='+CRMBIZ+'&r='+Date.now()).then(x=>x.json());
     if(!r.ok){crmMsg(r.error||'확인하지 못했습니다.',1);return}
-    if(r.status==='완료'&&r.result){applyImport(r.result);crmMsg('불러왔습니다. 숫자는 대략값이니 확인하세요.');dartMsg('');return}
+    if(r.status==='완료'&&r.result){applyImport(r.result);crmMsg(r.memo&&/메트/.test(r.memo)?r.memo+' 숫자는 대략값이니 확인하세요.':'불러왔습니다. 숫자는 대략값이니 확인하세요.');dartMsg('');if($('#histBox').open)loadHist();return}
     if(r.status==='미등록'||r.status==='실패'){crmMsg(r.memo||r.status,1);if(/재무자료/.test(r.memo||'')){const fb=$('#fsBox');if(fb){fb.open=true;fb.scrollIntoView({behavior:'smooth',block:'center'})}}return}
     const min=Math.round((Date.now()-started)/60000);
     crmMsg(`${r.status==='등록 대기'?'CRM 등록 후 자료를 기다리는 중':'조회 중'}… ${min}분 ${r.memo?'· '+r.memo:''}`);

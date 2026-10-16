@@ -142,6 +142,10 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <textarea id="fsText" rows="6" placeholder="예)&#10;(단위: 원)&#10;매출액 1,200,000,000 ...&#10;당기순이익 110,000,000&#10;이익잉여금 ...&#10;자본총계 ...&#10;주.임.종단기채권 ..."></textarea>
     <div class="btns" style="margin-top:6px"><button class="b p" id="fsParse">읽어서 채우기</button></div>
     <div id="fsOut" style="margin-top:8px"></div>
+    <div class="muted" style="margin:12px 0 4px"><b>또는 연도별 숫자를 직접 넣기</b> (억원 · 있는 해만 넣으세요, 1년만 있어도 됩니다)</div>
+    <div class="tw"><table class="mt fs3"><tr><th>항목</th><th><input id="fy0" style="width:70px"></th><th><input id="fy1" style="width:70px"></th><th><input id="fy2" style="width:70px"></th></tr>
+      <tr><td>매출</td><td><input type="number" step="0.01" id="f3_sales_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_sales_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_sales_2" style="width:80px"></td></tr><tr><td>영업이익</td><td><input type="number" step="0.01" id="f3_op_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_op_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_op_2" style="width:80px"></td></tr><tr><td>순이익</td><td><input type="number" step="0.01" id="f3_ni_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_ni_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_ni_2" style="width:80px"></td></tr><tr><td>자본총계</td><td><input type="number" step="0.01" id="f3_equity_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_equity_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_equity_2" style="width:80px"></td></tr><tr><td>부채총계</td><td><input type="number" step="0.01" id="f3_debt_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_debt_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_debt_2" style="width:80px"></td></tr><tr><td>이익잉여금</td><td><input type="number" step="0.01" id="f3_retained_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_retained_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_retained_2" style="width:80px"></td></tr><tr><td>가지급금</td><td><input type="number" step="0.01" id="f3_loan_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_loan_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_loan_2" style="width:80px"></td></tr><tr><td>현금성 자산</td><td><input type="number" step="0.01" id="f3_cash_0" style="width:80px"></td><td><input type="number" step="0.01" id="f3_cash_1" style="width:80px"></td><td><input type="number" step="0.01" id="f3_cash_2" style="width:80px"></td></tr></table></div>
+    <div class="btns" style="margin-top:6px"><button class="b p" type="button" id="fs3Apply">연도별 숫자 반영</button><span id="fs3Msg" class="muted"></span></div>
   </details>
 
   <fieldset><legend>① 상대 정보</legend>
@@ -605,6 +609,19 @@ function parseFS(txt){
   txt.split(/\r?\n/).forEach(raw=>{const l=raw.trim().replace(/^(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|\(?\d{1,2}[.)]|\(?[가-하][.)])\s*/,'').replace(/\s+/g,' ').trim();
     for(const[k,,re]of FS_KEYS){if(out[k]!=null)continue;if(re.test(l.replace(/\s/g,''))){const rest=l.replace(/^[^\d(-]*/,'');const v=fsNum(rest);if(v!=null)out[k]=v*unit/1e8}}});
   out._corp=/자본금|법인세/.test(txt);return out}
+const FS3=['sales','op','ni','equity','debt','retained','loan','cash'];
+(function(){const y=new Date().getFullYear();[0,1,2].forEach(n=>{const e=$('#fy'+n);if(e&&!e.value)e.value=String(y-3+n)})})();
+/* CRM·메트로 받은 3년 숫자를 표에도 채워 둠 */
+function fillFs3(h){if(!h||!h.years)return;const ys=h.years.slice(-3),off=3-ys.length;FS3.forEach(k=>[0,1,2].forEach(n=>{const e=$(`#f3_${k}_${n}`);if(e)e.value=''}));
+  ys.forEach((y,i)=>{const n=i+off;$('#fy'+n).value=y;FS3.forEach(k=>{const a=(h[k]||[]).slice(-3);const v=a[i];if(v!=null)$(`#f3_${k}_${n}`).value=Math.round(v*100)/100})})}
+$('#fs3Apply').onclick=()=>{const cols=[0,1,2].filter(n=>FS3.some(k=>$(`#f3_${k}_${n}`).value!==''));
+  if(!cols.length){$('#fs3Msg').textContent='숫자를 한 칸 이상 넣어 주세요.';return}
+  const h={years:cols.map(n=>$('#fy'+n).value.trim()||'')};FS3.forEach(k=>{h[k]=cols.map(n=>{const v=$(`#f3_${k}_${n}`).value;return v===''?null:+v})});
+  const last=a=>{for(let i=a.length-1;i>=0;i--)if(a[i]!=null)return a[i];return null};
+  lastFS={...lastFS,hist:h,debt:last(h.debt),retained:last(h.retained),loan:last(h.loan)};
+  const set=(id,v)=>{if(v!=null)$('#'+id).value=Math.round(v*100)/100};set('sales',last(h.sales));set('profit',last(h.ni));set('equity',last(h.equity));set('cash',last(h.cash));
+  if(last(h.loan)>=0.5)$('#f_loan').checked=true;if(last(h.retained)>=5)$('#f_retained').checked=true;
+  toggle();run();$('#fs3Msg').textContent=`${cols.length}개 연도를 반영했어요. 회사 가치는 ${cols.length>=3?'3년':cols.length+'년'} 순이익 기준으로 계산합니다.`};
 function applyFS(){const f=parseFS($('#fsText').value);lastFS=f;const r=x=>x==null?'–':(Math.round(x*100)/100)+'억';
   const set=(id,v)=>{if(v==null)return;const e=$('#'+id);if(e.type==='checkbox')e.checked=v;else e.value=v};
   if(f._corp)set('form_','법인');set('sales',f.sales!=null?Math.round(f.sales*10)/10:null);
@@ -747,17 +764,25 @@ const PCMOD={"corpConv": {"issue": "이익이 커져 개인 세율 부담이 크
 /* ---------- 업체 분석: 이슈 신호등 8종 (PC 준비 표준 7절 기준, 기본값은 보완 필요) ---------- */
 const GROW=0.03;
 const eok1=v=>{const neg=v<0;v=Math.abs(v);let t;if(v>=10000){const j=Math.floor(v/10000),r=Math.round(v%10000);t=j.toLocaleString('ko-KR')+'조'+(r?' '+r.toLocaleString('ko-KR')+'억':'')}else t=(v>=100?Math.round(v).toLocaleString('ko-KR'):(Math.round(v*10)/10).toString().replace(/\.0$/,''))+'억';return(neg?'-':'')+t};
-function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,ni=nz(c.profit)?c.profit:0,re=!!c.f_realEstate,sh=(nz(c.share)?c.share:100)/100;
-  const val=(e,p)=>{let v=re?e:(3*Math.max(0,p)/0.1+2*e)/5;return Math.max(v,e*0.8)};
-  const proj=[1,3,5,10].map(k=>{let e=eq,p=ni;for(let i=0;i<k;i++){p=p*(1+GROW);e+=Math.max(0,p)}return[k,val(e,p)*sh]});
-  return{now:val(eq,ni)*sh,proj,re}}
+/* 회사 가치: 메트 기업분석과 같은 방식
+   순손익가치 = 최근 3년 순이익을 1:2:3 가중평균 ÷ 10% (있는 해만, 1~2년이면 그만큼만)
+   기업가치 = (순손익가치×3 + 순자산×2) ÷ 5, 단 순자산의 80% 미만이면 80%
+   사업 3년 미만·부동산 비중 높음 → 순자산 기준. 앞으로는 이익이 매년 3% 늘고 쌓인다고 가정 */
+function niSeries(c){const h=lastFS&&lastFS.hist&&lastFS.hist.ni;const a=(h||[]).filter(x=>x!=null);return a.length?a.slice(-3):(nz(c.profit)?[c.profit]:[])}
+function wavg(a){if(!a.length)return 0;const w=a.map((_,i)=>i+1);return a.reduce((t,x,i)=>t+x*w[i],0)/w.reduce((t,x)=>t+x,0)}
+function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,sh=(nz(c.share)?c.share:100)/100;
+  const young=nz(c.years)&&c.years<3,re=!!c.f_realEstate,netOnly=re||young;const ns=niSeries(c);const yrs=ns.length;if(!yrs)ns.push(0);
+  const val=(e,arr)=>{const pv=Math.max(0,wavg(arr.slice(-3)))/0.1;const v=netOnly?e:(3*pv+2*e)/5;return Math.max(v,e*0.8)};
+  const base=wavg(ns);
+  const proj=[1,3,5,10].map(k=>{let e=eq,arr=[...ns],p=base;for(let i=0;i<k;i++){p=p*(1+GROW);arr.push(p);e+=Math.max(0,p)}return[k,val(e,arr)*sh]});
+  return{now:val(eq,ns)*sh,proj,re,young,netOnly,base,yrs,whole:val(eq,ns)}}
 const LV={r:['빨강','#c0392b'],o:['주황','#d9822b'],g:['초록','#2e8b57'],x:['자료 필요','#8a949e']};
 function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,con)=>out.push({n,name,lv,line,con});
   // 1 회사 가치
   if(v){const v10=v.proj[3][1];add(1,'회사 가치',v.now>=10?'r':v.now>=5?'o':'g',`대표님 지분 가치는 약 ${eok1(v.now)}로 추정되며, 이대로면 10년 후 약 ${eok1(v10)}입니다.`,['inherit','policy','estate'])}
   else add(1,'회사 가치','x','법인 순자산·순이익이 있으면 주식가치를 추정합니다.',[]);
   // 2 잉여금
-  if(f.retained!=null){const R=f.retained,p=nz(c.profit)?Math.max(0,c.profit):0;let R10=R,q=p;for(let i=0;i<10;i++){q*=1+GROW;R10+=q}
+  if(f.retained!=null){const R=f.retained,p=Math.max(0,wavg(niSeries(c)));let R10=R,q=p;for(let i=0;i<10;i++){q*=1+GROW;R10+=q}
     add(2,'잉여금 누적',R>=10||R10>=20?'r':R>=3?'o':'g',`회사에 쌓인 잉여금은 ${eok1(R)}이고, 이대로면 10년 후 약 ${eok1(R10)}이 됩니다.`,['exitRet','cashBld'])}
   else if(c.f_retained)add(2,'잉여금 누적','o','잉여금이 수억 쌓였고 꺼내는 구조가 아직 없습니다.',['exitRet','cashBld']);
   else add(2,'잉여금 누적','x','이익잉여금 숫자가 있으면 판단합니다.',[]);
@@ -796,7 +821,7 @@ function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,notes}=r
    ${int&&LASTMET?metBox():''}<h2>재무 현황</h2>${histTable()}<div class="kv">${kv.map(([k,val])=>`<div><span class="muted">${k}</span><b>${val}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
    ${(()=>{if(!c.bizinfo)return'';const rp=resParse(),base=c.bizinfo.split('[인터넷 조사')[0].trim();
      return`<h2>회사 이야기</h2>${base?`<p>${esc(base).replace(/\n/g,'<br>')}</p>`:''}${rp&&rp.items.length?`<h3>인터넷에서 찾은 회사 정보</h3><ul class="t">${rp.items.map(([k,v])=>`<li><b>${esc(k)}</b>: ${esc(v)}</li>`).join('')}</ul><div class="muted">공개 자료 기준이며 "확인 필요" 항목은 미팅에서 확인합니다.</div>`:''}`})()}
-   ${v?`<h2>회사 가치와 앞으로</h2><table class="mt"><tr><th>시점</th><th>지금</th>${v.proj.map(([k])=>`<th>${k}년 후</th>`).join('')}</tr><tr><td>대표 지분 가치 (추정)</td><td>${eok1(v.now)}</td>${v.proj.map(([,x])=>`<td>${eok1(x)}</td>`).join('')}</tr></table><div class="muted">순손익가치(순이익 ÷ 10%)와 순자산을 3:2로 가중한 약식 추정입니다${v.re?' (부동산 비중이 높아 순자산 기준)':''}. 이익은 매년 ${GROW*100}% 늘고 모두 쌓인다고 가정했습니다. 상증법 정식 평가가 아닙니다.</div>`:''}
+   ${v?`<h2>회사 가치와 앞으로</h2><table class="mt"><tr><th>시점</th><th>지금</th>${v.proj.map(([k])=>`<th>${k}년 후</th>`).join('')}</tr><tr><td>대표 지분 가치 (추정)</td><td>${eok1(v.now)}</td>${v.proj.map(([,x])=>`<td>${eok1(x)}</td>`).join('')}</tr></table><div class="muted">${v.netOnly?(v.re?'부동산 비중이 높아':'사업 3년 미만이라')+' 순자산 기준으로 봤습니다':`최근 ${v.yrs||1}년 순이익을 ${v.yrs>=3?'1:2:3으로 ':v.yrs===2?'1:2로 ':''}가중평균한 순손익가치(÷10%)와 순자산을 3:2로 가중했고, 순자산의 80%보다 작으면 80%로 봤습니다`} (메트 기업분석과 같은 약식 방식). 이익은 매년 ${GROW*100}% 늘고 모두 쌓인다고 가정했습니다. 상증법 정식 평가가 아닙니다.</div>`:''}
    ${pick.length?`<h2>이슈별 한 장</h2>${pick.map(i=>{const k=dx.find(d=>i.con.includes(d.id))||null,X=ISSUE_X[i.n]||['',''];return`<div class="isu"><h3><span class="dot" style="background:${LV[i.lv][1]}"></span>${i.n}. ${esc(i.name)} <span class="muted" style="font-size:13px">${LV[i.lv][0]}</span></h3><dl><dt>지금 상황</dt><dd>${esc(i.line)}</dd>${X[0]?`<dt>그대로 두면</dt><dd>${esc(X[0])}</dd>`:''}${k?`<dt>해결 방향</dt><dd>${esc(int?k.name+': '+k.alt:k.alt)}</dd>`:''}${X[1]?`<dt>필요한 자료</dt><dd>${esc(X[1])}</dd>`:''}</dl>${int&&k?`<div class="muted">PC 방향: ${esc(k.pc)}</div>`:''}</div>`}).join('')}`:''}
    ${notes.length?`<h2>대표님 상황</h2><ul class="t">${notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:''}
    ${top?`<h2>함께 검토할 방향</h2>${dx.slice(0,int?3:2).map((k,i)=>`<h3>${i+1}. ${esc(int?k.name:k.need)}</h3><p>${esc(k.alt)}</p>`).join('')}`:''}
@@ -857,7 +882,7 @@ function slideData(mode){const{c,dx,top,kv,notes}=reportData();if(!top)return[];
   if(notes.length)S.push({t:'지난번 말씀하신 것',b:notes.slice(0,3),say:`먼저 지난번에 하신 말씀을 그대로 적어 왔습니다. ${notes[0]?'"'+notes[0]+'" ':''}제가 맞게 이해했는지 확인하고 시작하겠습니다.`});
   S.push({t:'한눈에 보는 진단',b:sigItems,say:`회사 상황을 여덟 가지로 나눠 봤습니다. 빨간색이 ${IS.filter(i=>i.lv==='r').length}개, 주황색이 ${IS.filter(i=>i.lv==='o').length}개입니다. ${IS.some(i=>i.lv==='r')?'오늘은 빨간색부터 보겠습니다.':IS.some(i=>i.lv==='o')?'급한 빨간색은 없고, 주황색부터 보겠습니다.':'당장 급한 이슈는 없어서, 미리 준비할 것 위주로 보겠습니다.'}`});
   const H=histRows();S.push({t:'회사의 현재 모습',b:kv1.map(x=>`${x[0]}: ${x[1]}`),chart:H?{title:'최근 재무 흐름 (억원)',labels:H.years.map(y=>y+'년'),series:H.rows.filter(([k])=>k==='매출'||k==='순이익').map(([k,a])=>({name:k,values:a.map(x=>x==null?0:Math.round(x*10)/10)}))}:null,say:`숫자로 보면 ${kv1.slice(0,3).map(x=>x[0]+'이 '+x[1]).join(', ')}입니다. 주신 자료 기준의 대략값입니다.`});
-  if(v)S.push({t:'회사 가치와 앞으로',chart:{title:'대표 지분 가치 추정 (억원)',labels:['지금',...v.proj.map(([k])=>k+'년 후')],series:[{name:'지분 가치',values:[v.now,...v.proj.map(([,x])=>x)].map(x=>Math.round(x*10)/10)}]},b:[`대표 지분 가치 (추정): 지금 ${eok1(v.now)}`,...v.proj.map(([k,x])=>`${k}년 후: ${eok1(x)}`),`가정: 이익 매년 ${GROW*100}% 증가, 약식 추정 (정식 평가 아님)`],say:`회사가 지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(v.proj[3][1])}이 됩니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`});
+  if(v)S.push({t:'회사 가치와 앞으로',chart:{title:'대표 지분 가치 추정 (억원)',labels:['지금',...v.proj.map(([k])=>k+'년 후')],series:[{name:'지분 가치',values:[v.now,...v.proj.map(([,x])=>x)].map(x=>Math.round(x*10)/10)}]},b:[`대표 지분 가치 (추정): 지금 ${eok1(v.now)}`,...v.proj.map(([k,x])=>`${k}년 후: ${eok1(x)}`),`가정: 최근 순이익 가중평균 기준, 매년 ${GROW*100}% 증가, 약식 추정 (정식 평가 아님)`],say:`회사가 지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(v.proj[3][1])}이 됩니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`});
   IS.filter(i=>i.lv==='r'||i.lv==='o').slice(0,3).forEach(i=>{const k=dx.find(d=>i.con.includes(d.id));S.push({t:`${i.name}`,b:[i.line,...(k?['검토 방향: '+k.alt]:[]),...(int&&k?['PC 방향: '+k.pc]:[])],say:`${i.line} ${k?k.alt:''} 가만히 두면 어떻게 되는지, 준비하면 무엇이 달라지는지 같이 보시죠.`})});
   S.push({t:'해결 구조',b:['① 규정 정비 (정관·규정·의사록)','② 재원 마련 (회사 이익의 일부를 목적에 맞게)','③ 사후 관리 (매년 점검, 세무사 검토)',...(int&&m?['상품 후보: '+m.products.join(', ')]:[])],say:'해결은 세 단계입니다. 먼저 규정을 정비하고, 그다음 재원을 나눠서 만들고, 매년 함께 점검합니다.'});
   if(int&&a&&!a.none)S.push({t:'기본 제안 (세 가지 안)',b:[`A안 (부담 완화): 월 ${man(a.low)}`,`기준안: 월 ${man(a.mid)}`,`B안 (여유): 월 ${man(a.high)}`,'재정심사 확인 후 확정'],say:`(내부용 장) 세 가지 안을 준비했습니다. "어느 안이 대표님 현금 흐름에 맞으세요?" 재정심사 전에는 금액을 확정하지 않습니다.`});
@@ -1075,7 +1100,7 @@ async function dartLoad(code){const ep=await dartEndpoint();dartMsg('공시 자�
   catch(e){dartMsg('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',1)}}
 
 /* ---------- 사업자번호 → 리치 CRM 조회 요청 (관리자 PC의 조회 도우미가 처리) ---------- */
-function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};LASTMET=d.met||null;mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
+function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};LASTMET=d.met||null;if(d.fs&&d.fs.hist)fillFs3(d.fs.hist);mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
 let CRMT=null,RES=null,CRMBIZ='',LASTMET=null;
 /* 인터넷 조사: 결과를 "회사 공개 정보"에 붙임 (CRM 자료가 나중에 와도 유지) */
 function mergeResearch(){if(!RES)return;const bi=$('#bizinfo');if(!bi.value.includes('[인터넷 조사'))bi.value=(bi.value?bi.value+'\n':'')+'[인터넷 조사 '+new Date().toISOString().slice(0,10)+']\n'+RES.text}

@@ -502,6 +502,7 @@ function productHint(c,top){const a=c.age,m=c.sex!=='여';const out=[];
     else if(a<(m?63:68))out.push(`대표 ${a}세: 경정기 환급률 하락 구간 → 원금형 종신(제로백) 비교 (남 63세·여 68세까지)`);
     else out.push(`대표 ${a}세: 원금형 종신 가입 한계 초과 → 간편심사 종신(모두의 종신, 세븐PlusⅡ 등)`)}
   if(top&&['usdWhole'].includes(top.id))out.push('목적자금: 달러 단기납 종신(백만종). 10년 유지·환율 조건 고지');
+  if(nz(a)&&a<=70&&(top&&['protect','ceo','inherit','estate','family','retire'].includes(top.id)||c.f_familyLoss)){const p1=a<70?'90세 만기':'90세 만기(간편)';out.push(`가장 사망보장을 낮은 보험료로 + 환급·전환까지: 변액정기(MAVERICK, ${p1}). 연소득 3~5배 보장, 7년 후 종신·연금·달러 전환 가능. 변액이라 원금 손실 가능 고지, 법인 계약 손금은 세무사 검토`)}
   if(top&&top.id==='cashBld')out.push('법인 유휴현금: 저축성 달러 연금(쿠폰) → 다른 보험료 재원');
   if(nz(a)&&(c.form==='법인'||top&&['ceo','inherit','corpConv','exitRet'].includes(top.id))){const q=`simulator.html?age=${a}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}`;out.push(`<a href="${q}" target="_blank">경정기 시뮬레이터에서 ${a}세 ${c.sex||'남'} 바로 보기</a> `)}
   out.push('상품 조건은 수시로 바뀝니다. 현행 상품설명서·가입설계서로 확인');return out}

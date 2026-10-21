@@ -120,24 +120,18 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <section class="card form" id="form">
   <div class="btns" style="margin-bottom:12px"><button class="b" id="sample">예시 1: 제조업 대표</button><button class="b" id="sample2">예시 2: 강사 원장</button><button class="b" id="reset">비우기</button></div>
   <details id="dartBox" open style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">업체자료 불러오기</summary>
-    <div id="passRow" class="crmbox" hidden style="border-style:solid"><b>팀 비밀번호</b> <span class="muted">CRM 조회와 조회 목록은 팀 비밀번호가 있어야 볼 수 있어요 (한 번 넣으면 이 기기에서 기억)</span><div class="btns" style="margin-top:6px;align-items:center"><input type="password" id="teamPass" style="max-width:200px" autocomplete="off"><button class="b p" type="button" id="passOk">확인</button><span id="passMsg" class="muted"></span></div></div>
-    <div id="crmBox" class="crmbox">
+    <div class="crmbox">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:6px">
-        <div><label>사업자등록번호 *</label><input type="text" id="dartQ" inputmode="numeric" maxlength="12" placeholder="000-00-00000" autocomplete="off"></div>
-        <div><label>대표자명 *</label><input type="text" id="crmCeo" placeholder="예: 김OO" autocomplete="off"></div>
         <div><label>상호명 *</label><input type="text" id="crmCo" placeholder="예: OO정밀(주)" autocomplete="off"></div>
+        <div><label>대표자명 <span class="muted">(인터넷 검색 정확도용, 선택)</span></label><input type="text" id="crmCeo" placeholder="예: 김OO" autocomplete="off"></div>
       </div>
-      <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="crmConsent"> 정보제공 동의를 받은 업체입니다</label>
-      <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="resOpt"> 인터넷에서 회사 공개 정보도 검색하기 (유료)</label>
-      <div class="btns" style="margin-top:6px;align-items:center"><button class="b p" type="button" id="crmReq" disabled>불러오기</button><span id="crmState" class="crmst"></span><span class="muted" id="crmMsg">사업자등록번호·대표자명·상호명을 모두 넣으면 버튼이 켜집니다.</span></div>
+      <div class="btns" style="align-items:center"><button class="b p" type="button" id="dartFind">전자공시(DART)에서 찾기</button><button class="b" type="button" id="resBtn">인터넷에서 회사 정보 찾기 (유료)</button><span id="dartMsg" class="muted"></span></div>
+      <div id="dartList" class="btns" style="margin:6px 0"></div>
       <div class="muted" id="resMsg" style="margin-top:4px"></div><div id="resSrc" class="muted" style="font-size:12.5px"></div>
-      <div class="muted" style="margin-top:4px">리치 CRM에서 불러옵니다. 보통 1~3분, 새로 등록한 회사는 20분쯤 걸려요. 인터넷 검색에 체크하면 기다리는 동안 회사 공개 정보(소개·제품·거래처·뉴스·대표 업무 경력)를 찾아 "회사 공개 정보"에 넣어 둡니다. 화면을 열어 두면 자동으로 채워집니다.</div>
+      <div class="muted" style="margin-top:6px">전자공시는 상장사·외부감사 법인만 있어요. 그 밖의 회사는 아래 <b>"재무자료 붙여넣기"</b>에 재무제표를 붙이거나 연도별 숫자를 직접 넣으세요. 고객에게는 <b>"무료로 회사 가치(영업권) 평가를 해 드릴게요"</b>라며 사업자등록증과 최근 3년 재무제표를 받으면 자연스럽습니다.</div>
     </div>
-    <details id="histBox" open style="margin:6px 0"><summary style="cursor:pointer;font-weight:600">조회 목록 <span class="muted" style="font-weight:400">(누가 조회했든 누르면 다시 조회하지 않고 바로 열려요 · 조회 중인 회사도 여기 보여요)</span></summary><div id="histList" class="btns" style="margin-top:6px"><span class="muted">불러오는 중…</span></div></details>
-    <div class="btns" style="margin:6px 0;align-items:center"><span class="muted">상장사·외부감사 법인이면</span><button class="b" id="dartFind" type="button">전자공시(DART)에서도 찾기</button><span id="dartMsg" class="muted"></span></div>
-    <div id="dartList" class="btns" style="margin-bottom:6px"></div>
   </details>
-  <details id="fsBox" style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">재무자료 붙여넣기 → 자동 입력</summary>
+  <details id="fsBox" open style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">재무자료 붙여넣기 → 자동 입력</summary>
     <div class="muted" style="margin:6px 0">재무상태표·손익계산서 텍스트(위하고·홈택스·PDF 복사)를 그대로 붙여넣으세요. 첫 번째 숫자를 당기 값으로 읽습니다. 단위(원·천원·백만원)는 "(단위:" 표기로 판단합니다.</div>
     <textarea id="fsText" rows="6" placeholder="예)&#10;(단위: 원)&#10;매출액 1,200,000,000 ...&#10;당기순이익 110,000,000&#10;이익잉여금 ...&#10;자본총계 ...&#10;주.임.종단기채권 ..."></textarea>
     <div class="btns" style="margin-top:6px"><button class="b p" id="fsParse">읽어서 채우기</button></div>
@@ -1104,7 +1098,7 @@ async function dartLoad(code){const ep=await dartEndpoint();dartMsg('공시 자�
 
 /* ---------- 사업자번호 → 리치 CRM 조회 요청 (관리자 PC의 조회 도우미가 처리) ---------- */
 function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각'],...(d.fields||{})});if(d.fs)lastFS={...lastFS,...d.fs};LASTMET=d.met||null;if(d.fs&&d.fs.hist)fillFs3(d.fs.hist);mergeResearch();toggle();run();document.querySelector('.tab[data-t="rp"]').click()}
-let CRMT=null,RES=null,CRMBIZ='',LASTMET=null;
+let RES=null,LASTMET=null;
 /* 인터넷 조사: 결과를 "회사 공개 정보"에 붙임 (CRM 자료가 나중에 와도 유지) */
 function mergeResearch(){if(!RES)return;const bi=$('#bizinfo');if(!bi.value.includes('[인터넷 조사'))bi.value=(bi.value?bi.value+'\n':'')+'[인터넷 조사 '+new Date().toISOString().slice(0,10)+']\n'+RES.text}
 async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('#resMsg').textContent='인터넷에서 회사 정보를 찾는 중… (약 1분)';
@@ -1114,69 +1108,11 @@ async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('
     $('#resMsg').textContent='인터넷 조사 완료'+(r.cached?' (최근 조사 재사용)':'')+': "회사 공개 정보"에 넣었습니다. 사실과 다르면 고쳐 주세요.';
     $('#resSrc').innerHTML=(r.sources||[]).length?'출처: '+r.sources.map((s,i)=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+(i+1)+'. '+esc(s.title||s.url)+'</a>').join(' · '):''}
   catch(e){$('#resMsg').textContent='인터넷 조사: 연결하지 못했습니다'}}
-async function crmState(){const el=$('#crmState');if(!el)return;const ep=await dartEndpoint();if(!ep)return;
-  try{const r=await fetch(ep+'?action=crmstatus&r='+Date.now()).then(x=>x.json());if(!r.ok)return;
-    const [c,t]=r.login?['#d9822b','● CRM 로그인 대기 중 (관리자가 확인해요)']:r.alive?['#2e8b57','● CRM 조회 가능']:['#8a949e','● 조회 도우미 쉬는 중 (요청은 저장되고 켜지면 처리돼요)'];
-    el.style.color=c;el.textContent=t}catch(e){}}
-crmState();setInterval(crmState,60000);
 function TP(){try{return localStorage.getItem('team_pass')||''}catch(e){return ''}}
-function needPass(){const row=$('#passRow');if(row){row.hidden=false;$('#passMsg').textContent=TP()?'비밀번호가 바뀌었거나 틀렸어요. 다시 넣어 주세요.':'';}}
-function savePending(v){try{v?localStorage.setItem('crm_pending',JSON.stringify(v)):localStorage.removeItem('crm_pending')}catch(e){}}
-$('#passOk').onclick=async()=>{const v=$('#teamPass').value.trim();if(!v)return;const ep=await dartEndpoint();if(!ep)return;
-  try{const r=await fetch(ep+'?action=passcheck&pass='+encodeURIComponent(v)+'&r='+Date.now()).then(x=>x.json());
-    if(r.ok){try{localStorage.setItem('team_pass',v)}catch(e){}$('#passRow').hidden=true;$('#teamPass').value='';loadHist();resumePending()}
-    else $('#passMsg').textContent='비밀번호가 맞지 않아요.'}catch(e){$('#passMsg').textContent='연결하지 못했어요.'}};
-$('#teamPass').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#passOk').click()}});
-/* 새로고침해도 조회 중이던 회사를 이어서 기다림 */
-async function resumePending(){let v=null;try{v=JSON.parse(localStorage.getItem('crm_pending')||'null')}catch(e){}
-  if(!v||Date.now()-v.t>3*3600e3)return savePending(null);const ep=await dartEndpoint();if(!ep)return;
-  CRMBIZ=v.biz;$('#dartQ').value=bizFmt(v.biz);if(v.co)$('#crmCo').value=v.co;loadReady();crmMsg('아까 조회하던 회사를 이어서 확인하는 중…');crmPoll(ep,v.id,v.t)}
-(async()=>{const ep=await dartEndpoint();if(!ep)return;if(!TP()){needPass();$('#histList').innerHTML='<span class="muted">팀 비밀번호를 넣으면 보여요.</span>';return}loadHist();resumePending()})();
-async function loadHist(){const el=$('#histList');if(!el)return;const ep=await dartEndpoint();if(!ep){el.innerHTML='<span class="muted">사이트에서 열었을 때 볼 수 있어요.</span>';return}
-  try{const r=await fetch(ep+'?action=crmhist&pass='+encodeURIComponent(TP())+'&r='+Date.now()).then(x=>x.json());if(!r.ok&&r.code==='pass'){needPass();el.innerHTML='<span class="muted">팀 비밀번호를 넣으면 보여요.</span>';return}if(!r.ok||!r.items.length){el.innerHTML='<span class="muted">아직 조회한 회사가 없어요.</span>';return}
-    el.innerHTML=r.items.map(i=>`<span style="display:inline-flex;gap:2px"><button class="b" type="button" data-hid="${i.id}" data-biz="${i.biz}" data-co="${esc(i.co)}" title="${esc(i.status)}">${esc(i.co||'(상호 없음)')} <span class="muted">${bizFmt(i.biz)} · ${esc(i.time.slice(5,10))}${i.status==='완료'?(i.met?' · 메트✓':''):' · '+esc(i.status)}</span></button><button class="b" type="button" data-del="${i.biz}" data-co="${esc(i.co)}" title="목록에서 지우기" style="padding-inline:8px">✕</button></span>`).join(' ');
-    $$('#histList [data-hid]').forEach(b=>b.onclick=()=>openHist(ep,b.dataset.hid,b.dataset.biz,b.dataset.co));
-    $$('#histList [data-del]').forEach(b=>b.onclick=()=>delHist(ep,b.dataset.del,b.dataset.co))}
-  catch(e){el.innerHTML='<span class="muted">이력을 불러오지 못했어요.</span>'}}
-async function delHist(ep,biz,co){if(!confirm(`${co||bizFmt(biz)}을(를) 조회 목록에서 지울까요?
-(조회 중이었다면 조회도 멈춥니다. 다시 조회하면 새로 불러와요)`))return;
-  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmdel',biz,pass:TP()})}).then(x=>x.json());
-    if(!r.ok){if(r.code==='pass')needPass();crmMsg(r.error||'지우지 못했어요.',1);return}
-    let v=null;try{v=JSON.parse(localStorage.getItem('crm_pending')||'null')}catch(e){}if(v&&v.biz===biz){savePending(null);clearTimeout(CRMT);crmMsg('')}
-    loadHist()}catch(e){crmMsg('지우지 못했어요.',1)}}
-async function openHist(ep,id,biz,co){CRMBIZ=biz;$('#dartQ').value=bizFmt(biz);if(co)$('#crmCo').value=co;loadReady();crmMsg('조회 이력에서 여는 중…');
-  try{const r=await fetch(ep+'?action=crmget&id='+id+'&biz='+biz+'&pass='+encodeURIComponent(TP())+'&r='+Date.now()).then(x=>x.json());
-    if(r.ok&&r.status==='완료'&&r.result){applyImport(r.result);crmMsg('조회 이력에서 열었어요 (다시 조회하지 않음).')}
-    else if(r.ok)crmPoll(ep,id,Date.now());else crmMsg(r.error||'열지 못했어요.',1)}
-  catch(e){crmMsg('열지 못했어요.',1)}}
-$('#histBox').addEventListener('toggle',e=>{if(e.target.open)loadHist()});
-function crmMsg(t,bad){$('#crmMsg').className='muted'+(bad?' bad':'');$('#crmMsg').textContent=t}
-async function crmPoll(ep,id,started){clearTimeout(CRMT);
-  try{const r=await fetch(ep+'?action=crmget&id='+id+'&biz='+CRMBIZ+'&pass='+encodeURIComponent(TP())+'&r='+Date.now()).then(x=>x.json());
-    if(!r.ok){if(r.code==='pass')needPass();crmMsg(r.error||'확인하지 못했습니다.',1);return}
-    if(r.status==='완료'&&r.result){savePending(null);applyImport(r.result);crmMsg(r.memo&&/메트/.test(r.memo)?r.memo+' 숫자는 대략값이니 확인하세요.':'불러왔습니다. 숫자는 대략값이니 확인하세요.');dartMsg('');if($('#histBox').open)loadHist();return}
-    if(r.status==='미등록'||r.status==='실패'){savePending(null);loadHist();crmMsg(r.memo||r.status,1);if(/재무자료/.test(r.memo||'')){const fb=$('#fsBox');if(fb){fb.open=true;fb.scrollIntoView({behavior:'smooth',block:'center'})}}return}
-    const min=Math.round((Date.now()-started)/60000);
-    crmMsg(`${r.status==='등록 대기'?'CRM 등록 후 자료를 기다리는 중':'조회 중'}… ${min}분 ${r.memo?'· '+r.memo:''}`);
-    if(Date.now()-started<45*60000)CRMT=setTimeout(()=>crmPoll(ep,id,started),10000);else crmMsg('시간이 오래 걸리고 있어요. 조회 도우미가 켜져 있는지 관리자에게 확인해 주세요.',1)}
-  catch(e){CRMT=setTimeout(()=>crmPoll(ep,id,started),15000)}}
-$('#crmReq').onclick=async()=>{if(!loadReady())return;const dg=$('#dartQ').value.replace(/\D/g,'');if(dg.length!==10){crmMsg('사업자번호 10자리를 넣어 주세요.',1);return}
-  const co=$('#crmCo').value.trim(),ceo=$('#crmCeo').value.trim();if(co.length<2||ceo.length<2){crmMsg('상호명과 대표자명을 함께 넣어 주세요.',1);return}
-  const ep=await dartEndpoint();if(!ep){crmMsg('사이트에서 열었을 때 쓸 수 있어요.',1);return}CRMBIZ=dg;
-  crmMsg('요청 보내는 중…');
-  if($('#resOpt').checked)runResearch(ep,dg,co,ceo);else{$('#resMsg').textContent='';$('#resSrc').innerHTML=''}
-  try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'crmreq',biz:dg,co,ceo,consent:$('#crmConsent').checked,pass:TP()})}).then(x=>x.json());
-    if(!r.ok){if(r.code==='pass')needPass();crmMsg(r.error||'요청하지 못했습니다.',1);return}
-    if(r.status==='완료'&&r.result){applyImport(r.result);crmMsg('최근에 조회한 자료로 불러왔습니다.');loadHist();return}
-    savePending({id:r.id,biz:dg,co,t:Date.now()});loadHist();crmPoll(ep,r.id,Date.now())}
-  catch(e){crmMsg('연결하지 못했습니다. 잠시 후 다시 시도해 주세요.',1)}};
 $('#dartFind').onclick=dartFind;
-/* 사업자등록번호 000-00-00000 자동 맞춤, 세 칸이 다 차야 불러오기 켜짐 */
-function bizFmt(v){const d=v.replace(/\D/g,'').slice(0,10);return d.length>5?d.slice(0,3)+'-'+d.slice(3,5)+'-'+d.slice(5):d.length>3?d.slice(0,3)+'-'+d.slice(3):d}
-function loadReady(){const ok=$('#dartQ').value.replace(/\D/g,'').length===10&&$('#crmCeo').value.trim().length>=2&&$('#crmCo').value.trim().length>=2;$('#crmReq').disabled=!ok;return ok}
-$('#dartQ').addEventListener('input',e=>{const el=e.target;el.value=bizFmt(el.value);loadReady()});
-['#crmCeo','#crmCo'].forEach(id=>$(id).addEventListener('input',loadReady));
-['#dartQ','#crmCeo','#crmCo'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(loadReady())$('#crmReq').click()}}));
+$('#resBtn').onclick=async()=>{const co=$('#crmCo').value.trim(),ceo=$('#crmCeo').value.trim();if(co.length<2){$('#resMsg').textContent='상호명을 두 글자 이상 적어 주세요.';return}
+  const ep=await dartEndpoint();if(!ep){$('#resMsg').textContent='사이트에서 열었을 때 쓸 수 있어요.';return}runResearch(ep,'',co,ceo)};
+$('#crmCo').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();dartFind()}});
 
 $$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr','pc'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal();if(t.dataset.t==='pr')renderPrompt()});
 $('#gen').onclick=()=>{run();document.querySelector('.tab[data-t="rp"]').click();document.getElementById('out').scrollIntoView({behavior:'smooth'})};

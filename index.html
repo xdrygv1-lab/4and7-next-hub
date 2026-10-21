@@ -276,7 +276,7 @@ details.sit summary{cursor:pointer;font-weight:600}
 
   <h2>한 업체가 지나가는 길</h2>
   <div class="flow">
-    <div class="st"><h3>업체자료 불러오기</h3><dl><dt>무엇으로</dt><dd>리치 CRM(KoData 재무 3년), 전자공시, 인터넷 공개 정보(선택·유료)</dd><dt>어떻게</dt><dd>사업자번호·대표자명·상호명을 넣으면 자동으로 찾아 채움</dd></dl><div class="up">정보제공 동의를 받은 업체만 CRM에 등록합니다</div></div>
+    <div class="st"><h3>업체자료 불러오기</h3><dl><dt>무엇으로</dt><dd>고객에게 받은 재무제표(붙여넣기·연도별 숫자), 전자공시, 인터넷 공개 정보(선택·유료)</dd><dt>어떻게</dt><dd>상호명으로 공시를 찾거나, 재무제표를 붙여넣으면 숫자를 읽어 채움</dd></dl><div class="up">"무료 회사 가치 평가"를 명분으로 최근 3년 재무제표를 받아요</div></div>
     <div class="st"><h3>업체 분석 (신호등 8가지)</h3><dl><dt>무엇으로</dt><dd>재무 숫자 + 체크한 상황</dd><dt>어떻게</dt><dd>회사 가치·잉여금·급여배당·퇴직금·가지급금·유고자금·주주·상속세를 빨강/주황/초록으로. 자료가 없으면 회색</dd></dl><div class="up">→ 실제 사례가 쌓일수록 <b>색 기준이 정확해져요</b></div></div>
     <div class="st"><h3>컨셉 진단</h3><dl><dt>무엇으로</dt><dd>공부하기의 컨셉 카드 50여 개</dd><dt>어떻게</dt><dd>카드마다 적힌 "이런 업체에 맞다" 신호와 대조해 1~3순위</dd></dl><div class="up">→ 계약·보류 사례가 들어가면 <b>순위가 정교해져요</b></div></div>
     <div class="st"><h3>첫 미팅(AP) 스크립트</h3><dl><dt>무엇으로</dt><dd>AP 15단계 표준, 화법·반론 자료</dd><dt>어떻게</dt><dd>업체 상황에 맞춰 단계별 멘트, 상품명 금지어 검사, 대략 점수</dd></dl><div class="up">→ 실제 녹음이 들어가면 <b>현장 말투</b>가 돼요</div></div>
@@ -287,9 +287,8 @@ details.sit summary{cursor:pointer;font-weight:600}
   <h2>뒤에서 돌아가는 것</h2>
   <div class="tw"><table><thead><tr><th>무엇</th><th>하는 일</th></tr></thead><tbody>
     <tr><td>이 사이트</td><td>링크만 있으면 누구나 여는 웹페이지. 휴대폰에서도 열려요</td></tr>
-    <tr><td>저장 서버 (구글)</td><td>바로 고치기·AI에게 가르치기 저장, AI·공시·CRM 연결 창구. 첨부 파일은 비공개 드라이브에</td></tr>
+    <tr><td>저장 서버 (구글)</td><td>바로 고치기·AI에게 가르치기 저장, AI·공시 연결 창구. 첨부 파일은 비공개 드라이브에</td></tr>
     <tr><td>AI (Claude)</td><td>물어보기, 자동작성, 인터넷 검색. 하루·한 달 사용 한도가 걸려 있어요</td></tr>
-    <tr><td>CRM 조회 도우미</td><td>관리자 PC에서 리치 CRM을 대신 조회. 요청하면 1~3분, 새로 등록한 회사는 20분쯤</td></tr>
     <tr><td>매일 밤 학습</td><td>밤 11시에 "AI에게 가르치기"로 들어온 자료를 읽고 사이트에 반영</td></tr>
     <tr><td>상품 비교 데이터</td><td>매주 월요일 자동으로 새 기준을 확인</td></tr>
   </tbody></table></div>
@@ -306,8 +305,8 @@ details.sit summary{cursor:pointer;font-weight:600}
   <h1>3분 시연: 가상의 회사로 따라가 보기</h1>
   <p class="lede"><b>가나정밀(주)</b>라는 가상의 제조업 법인으로 처음부터 PPT까지 따라가 봅니다. 회사 이름과 숫자는 모두 지어낸 것입니다.</p>
   <div class="demo">
-    <figure><img loading="lazy" src="img/demo/1_load.jpg" alt="업체자료 불러오기 화면"><figcaption><b>1. 업체자료 불러오기</b>사업자등록번호·대표자명·상호명 세 칸을 채우면 "불러오기"가 켜집니다. 옆의 초록 불은 CRM 조회가 가능하다는 표시예요. 인터넷 검색은 필요할 때만 체크(유료).</figcaption></figure>
-    <figure><img loading="lazy" src="img/demo/2_report.jpg" alt="업체 분석 보고서"><figcaption><b>2. 업체 분석 보고서</b>CRM에서 가져온 3년 재무로 신호등 8가지를 매깁니다. 이 회사는 빨강 5개: 회사 가치, 잉여금, 퇴직금, 유고 자금, 상속세. 3년 흐름과 매출 증가율도 같이 나와요.</figcaption></figure>
+    <figure><img loading="lazy" src="img/demo/1_load.jpg" alt="업체자료 불러오기 화면"><figcaption><b>1. 업체자료 불러오기</b>상호명으로 전자공시를 찾거나, 고객에게 받은 재무제표를 붙여넣거나 연도별 숫자를 직접 넣습니다. 인터넷 회사 정보 검색은 필요할 때만(유료).</figcaption></figure>
+    <figure><img loading="lazy" src="img/demo/2_report.jpg" alt="업체 분석 보고서"><figcaption><b>2. 업체 분석 보고서</b>3년 재무로 신호등 8가지를 매깁니다. 이 회사는 빨강 5개: 회사 가치, 잉여금, 퇴직금, 유고 자금, 상속세. 3년 흐름과 매출 증가율도 같이 나와요.</figcaption></figure>
     <figure><img loading="lazy" src="img/demo/3_issue.jpg" alt="이슈별 한 장"><figcaption><b>3. 이슈별 한 장</b>빨강·주황 이슈마다 "지금 상황 / 그대로 두면 / 해결 방향 / 필요한 자료"를 정리합니다. 위 "인쇄 · PDF 저장"으로 그대로 출력돼요.</figcaption></figure>
     <figure><img loading="lazy" src="img/demo/4_ap.jpg" alt="AP 스크립트"><figcaption><b>4. 첫 미팅(AP) 스크립트</b>15단계 멘트가 이 회사 상황에 맞춰 나옵니다. 인터넷에서 찾은 "2공장 증설" 소식이 첫 인사에, 만들어진 질문이 니즈 질문에 들어갔어요. <code>[ ]</code>는 대표님께 물어서 받을 숫자입니다.</figcaption></figure>
     <figure><img loading="lazy" src="img/demo/5_pc.jpg" alt="PC 준비"><figcaption><b>5. 제안(PC) 준비</b>제안 전 확인할 신호, 1·2순위 컨셉별 제안서 순서·계산·준비 자료·예상 반론·클로징 한 문장. 아래로 내리면 금액 세 안, 재정심사 미리 보기, 현장 화법, 청약·사후관리 체크가 이어집니다.</figcaption></figure>

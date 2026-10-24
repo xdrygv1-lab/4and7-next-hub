@@ -17,11 +17,12 @@
 <script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
-function check(p){return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){return !!j.ok}).catch(function(){return null})})}
+var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
+function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){return !!j.ok}).catch(function(){return null})})}
 if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}
 else setTimeout(function(){var i=document.getElementById('g47p');if(i)i.focus()},50);
 document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var p=document.getElementById('g47p').value.trim();if(!p)return;m.style.color='#5f6b66';m.textContent='확인 중…';
-  check(p).then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent='비밀번호가 맞지 않아요.';return}
+  check(p,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent='비밀번호가 맞지 않아요.';return}
     if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
     try{localStorage.setItem(K,p)}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
 })();</script>

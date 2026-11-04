@@ -90,11 +90,11 @@ const AX = [
   { id:'p', name:'설득', pos:['N','숫자형','표·계산·근거로 설득한다'], neg:['S','이야기형','사례·공감·가족 이야기로 움직인다'] },
   { id:'w', name:'방식', pos:['T','동행형','함께 갈 때(조인업) 힘이 난다'], neg:['O','독립형','혼자 준비해 끝까지 간다'] }
 ];
-/* 실제 활동 (점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
+/* 미팅 10번 (신인·활동 중 누구나 같게, 점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
 const BEH = [
-  ['최근 3개월 동안 새로 만난 대표 수', ['0~2명', '3~5명', '6~10명', '10명 넘게']],
-  ['최근 계약 중 소개로 온 비율', ['거의 없음', '절반 아래', '절반 넘게', '거의 전부']],
-  ['최근 3개월 동안 동행 미팅 횟수', ['0번', '1~2번', '3~5번', '6번 넘게']]
+  ['그중 처음 보는 대표와의 미팅은 몇 번으로 채울까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
+  ['그중 소개받은 대표와의 미팅은 몇 번이면 좋을까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
+  ['그중 지점장·선배·다른 자격사와 같이 가는 미팅은 몇 번?', ['0번', '1~2번', '3~5번', '6번 넘게']]
 ];
 const beh = {};
 const Q = [
@@ -199,8 +199,8 @@ function renderQs(){
   const PK = ['A 확실', 'A 쪽', '반반', 'B 쪽', 'B 확실'];
   $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => { const pr = q[2].split('||'), two = pr.length === 2;
     return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(q[2])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('')
-    + '<h2 style="margin-top:18px">실제 활동</h2><p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다. 골라도 되고 비워 둬도 됩니다.</p>'
-    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">활동 ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
+    + '<h2 style="margin-top:18px">다음 달 미팅 10번을 내 마음대로 잡는다면</h2><p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다.</p>'
+    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">미팅 ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
   prog();
 }
 function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항`; }

@@ -2,7 +2,7 @@
 (function(){
   if (window.top === window) return;
   var root = document.documentElement; root.classList.add('embed');
-  var MAP = {'uw-calc.html':'tool-uw','checklist.html':'tool-check','library.html':'tool-lib','simulator.html':'tool-sim','ap-generator.html':'tool-ap'};
+  var MAP = {'uw-calc.html':'tool-uw','checklist.html':'tool-check','library.html':'tool-lib','simulator.html':'tool-sim','ap-generator.html':'tool-ap','roleplay.html':'tool-rp'};
   var st = document.createElement('style'); st.textContent = '.embed header.top .brand{display:none}'; document.head.appendChild(st);
   document.addEventListener('click', function(e){
     var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;

@@ -1081,7 +1081,7 @@ function renderSc(){const{S}=last;let html='',cur='';const tm={진입:'5분',전
   S.forEach(s=>{if(s.blk!==cur){cur=s.blk;html+=`<div class="blk"><b>${cur}</b><span class="muted">${tm[cur]} (20분 기준)</span></div>`}
     html+=`<div class="step"><div class="sh"><span class="no">${s.no}</span><span class="tt">${s.tt}</span></div><div class="say">${esc(s.say).replace(/\[([^\]]*)\]/g,(m,a)=>a==='저항'?'<b>[저항]</b>':`<span class="ph">[${a}]</span>`)}</div><div class="pt">✓ ${s.pt}${s.warn?' · '+s.warn:''}</div></div>`});
   const hits=check(S.map(s=>s.say).join('\n'));
-  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><button class="b" onclick="window.print()">인쇄</button></div>`+styleBox(last.c,false)+html}
+  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><span><a class="b" href="roleplay.html" onclick="if(window.top!==window){event.preventDefault();window.top.location.hash='#tool-rp'}" target="_blank">이 업체로 AP 롤플레이 연습</a> <button class="b" onclick="window.print()">인쇄</button></span></div>`+styleBox(last.c,false)+html}
 function plain(){const{S}=last;return S.map(s=>`[${s.no}] ${s.tt}\n${s.say}\n`).join('\n')}
 function fillEdit(){$('#edit').value=plain();runCheck()}
 function runCheck(){const t=$('#edit').value;const h=check(t);const b=h.filter(x=>x.lv==='bad'),w=h.filter(x=>x.lv==='warn');

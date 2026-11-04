@@ -59,7 +59,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <div class="wrap">
   <a class="brand" href="../index.html#home">4&amp;7 NEXT 허브</a>
   <h1>보험 MBTI <span style="font-size:15px;color:var(--sub);font-weight:400">전문직 설계사 성향검사 · 1차안</span></h1>
-  <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 좋고 나쁨을 가리는 시험이 아니라, 내게 맞는 길을 찾는 지도입니다. 8분, 48문항.</p>
+  <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 8분, 48문항.</p>
 
   <section class="panel" id="intro">
     <h2>나에 대해</h2>
@@ -237,7 +237,7 @@ function result(){
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn p" id="send">팀 기록에 저장</button><a class="btn" href="roleplay.html">AP 롤플레이로 가기</a><button class="btn" id="again">다시 하기</button></div>
     <p class="hint" id="sendMsg">저장하면 지점장이 팀 결과를 볼 수 있습니다(팀 비밀번호 기기만). 저장하지 않으면 이 브라우저에만 남습니다.</p>
   </section>
-  <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다. 사람을 평가하거나 위촉을 거르는 데 쓰지 않습니다.</p>`;
+  <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다.</p>`;
   $('result').scrollIntoView({ behavior: 'smooth' });
   $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('send').onclick = () => {

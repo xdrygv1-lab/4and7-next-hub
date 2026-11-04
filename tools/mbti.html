@@ -20,6 +20,7 @@ select,input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(-
 .row3>*{min-width:0}
 .q{padding:12px 0;border-top:1px solid var(--line)}.q:first-child{border-top:0}.qt{font-size:15px;margin-bottom:8px}.qn{color:var(--sub);font-size:12px;margin-right:6px}
 .lk{display:flex;gap:6px;flex-wrap:wrap}.lk button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.2;min-height:38px;word-break:keep-all;font:inherit;font-size:12px;padding:8px 4px;border:1px solid var(--line);border-radius:100px;background:#fff;cursor:pointer}
+.ver{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ver button{font:inherit;text-align:left;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;display:flex;flex-direction:column;gap:4px}.ver button b{font-size:16px}.ver button span{font-size:12px;color:var(--sub);line-height:1.45}.ver button.on{border-color:#0052FF;background:#F0F5FF}.ver button.on b{color:#0052FF}@media(max-width:480px){.ver{grid-template-columns:1fr}}
 .pair{display:grid;gap:6px;margin-top:8px}.pair span{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fafafa;font-size:14px}.pair b{color:#0052FF;margin-right:4px}
 .lk button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .bar{height:8px;background:#eef0f3;border-radius:8px;overflow:hidden;margin:10px 0 2px}.bar i{display:block;height:100%;background:var(--acc)}
@@ -29,6 +30,7 @@ select,input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(-
 .track i{position:absolute;top:-3px;width:16px;height:16px;border-radius:50%;background:var(--acc);transform:translateX(-50%)}
 .card{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0}.card h3{margin:0 0 4px;font-size:15px}
 .warn{color:var(--warn)}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+[hidden]{display:none!important}
 .sticky{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:16px 0 10px;display:flex;gap:10px;align-items:center;justify-content:space-between}
 a.btn{text-decoration:none;color:inherit;display:inline-block}a.btn.p{color:#fff}
 </style>
@@ -62,6 +64,12 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <h1>보험 MBTI <span style="font-size:15px;color:var(--sub);font-weight:400">전문직 설계사 성향검사 · 1차안</span></h1>
   <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 9분, 52문항.</p>
 
+  <section class="panel" id="verbox">
+    <h2>버전 고르기</h2>
+    <div class="ver"><button type="button" data-ver="new"><b>신입 버전</b><span>위촉 전·MBA, 활동 1년 미만<br>본업과 평소 모습으로 답해요</span></button><button type="button" data-ver="pro"><b>지점원 버전</b><span>활동 중인 지점원<br>실제 영업 경험으로 답해요</span></button></div>
+    <p class="hint">두 버전은 같은 기준으로 점수를 내서, 신입과 지점원 결과를 그대로 비교할 수 있어요.</p>
+  </section>
+
   <section class="panel" id="intro">
     <h2>나에 대해</h2>
     <div class="row3">
@@ -69,7 +77,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <label class="f">자격<select id="cert"><option>세무사</option><option>회계사</option><option>노무사</option><option>변리사</option><option>변호사</option><option>기타</option></select></label>
       <label class="f">설계사 경력<select id="career"><option value="0">위촉 전·MBA</option><option value="1">1년 미만</option><option value="2">1~3년</option><option value="3">3년 이상</option></select></label>
     </div>
-    <p class="hint">정답이 없습니다. «되고 싶은 나»가 아니라 «지금 실제로 하는 나»에 가깝게 고르세요. 비슷한 질문이 일부러 두 번 나옵니다.</p>
+    <p class="hint">정답이 없습니다. «되고 싶은 나»가 아니라 «지금 실제로 하는 나»에 가깝게 고르세요. 비슷한 질문이 일부러 두 번 나옵니다.<span id="newHint" hidden> 영업 경험이 아직 없으면 본업(세무·노무·특허 상담)이나 평소 모습으로 답하세요.</span></p>
   </section>
 
   <section class="panel" id="qs"></section>
@@ -90,13 +98,45 @@ const AX = [
   { id:'p', name:'설득', pos:['N','숫자형','표·계산·근거로 설득한다'], neg:['S','이야기형','사례·공감·가족 이야기로 움직인다'] },
   { id:'w', name:'방식', pos:['T','동행형','함께 갈 때(조인업) 힘이 난다'], neg:['O','독립형','혼자 준비해 끝까지 간다'] }
 ];
-/* 미팅 10번 (신인·활동 중 누구나 같게, 점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
-const BEH = [
+/* 신입 버전 문장 (번호-1 → 문장). 축·방향은 지점원 버전과 같다 */
+const NEW = {
+  0: '처음 보는 사람들이 모인 자리(모임·세미나)에서 내가 먼저 말을 건다.',
+  1: '처음 만나는 사람보다 이미 아는 사람(기장 거래처·지인)에게 이야기를 꺼내는 게 훨씬 편하다.',
+  7: '오래 알고 지낸 사람들과의 관계가 내 가장 큰 무기다.',
+  8: '한 번 거절한 사람에게도 몇 달 뒤 다시 연락하는 게 어렵지 않다.',
+  9: '새 사람을 찾는 것보다 지금 아는 사람을 깊게 챙기는 쪽이 내 성격에 맞다.',
+  11: '처음 만난 자리에서도 비용·금액 이야기를 먼저 꺼내는 게 어렵지 않다.',
+  13: '상대가 생각한 것보다 큰 안을 먼저 보여 주는 게 맞다고 생각한다.',
+  15: '상대가 망설여도 다음 약속은 그 자리에서 잡으려 한다.',
+  16: '여러 안을 보여 줄 때 가장 큰 안부터 보여 주는 게 낫다고 생각한다.',
+  17: '금액을 말했는데 상대 표정이 굳으면 바로 낮춰 주고 싶어진다.',
+  18: '작은 일 여러 개보다 큰 일 하나를 노리는 편이다.',
+  20: '누군가에게 설명할 때 표나 계산부터 보여 준다.',
+  21: '설명할 때 숫자보다 비슷한 사람의 이야기를 들려주는 쪽이 편하다.',
+  23: '상담할 때 숫자보다 상대의 걱정(가족·은퇴 등)을 먼저 듣는 편이다.',
+  24: '상대 이야기를 들으면 머릿속으로 숫자부터 계산하게 된다.',
+  25: '논리만으로는 사람이 움직이지 않는다고 느낀다.',
+  26: '중요한 미팅 전에는 상대 회사 숫자를 미리 다 챙겨 간다.',
+  27: '상대가 속마음을 꺼내는 순간이 가장 중요한 순간이라고 생각한다.',
+  29: '상품 설명보다 "대표님이 없을 때 가족은?" 같은 질문이 더 잘 통할 것 같다.',
+  35: '누군가와 같이 가면 내 페이스를 잃는 느낌이 든다.',
+  36: '중요한 자리일수록 누군가 옆에 있으면 말이 더 잘 나온다.',
+  49: '처음 만난 날 금액까지 꺼낸다||두 번째 만남부터 꺼낸다'
+};
+/* 활동 문항 (점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
+const BEH_PRO = [
+  ['최근 3개월 동안 새로 만난 대표 수', ['0~2명', '3~5명', '6~10명', '10명 넘게']],
+  ['최근 계약 중 소개로 온 비율', ['거의 없음', '절반 아래', '절반 넘게', '거의 전부']],
+  ['최근 3개월 동안 동행 미팅 횟수', ['0번', '1~2번', '3~5번', '6번 넘게']]
+];
+const BEH_NEW = [
   ['그중 처음 보는 대표와의 미팅은 몇 번으로 채울까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
   ['그중 소개받은 대표와의 미팅은 몇 번이면 좋을까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
   ['그중 지점장·선배·다른 자격사와 같이 가는 미팅은 몇 번?', ['0번', '1~2번', '3~5번', '6번 넘게']]
 ];
+let VER = '', BEH = BEH_NEW;
 const beh = {};
+const qText = i => (VER === 'new' && NEW[i]) || Q[i][2];
 const Q = [
   /* 만남: + 개척 A / − 관계 R */
   ['m', 1, '처음 보는 대표들이 모인 자리에서 내가 먼저 말을 건다.'],
@@ -197,16 +237,21 @@ const MATCH = {
 };
 function renderQs(){
   const PK = ['A 확실', 'A 쪽', '반반', 'B 쪽', 'B 확실'];
-  $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => { const pr = q[2].split('||'), two = pr.length === 2;
-    return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(q[2])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('')
-    + '<h2 style="margin-top:18px">다음 달 미팅 10번을 내 마음대로 잡는다면</h2><p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다.</p>'
-    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">미팅 ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
+  BEH = VER === 'pro' ? BEH_PRO : BEH_NEW;
+  $('qs').hidden = $('done').parentElement.hidden = !VER;
+  $('newHint').hidden = VER !== 'new';
+  document.querySelectorAll('.ver button').forEach(b => b.classList.toggle('on', b.dataset.ver === VER));
+  if (!VER) return;
+  $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => { const pr = qText(i).split('||'), two = pr.length === 2;
+    return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(pr[0])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('')
+    + (VER === 'pro' ? '<h2 style="margin-top:18px">최근 실제 활동</h2>' : '<h2 style="margin-top:18px">다음 달 미팅 10번을 내 마음대로 잡는다면</h2>')+'<p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다.</p>'
+    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">${VER === 'pro' ? '활동' : '미팅'} ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
   prog();
 }
 function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항`; }
 $('qs').addEventListener('click', e => { const w = e.target.closest('button[data-w]'); if (w) { const k = +w.parentElement.dataset.b; beh[k] = +w.dataset.w; w.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === w)); save(); return; } const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
-function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, beh, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
-function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); Object.assign(beh, o.beh || {}); ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, beh, ver: VER, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
+function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); Object.assign(beh, o.beh || {}); VER = o.ver || ''; ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
 function score(){
   const sum = {}, cnt = {};
   Q.forEach((q, i) => { if (!ans[i]) return; const v = (ans[i] - 3) * q[1]; sum[q[0]] = (sum[q[0]] || 0) + v; cnt[q[0]] = (cnt[q[0]] || 0) + 1; });
@@ -262,10 +307,14 @@ function result(){
     const TP = (() => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } })();
     if (!TP) { $('sendMsg').textContent = '팀 비밀번호를 넣은 기기에서만 저장할 수 있어요.'; return; }
     $('send').disabled = true; $('sendMsg').textContent = '저장하는 중…';
-    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), ver: VER === 'pro' ? '지점원' : '신입', beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
       .then(r => { $('sendMsg').textContent = r.ok ? '팀 기록에 저장했어요.' : (r.error || '저장하지 못했어요.'); if (r.ok) $('send').textContent = '저장 완료'; else $('send').disabled = false; }).catch(() => { $('sendMsg').textContent = '서버에 연결하지 못했어요.'; $('send').disabled = false; });
   };
 }
+$('verbox').addEventListener('click', e => { const b = e.target.closest('button[data-ver]'); if (!b || b.dataset.ver === VER) return;
+  VER = b.dataset.ver; Object.keys(beh).forEach(k => delete beh[k]);
+  const c = $('career'); if (VER === 'new' && +c.value > 1) c.value = '0'; if (VER === 'pro' && +c.value < 1) c.value = '2';
+  save(); renderQs(); $('result').hidden = true; });
 $('done').onclick = result;
 ['who','cert','career'].forEach(k => $(k).addEventListener('change', save));
 load(); renderQs();

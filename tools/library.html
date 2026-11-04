@@ -82,6 +82,15 @@ section.common h3{font-size:14px;color:var(--sub);margin:14px 0 4px}
 footer{margin-top:28px;font-size:13px;color:var(--sub-d);border-top:1px solid var(--line-d);padding-top:16px}
 @media (max-width:640px){h1{font-size:28px}.filters input[type=search]{min-width:0;width:100%}}
 @media print{body{background:#fff;color:#000}.nav,.filters{display:none}.alerts{background:#fff;color:#000}.alerts ul{color:#000}.card,section.common{border:1px solid #ccc;break-inside:avoid}details.more{display:block}}
+.team{background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);border-radius:16px;padding:14px 16px;margin:14px 0}
+.team .th{display:flex;justify-content:space-between;align-items:center;gap:8px}.team h2{margin:0;font-size:18px}.tcount{font-size:13px;color:var(--sub,#6b7280);font-weight:400}
+.team .tl{font-size:13px;color:var(--sub,#6b7280);margin:6px 0 8px}
+.tg2{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}.tg2 label{display:flex;flex-direction:column;font-size:13px;gap:3px}
+.tg2 input,.tg2 select{font:inherit;font-size:14px;padding:7px 8px;border:1px solid var(--line,#d1d5db);border-radius:10px}
+.tchk{display:block;font-size:13px;margin:8px 0}.tbtn{display:flex;gap:10px;align-items:center}#tMsg{font-size:13px}
+.tfiles{list-style:none;padding:0;margin:6px 0 0}.tfiles li{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;padding:4px 0;border-top:1px dashed var(--line,#e5e7eb)}
+.tfiles .tm{color:var(--sub,#6b7280);font-size:12px;width:100%}.tfiles button{font:inherit;font-size:12px;border:1px solid var(--line,#d1d5db);background:none;border-radius:100px;padding:2px 9px;cursor:pointer}
+.tfiles button.dl{background:#0052FF;color:#fff;border-color:#0052FF}
 </style>
 </head>
 <body>
@@ -113,7 +122,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div>
       <a class="brand" href="../index.html#uw" style="text-decoration:none;color:inherit">4&amp;7 NEXT 허브 · 재정심사 → 청약</a>
       <h1>상품 자료실</h1>
-      <p class="lead">메트라이프·KB라이프·신한라이프 상품을 한 장씩 요약하고, 5. 상품 폴더의 어느 파일을 보면 되는지 알려 줍니다. 원문 파일은 올리지 않고 위치만 보여 줍니다.</p>
+      <p class="lead">메트라이프·KB라이프·신한라이프 상품을 한 장씩 요약하고, 5. 상품 폴더의 어느 파일을 보면 되는지 알려 줍니다. 원문 파일은 공개 사이트에 올리지 않습니다. 팀원끼리 주고받을 최신 자료는 아래 «팀 자료함»에서 올리고 내려받습니다.</p>
     </div>
     <div class="nav">
       <a class="chip" href="uw-calc.html">재정심사 계산기</a>
@@ -123,6 +132,28 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   </header>
 
   <div class="alerts" id="alerts"></div>
+
+  <section class="team" id="team">
+    <div class="th"><h2>팀 자료함 <span class="tcount" id="tCount"></span></h2>
+      <button type="button" class="chip" id="tOpen">자료 올리기</button></div>
+    <p class="tl">팀원이 올린 최신 자료를 여기서 바로 내려받습니다. 팀 비밀번호를 넣은 기기에서만 보이고, 파일은 팀 드라이브(비공개)에 저장됩니다. 새 버전이 나오면 «새 버전 올리기»로 바꾸면 예전 판은 자동으로 내려갑니다.</p>
+    <form id="tForm" hidden onsubmit="return false">
+      <div class="tg2">
+        <label>원수사<select id="tIns"><option>메트라이프</option><option>KB라이프</option><option>신한라이프</option><option>공통</option></select></label>
+        <label>상품<select id="tPid"></select></label>
+        <label>자료 제목<input id="tTitle" placeholder="예: 2026년 11월 상품교육 요약본"></label>
+        <label>종류<select id="tType"><option>고객용</option><option>내부·교육용</option><option>약관</option><option>설계 샘플</option><option>서식·매뉴얼</option><option>이미지</option><option>기타</option></select></label>
+        <label>준법번호 (있으면)<input id="tAppr" placeholder="예: 3001_2610_003584"></label>
+        <label>준법 유효기간 끝 (있으면)<input type="date" id="tExp"></label>
+        <label>올린 사람<input id="tWho" placeholder="이름 또는 호칭"></label>
+        <label>파일 (15MB까지)<input type="file" id="tFile"></label>
+      </div>
+      <label class="tchk"><input type="checkbox" id="tNoPII"> 고객 개인정보(이름·주민번호·연락처)가 들어 있지 않습니다. 고객 제안서·청약서는 올리지 않습니다.</label>
+      <div class="tbtn"><button type="button" class="chip on" id="tSend">올리기</button><span id="tMsg"></span></div>
+      <input type="hidden" id="tReplace">
+    </form>
+    <div id="tCommon"></div>
+  </section>
 
   <div class="filters">
     <div class="grp" id="fIns"></div>
@@ -209,6 +240,7 @@ function card(p){
     <p class="one">${esc(p.oneLine)}</p>
     <table class="kv">${specs}</table>
     <div class="uw"><b>재정:</b> ${esc(p.uw)}${calc}</div>
+    ${teamBox(p.id)}
     ${ours.length ? `<div class="uw" style="margin-top:6px"><b>우리 상품 자료:</b> ${ours.map(d => `<a href="../index.html#${esc(d.id)}">${esc(d.title.replace(/^(상품 요약|요약_|FAQ|약관 정리):?\s*/, ''))}</a>`).join(' · ')}</div>` : ''}
     <details class="more"><summary>판매 포인트·주의·자료 ${(p.docs||[]).length}건</summary>
       ${p.points && p.points.length ? '<h4>판매 포인트</h4>' + list(p.points) : ''}
@@ -230,6 +262,63 @@ const HUB_RULE = {
   sh_vip: /상속세 재원|종신보험 법인·개인/, sh_silsok: /단기납종신 환급률|종신보험 법인·개인/, sh_seven: /단기납종신 환급률/
 };
 let HUB = [];
+/* ---------- 팀 자료함 (서버: Apps Script produp·prodlist·proddl·prodhide, 팀 비밀번호) ---------- */
+let EP = '', TEAM = [], TEAM_ERR = '';
+const TP = () => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } };
+const post = o => fetch(EP, { method: 'POST', body: JSON.stringify(Object.assign({ pass: TP() }, o)) }).then(r => r.json());
+function tRow(f){
+  const n = f.exp ? days(f.exp) : null;
+  const ex = f.exp ? (n < 0 ? ` · <span class="exp">준법 만료 ${esc(f.exp)}</span>` : n <= 60 ? ` · <span class="soon">${n}일 뒤 만료</span>` : ` · 유효 ~${esc(f.exp)}`) : '';
+  return `<li><span class="dt ${f.type === '고객용' ? 'cust' : ''}">${esc(f.type)}</span><b>${esc(f.title)}</b>
+    <button type="button" class="dl" data-dl="${esc(f.id)}">내려받기</button><button type="button" data-rep="${esc(f.id)}">새 버전 올리기</button><button type="button" data-hide="${esc(f.id)}">내리기</button>
+    <span class="tm">${esc(f.name)} · ${Math.max(1, Math.round((+f.size || 0) / 1024))}KB · ${esc(f.who)} · ${esc(f.at)}${f.approval ? ' · 준법 ' + esc(f.approval) : ''}${ex}</span></li>`;
+}
+function teamBox(pid){ const fs = TEAM.filter(f => f.pid === pid); return fs.length ? `<div class="uw" style="margin-top:6px"><b>팀 자료함 (${fs.length}):</b><ul class="tfiles">${fs.map(tRow).join('')}</ul></div>` : ''; }
+function teamRender(){
+  $('tCount').textContent = TEAM_ERR ? '' : `${TEAM.length}건`;
+  const rest = TEAM.filter(f => !f.pid || !L.products.some(p => p.id === f.pid));
+  $('tCommon').innerHTML = TEAM_ERR ? `<p class="tl">${esc(TEAM_ERR)}</p>` : rest.length ? `<h3 style="font-size:15px;margin:8px 0 0">공통·기타 자료</h3><ul class="tfiles">${rest.map(tRow).join('')}</ul>` : '';
+}
+function teamLoad(){
+  if (!EP) { TEAM_ERR = '서버 주소가 없어 팀 자료함을 쓸 수 없어요.'; teamRender(); return; }
+  if (!TP()) { TEAM_ERR = '팀 비밀번호를 넣은 기기에서만 팀 자료함이 보여요. 허브 첫 화면에서 비밀번호를 넣어 주세요.'; teamRender(); return; }
+  post({ action: 'prodlist' }).then(r => { if (r.ok) { TEAM = r.items || []; TEAM_ERR = ''; } else TEAM_ERR = r.error || '목록을 못 불러왔어요.'; teamRender(); render(); }).catch(() => { TEAM_ERR = '서버에 연결하지 못했어요.'; teamRender(); });
+}
+function pidOptions(){ const ins = $('tIns').value; $('tPid').innerHTML = '<option value="">(상품 없음·공통)</option>' + L.products.filter(p => ins === '공통' || p.ins === ins).map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join(''); }
+function openForm(rep){
+  $('tForm').hidden = false; $('tReplace').value = rep ? rep.id : ''; $('tMsg').textContent = rep ? `«${rep.title}»의 새 버전을 올립니다. 올리면 예전 판은 내려갑니다.` : '';
+  if (rep) { $('tIns').value = rep.ins; pidOptions(); $('tPid').value = rep.pid; $('tTitle').value = rep.title; $('tType').value = rep.type; $('tAppr').value = ''; $('tExp').value = ''; }
+  try { $('tWho').value = $('tWho').value || localStorage.getItem('lib-who') || ''; } catch (e) {}
+  $('team').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('tOpen').onclick = () => { if ($('tForm').hidden) openForm(null); else $('tForm').hidden = true; };
+$('tIns').onchange = pidOptions; pidOptions();
+$('tSend').onclick = () => {
+  const f = $('tFile').files[0], msg = $('tMsg');
+  if (!TP()) { msg.textContent = '팀 비밀번호를 넣은 기기에서만 올릴 수 있어요.'; return; }
+  if (!f) { msg.textContent = '파일을 골라 주세요.'; return; }
+  if (f.size > 15 * 1024 * 1024) { msg.textContent = '파일은 15MB까지 올릴 수 있어요.'; return; }
+  if (!$('tNoPII').checked) { msg.textContent = '«고객 개인정보가 들어 있지 않습니다»를 확인해 주세요.'; return; }
+  const pid = $('tPid').value, pr = L.products.find(p => p.id === pid);
+  msg.textContent = '올리는 중…'; $('tSend').disabled = true;
+  const rd = new FileReader();
+  rd.onload = () => post({ action: 'produp', ins: $('tIns').value, pid, pname: pr ? pr.name : '', title: $('tTitle').value, type: $('tType').value, approval: $('tAppr').value, exp: $('tExp').value, who: $('tWho').value, noPII: true, replaceId: $('tReplace').value, file: { name: f.name, mimeType: f.type, base64: String(rd.result) } })
+    .then(r => { msg.textContent = r.ok ? r.message : (r.error || '올리지 못했어요.'); if (r.ok) { try { localStorage.setItem('lib-who', $('tWho').value); } catch (e) {} $('tFile').value = ''; $('tNoPII').checked = false; $('tReplace').value = ''; teamLoad(); } })
+    .catch(() => { msg.textContent = '서버에 연결하지 못했어요.'; }).finally(() => { $('tSend').disabled = false; });
+  rd.readAsDataURL(f);
+};
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-dl]'), r = e.target.closest('[data-rep]'), h = e.target.closest('[data-hide]');
+  if (d) { const id = d.dataset.dl; d.textContent = '받는 중…'; post({ action: 'proddl', id }).then(x => {
+      if (!x.ok) { d.textContent = x.error || '실패'; return; }
+      const bin = atob(x.base64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([u], { type: x.mime || 'application/octet-stream' })), a = document.createElement('a');
+      a.href = url; a.download = x.name || 'download'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000); d.textContent = '내려받기';
+    }).catch(() => { d.textContent = '연결 실패'; }); }
+  if (r) { const f = TEAM.find(x => x.id === r.dataset.rep); if (f) openForm(f); }
+  if (h) { const f = TEAM.find(x => x.id === h.dataset.hide); if (!f) return; h.textContent = '한 번 더 누르면 내림'; if (h.dataset.sure) { post({ action: 'prodhide', id: f.id, who: $('tWho').value || localStorage.getItem('lib-who') || '' }).then(x => { if (x.ok) teamLoad(); else h.textContent = x.error || '실패'; }); } h.dataset.sure = '1'; }
+});
+fetch('../config.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(c => { EP = (c && c.endpoint) || ''; teamLoad(); }).catch(() => teamLoad());
 function hubDocs(p){ const re = HUB_RULE[p.id]; if (!re || !HUB.length) return []; const all = HUB.filter(d => re.test(d.title)); if (p.kind !== 'annuity') all.push(...HUB.filter(d => /청약서 작성 가이드/.test(d.title))); return [...new Map(all.map(d => [d.id, d])).values()].slice(0, 6); }
 fetch('../manifest.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(m => { if (m && m.docs) { HUB = m.docs.filter(d => /^(prod|prodmet|prodguide|faq|guide|concept)$/.test(d.gid)); render(); } }).catch(() => {});
 

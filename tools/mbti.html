@@ -22,6 +22,10 @@ select,input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(-
 .lk{display:flex;gap:6px;flex-wrap:wrap}.lk button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.2;min-height:38px;word-break:keep-all;font:inherit;font-size:12px;padding:8px 4px;border:1px solid var(--line);border-radius:100px;background:#fff;cursor:pointer}
 .ver{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ver button{font:inherit;text-align:left;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;display:flex;flex-direction:column;gap:4px}.ver button b{font-size:16px}.ver button span{font-size:12px;color:var(--sub);line-height:1.45}.ver button.on{border-color:#0052FF;background:#F0F5FF}.ver button.on b{color:#0052FF}@media(max-width:480px){.ver{grid-template-columns:1fr}}
 .emo{font-size:56px;line-height:1.1}.mrow{display:flex;gap:12px;align-items:center}
+.mg-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mg-top input,.mg-top select{width:auto;min-width:0;flex:1 1 140px}.mg-top input[type=checkbox]{flex:none}
+.dist{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.dist div{border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center;font-size:12px}.dist div b{display:block;font-size:20px}.dist div.z{opacity:.35}
+.pc{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}.pc .hd{display:flex;gap:10px;align-items:center}.pc .hd .e{font-size:34px}.pc .hd b{font-size:17px}.pc .mini{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin:8px 0}.pc .mini .track{height:6px}.pc .mini .track i{width:12px;height:12px;top:-3px}.pc .mm{background:#f7f9ff;border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.55}
+@media(max-width:560px){.dist{grid-template-columns:repeat(2,1fr)}.pc .mini{grid-template-columns:1fr}}
 .pair{display:grid;gap:6px;margin-top:8px}.pair span{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fafafa;font-size:14px}.pair b{color:#0052FF;margin-right:4px}
 .lk button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .bar{height:8px;background:#eef0f3;border-radius:8px;overflow:hidden;margin:10px 0 2px}.bar i{display:block;height:100%;background:var(--acc)}
@@ -85,6 +89,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div class="sticky"><div style="flex:1"><div class="bar"><i id="prog" style="width:0"></i></div><span class="hint" id="cnt"></span></div><button class="btn p" id="done">결과 보기</button></div>
 
   <section id="result" hidden></section>
+  <section id="mgr" hidden></section>
 </div>
 
 <script>
@@ -359,7 +364,64 @@ $('verbox').addEventListener('click', e => { const b = e.target.closest('button[
   save(); renderQs(); $('result').hidden = true; });
 $('done').onclick = result;
 ['who','cert','career'].forEach(k => $(k).addEventListener('change', save));
-load(); renderQs();
+/* ── 지점장 보기 (?view=mgr). 지금은 관리자 키로 연다.
+   나중에 사람마다 이름·비밀번호를 주고 지점과 연결하면, 서버 mbtilist 가 그 지점 기록만 돌려주게 바꾼다. */
+const MGR = /(^|[?&])view=mgr(&|$)/.test(location.search);
+const CAREER = ['위촉 전·MBA', '1년 미만', '1~3년', '3년 이상'];
+function mgrView(){
+  ['verbox', 'intro', 'qs', 'result'].forEach(k => $(k).hidden = true); $('done').parentElement.hidden = true;
+  document.querySelector('h1').firstChild.textContent = '보험 MBTI 지점장 보기 ';
+  document.querySelector('.lead').textContent = '팀원 결과와 매니지먼트 포인트를 한눈에 봅니다. 이 화면의 매니지먼트 문구는 본인 결과 화면에는 나오지 않습니다.';
+  const m = $('mgr'); m.hidden = false;
+  const KK = 'mbti-mgr-key'; let key = ''; try { key = localStorage.getItem(KK) || ''; } catch (e) {}
+  m.innerHTML = `<section class="panel"><h2>열기</h2><div class="mg-top"><input id="mgKey" type="password" placeholder="관리자 키" autocomplete="off"><button class="btn p" id="mgOpen">불러오기</button></div><p class="hint" id="mgMsg">관리자 키는 이 기기에만 기억합니다.</p></section><div id="mgBody"></div>`;
+  const open = () => {
+    key = $('mgKey').value.trim() || key; if (!key) { $('mgMsg').textContent = '관리자 키를 넣어 주세요.'; return; }
+    $('mgMsg').textContent = '불러오는 중…';
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbtilist', token: key }) })).then(r => r.json()).then(d => {
+      if (!d.ok) { $('mgMsg').textContent = '키가 맞지 않거나 볼 수 없습니다.'; return; }
+      try { localStorage.setItem(KK, key); } catch (e) {}
+      $('mgKey').value = ''; $('mgMsg').textContent = `기록 ${d.rows.length}줄을 불러왔어요.`;
+      mgrRender(d.rows.map(v => ({ t: String(v[0]), who: String(v[1] || ''), cert: String(v[2] || ''), career: +v[3] || 0, code: String(v[4] || ''), pct: String(v[6] || '').split(',').map(Number), gap: +v[7] || 0, act: String(v[9] || ''), ver: String(v[10] || '') })));
+    }).catch(() => { $('mgMsg').textContent = '서버에 연결하지 못했어요.'; });
+  };
+  $('mgOpen').onclick = open; $('mgKey').addEventListener('keydown', e => { if (e.key === 'Enter') open(); });
+  if (key) open();
+}
+function mgrRender(all){
+  const st = { ver: '', q: '', test: false, latest: true, sort: 'type' };
+  $('mgBody').innerHTML = `<section class="panel"><div class="mg-top"><select id="fVer"><option value="">전체 버전</option><option>신입</option><option>지점원</option></select><input id="fQ" placeholder="이름 찾기"><select id="fSort"><option value="type">유형 순</option><option value="new">최근 순</option><option value="name">이름 순</option></select></div>
+    <div class="mg-top" style="margin-top:8px;font-size:13px"><label><input type="checkbox" id="fLatest" checked> 같은 이름은 최근 1개만</label><label><input type="checkbox" id="fTest"> 시험 기록도 보기</label></div></section><div id="mgOut"></div>`;
+  const draw = () => {
+    let rows = all.filter(x => x.code.length === 4 && (st.test || !/시험/.test(x.who)) && (!st.ver || (x.ver || '지점원') === st.ver) && (!st.q || x.who.includes(st.q)));
+    if (st.latest) { const seen = {}; rows = rows.slice().reverse().filter(x => { const k = x.who || ('익명' + x.t); if (seen[k]) return false; seen[k] = 1; return true; }); }
+    rows.sort(st.sort === 'new' ? (a, b) => b.t.localeCompare(a.t) : st.sort === 'name' ? (a, b) => a.who.localeCompare(b.who) : (a, b) => a.code.localeCompare(b.code));
+    const cnt = {}, byCode = {}; rows.forEach(x => { cnt[x.code] = (cnt[x.code] || 0) + 1; (byCode[x.code] = byCode[x.code] || []).push(x.who || '이름 없음'); });
+    const nNew = rows.filter(x => x.ver === '신입').length;
+    const avg = AX.map((a, k) => rows.length ? Math.round(rows.reduce((s, x) => s + (x.pct[k] || 0), 0) / rows.length) : 50);
+    $('mgOut').innerHTML = `<section class="panel"><h2>한눈에</h2>
+      <p style="margin:0 0 8px"><b>${rows.length}명</b> <span class="hint">신입 ${nNew} · 지점원 ${rows.length - nNew}</span></p>
+      <div class="dist">${Object.keys(TYPES).map(k => `<div class="${cnt[k] ? '' : 'z'}" title="${esc((byCode[k] || []).join(', '))}"><b>${EMO[k]} ${cnt[k] || 0}</b>${k}<br>${esc(TYPES[k][0])}</div>`).join('')}</div>
+      <h3 style="margin:14px 0 4px;font-size:15px">팀 평균</h3>
+      ${AX.map((a, k) => `<div class="axis"><div class="nm"><span>${a.neg[0]} ${a.neg[1]}</span><b>${a.name}</b><span>${a.pos[1]} ${a.pos[0]}</span></div><div class="track"><i style="left:${avg[k]}%"></i></div></div>`).join('')}
+    </section>
+    <section class="panel"><h2>사람별</h2>${rows.length ? rows.map(x => {
+      const v = x.ver === '신입' ? 0 : 1, poles = AX.map((a, k) => (x.pct[k] >= 50 ? a.pos : a.neg));
+      const mg = poles.map((p, k) => `<div><b>${AX[k].name}·${p[1]}</b> ${esc(MGMT[p[0]][v])}</div>`).join('');
+      const mates = (byCode[MATE(x.code)] || []).filter(n => n !== x.who);
+      return `<div class="pc"><div class="hd"><span class="e">${EMO[x.code] || '✨'}</span><div><b>${esc(x.who || '이름 없음')}</b> <span class="hint">${esc(x.cert)} · ${CAREER[x.career] || ''} · ${x.ver || '지점원(이전판)'} · ${esc(x.t)}</span><div><b style="color:var(--acc)">${x.code}</b> ${esc((TYPES[x.code] || [''])[0])}</div></div></div>
+        <div class="mini">${AX.map((a, k) => `<div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>${a.neg[1]}</span><span>${a.name} ${x.pct[k]}</span><span>${a.pos[1]}</span></div><div class="track"><i style="left:${x.pct[k]}%"></i></div></div>`).join('')}</div>
+        <div class="mm">${mg}</div>
+        <div class="hint" style="margin-top:6px">짝꿍 ${MATE(x.code)} ${esc((TYPES[MATE(x.code)] || [''])[0])}${mates.length ? ' · 팀에서: ' + esc(mates.join(', ')) : ' · 팀에 아직 없음'}${x.act ? ' · 활동: ' + esc(x.act) : ''}${x.gap >= 2 ? ' · <span class="warn">비슷한 질문에 다르게 답한 곳 ' + x.gap + '곳</span>' : ''}</div></div>`; }).join('') : '<p class="hint">보여 줄 기록이 없어요.</p>'}</section>`;
+  };
+  $('fVer').onchange = e => { st.ver = e.target.value; draw(); };
+  $('fQ').oninput = e => { st.q = e.target.value.trim(); draw(); };
+  $('fSort').onchange = e => { st.sort = e.target.value; draw(); };
+  $('fLatest').onchange = e => { st.latest = e.target.checked; draw(); };
+  $('fTest').onchange = e => { st.test = e.target.checked; draw(); };
+  draw();
+}
+if (MGR) mgrView(); else { load(); renderQs(); }
 })();
 </script>
 </body>

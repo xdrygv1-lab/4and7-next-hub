@@ -20,6 +20,7 @@ select,input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(-
 .row3>*{min-width:0}
 .q{padding:12px 0;border-top:1px solid var(--line)}.q:first-child{border-top:0}.qt{font-size:15px;margin-bottom:8px}.qn{color:var(--sub);font-size:12px;margin-right:6px}
 .lk{display:flex;gap:6px;flex-wrap:wrap}.lk button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.2;min-height:38px;word-break:keep-all;font:inherit;font-size:12px;padding:8px 4px;border:1px solid var(--line);border-radius:100px;background:#fff;cursor:pointer}
+.pair{display:grid;gap:6px;margin-top:8px}.pair span{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fafafa;font-size:14px}.pair b{color:#0052FF;margin-right:4px}
 .lk button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .bar{height:8px;background:#eef0f3;border-radius:8px;overflow:hidden;margin:10px 0 2px}.bar i{display:block;height:100%;background:var(--acc)}
 .btn{font:inherit;font-size:15px;padding:10px 20px;border-radius:100px;border:1px solid var(--line);background:#fff;cursor:pointer}.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
@@ -59,7 +60,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <div class="wrap">
   <a class="brand" href="../index.html#home">4&amp;7 NEXT 허브</a>
   <h1>보험 MBTI <span style="font-size:15px;color:var(--sub);font-weight:400">전문직 설계사 성향검사 · 1차안</span></h1>
-  <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 8분, 48문항.</p>
+  <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 9분, 52문항.</p>
 
   <section class="panel" id="intro">
     <h2>나에 대해</h2>
@@ -89,12 +90,19 @@ const AX = [
   { id:'p', name:'설득', pos:['N','숫자형','표·계산·근거로 설득한다'], neg:['S','이야기형','사례·공감·가족 이야기로 움직인다'] },
   { id:'w', name:'방식', pos:['T','동행형','함께 갈 때(조인업) 힘이 난다'], neg:['O','독립형','혼자 준비해 끝까지 간다'] }
 ];
+/* 실제 활동 (점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
+const BEH = [
+  ['최근 3개월 동안 새로 만난 대표 수', ['0~2명', '3~5명', '6~10명', '10명 넘게']],
+  ['최근 계약 중 소개로 온 비율', ['거의 없음', '절반 아래', '절반 넘게', '거의 전부']],
+  ['최근 3개월 동안 동행 미팅 횟수', ['0번', '1~2번', '3~5번', '6번 넘게']]
+];
+const beh = {};
 const Q = [
   /* 만남: + 개척 A / − 관계 R */
   ['m', 1, '처음 보는 대표들이 모인 자리에서 내가 먼저 말을 건다.'],
   ['m', -1, '처음 만나는 사람보다, 이미 아는 거래처에 이야기를 꺼내는 게 훨씬 편하다.'],
   ['m', 1, '소개가 없어도 관심 가는 회사가 있으면 먼저 연락해 본다.'],
-  ['m', -1, '신뢰가 쌓이기 전에 컨설팅 이야기를 꺼내면 실례라고 느낀다.'],
+  ['m', -1, '처음 보는 대표에게는 컨설팅 이야기를 두 번째 만남부터 꺼낸다.'],
   ['m', 1, '모임·행사에 나가면 새 명함을 많이 받아 오는 편이다.'],
   ['m', -1, '영업은 결국 오래된 관계에서 나온다고 믿는다.'],
   ['m', 1, '새 업종·새 지역 대표를 만나는 일이 설렌다.'],
@@ -103,12 +111,12 @@ const Q = [
   ['m', -1, '새 사람을 찾기보다 소개받은 고객을 깊게 챙기는 데 시간을 쓴다.'],
   /* 제안: + 과감 B / − 확신 C */
   ['c', -1, '내가 먼저 납득한 금액이어야 대표님께 말할 수 있다.'],
-  ['c', 1, '고객에게 필요하다고 판단되면, 큰 금액도 망설임 없이 제안한다.'],
+  ['c', 1, '첫 AP에서 금액 이야기를 내가 먼저 꺼내는 편이다.'],
   ['c', -1, '보험을 권하면 거래처가 나를 다르게 볼까 봐 조심스럽다.'],
-  ['c', 1, '월 천만 원 이상 보험료도 숫자가 맞으면 자연스럽게 말할 수 있다.'],
+  ['c', 1, '대표님이 생각한 금액보다 큰 안을 먼저 보여 준다.'],
   ['c', -1, '거절을 들으면 한동안 그 고객에게 다시 연락하기 어렵다.'],
   ['c', 1, '대표님이 망설여도 다음 약속까지는 끝까지 잡는다.'],
-  ['c', 1, '고객이 일부 손해를 볼 수 있어도, 전체 구조가 맞다면 제안할 수 있다.'],
+  ['c', 1, '여러 안 중 가장 큰 안을 첫 장에 놓는다.'],
   ['c', -1, '제안 금액을 말한 뒤 대표 표정이 굳으면 바로 금액을 낮춘다.'],
   ['c', 1, '작은 건 여러 개보다 큰 건 하나를 노리는 편이다.'],
   ['c', -1, '보험을 권하는 것이 고객에게 짐을 지우는 것 같아 마음이 불편할 때가 있다.'],
@@ -117,14 +125,14 @@ const Q = [
   ['p', -1, '숫자보다 비슷한 대표님 이야기를 들려줄 때 반응이 좋다.'],
   ['p', 1, '상품을 볼 때 환급률·세금·비용처리 근거부터 따진다.'],
   ['p', -1, '대표님의 가족·은퇴 걱정을 먼저 듣고 공감하는 편이다.'],
-  ['p', 1, '"근거가 뭐예요?"라는 질문을 받으면 오히려 반갑다.'],
+  ['p', 1, '대표님 이야기를 들으면 머릿속으로 숫자부터 계산하게 된다.'],
   ['p', -1, '논리만으로는 계약이 안 된다고 느낀다.'],
   ['p', 1, '미팅 전에 재무제표 숫자를 다 외워 간다.'],
   ['p', -1, '대표님이 눈물을 보이거나 속마음을 꺼내는 순간이 계약으로 이어졌다.'],
   ['p', 1, '"세금이 얼마 줄어드는지"를 보여 주면 대부분 설득된다고 생각한다.'],
   ['p', -1, '상품 설명보다 "대표님이 없을 때 가족은?" 같은 질문이 더 잘 통한다.'],
   /* 방식: + 동행 T / − 독립 O */
-  ['w', 1, '지점장·선배와 같이 가는 미팅에서 결과가 더 잘 나온다.'],
+  ['w', 1, '동행할 사람이 있으면 미팅을 더 자주 잡게 된다.'],
   ['w', -1, '자료만 잘 준비되면 혼자 가는 게 더 편하다.'],
   ['w', 1, '다른 자격사(노무사·변리사 등)와 함께 제안하는 게 좋다.'],
   ['w', -1, '내 거래처 미팅은 다른 사람 없이 내가 직접 끝내고 싶다.'],
@@ -142,7 +150,12 @@ const Q = [
   ['p', 1, '고객을 설득할 때 숫자와 근거가 가장 큰 무기다.', 20],
   ['p', -1, '사람 이야기가 숫자보다 마음을 더 움직인다고 생각한다.', 21],
   ['w', 1, '혼자보다 누군가와 함께할 때 영업이 더 잘 풀린다.', 30],
-  ['w', -1, '혼자 준비하고 혼자 마무리하는 게 내 스타일이다.', 31]
+  ['w', -1, '혼자 준비하고 혼자 마무리하는 게 내 스타일이다.', 31],
+  /* 둘 중 고르기: 왼쪽이 앞 글자, 오른쪽이 뒷 글자 (1=왼쪽 확실 … 5=오른쪽 확실) */
+  ['m', -1, '한 달에 새 대표 5명을 만난다||기존 거래처 5곳을 깊게 본다'],
+  ['c', -1, '첫 AP에서 금액을 꺼낸다||두 번째 만남 이후에 꺼낸다'],
+  ['p', -1, '표 한 장으로 보여 준다||비슷한 대표님 사례 하나를 들려준다'],
+  ['w', -1, '큰 건은 지점장과 같이 간다||큰 건도 내가 끝까지 간다']
 ];
 /* 16유형: [만남][제안][설득][방식]. 별명 · 한 줄 · 이런 사람(장면) · 잘 맞는 판 · 코칭 한 마디 */
 const TYPES = {
@@ -183,13 +196,17 @@ const MATCH = {
   신중형: { C:'잘 맞음. 천천히 한 단계씩', B:'재촉으로 느끼지 않게 속도 조절', S:'공감이 안심을 줌', T:'동행이 부담이 되지 않게 1명만' }
 };
 function renderQs(){
-  $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${esc(q[2])}</div><div class="lk" data-i="${i}">${LK.map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
+  const PK = ['A 확실', 'A 쪽', '반반', 'B 쪽', 'B 확실'];
+  $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => { const pr = q[2].split('||'), two = pr.length === 2;
+    return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(q[2])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('')
+    + '<h2 style="margin-top:18px">실제 활동</h2><p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다. 골라도 되고 비워 둬도 됩니다.</p>'
+    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">활동 ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
   prog();
 }
 function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항`; }
-$('qs').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
-function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
-function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
+$('qs').addEventListener('click', e => { const w = e.target.closest('button[data-w]'); if (w) { const k = +w.parentElement.dataset.b; beh[k] = +w.dataset.w; w.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === w)); save(); return; } const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
+function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, beh, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
+function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); Object.assign(beh, o.beh || {}); ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
 function score(){
   const sum = {}, cnt = {};
   Q.forEach((q, i) => { if (!ans[i]) return; const v = (ans[i] - 3) * q[1]; sum[q[0]] = (sum[q[0]] || 0) + v; cnt[q[0]] = (cnt[q[0]] || 0) + 1; });
@@ -239,13 +256,13 @@ function result(){
   </section>
   <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다.</p>`;
   $('result').scrollIntoView({ behavior: 'smooth' });
-  $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); Object.keys(beh).forEach(k => delete beh[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('send').onclick = () => {
     if ($('send').disabled) return;
     const TP = (() => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } })();
     if (!TP) { $('sendMsg').textContent = '팀 비밀번호를 넣은 기기에서만 저장할 수 있어요.'; return; }
     $('send').disabled = true; $('sendMsg').textContent = '저장하는 중…';
-    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]) }) })).then(r => r.json())
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
       .then(r => { $('sendMsg').textContent = r.ok ? '팀 기록에 저장했어요.' : (r.error || '저장하지 못했어요.'); if (r.ok) $('send').textContent = '저장 완료'; else $('send').disabled = false; }).catch(() => { $('sendMsg').textContent = '서버에 연결하지 못했어요.'; $('send').disabled = false; });
   };
 }

@@ -42,6 +42,7 @@ fieldset{border:0;padding:0;margin:0 0 16px}
 legend{font-weight:700;font-size:14px;margin-bottom:8px;padding:0}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row>*,.row3>*{min-width:0}.row input,.row select,.row3 input,.row3 select{width:100%;min-width:0;box-sizing:border-box}
 label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--sub)}
 .lt .unit{margin-left:2px}
 input[type=number],input[type=date],select{font:inherit;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
@@ -188,7 +189,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
           <label class="f">직위<select id="pos"><option value="ceo">대표이사</option><option value="exec">등기임원</option><option value="staff">미등기임원·직원</option></select></label>
         </div>
         <div class="row" style="margin-top:10px">
-          <label class="f"><span class="lt">생년월일 <span class="unit">넣으면 보험나이 자동 · 저장 안 함</span></span><input type="date" id="birth"></label>
+          <label class="f"><span class="lt">생년월일 <span class="unit">보험나이 자동</span></span><input type="date" id="birth"></label>
           <div class="f" id="ageOut" style="font-size:13px;color:var(--sub);align-self:end;padding-bottom:6px"></div>
         </div>
         <div class="row" style="margin-top:10px">

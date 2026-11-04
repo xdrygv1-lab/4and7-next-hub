@@ -227,6 +227,8 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div><label>미팅 성격</label><select id="occ"><option value="결산">가결산·결산 미팅 겸</option><option value="단독">AP 단독 미팅</option></select></div>
     </div>
     <div style="margin-top:8px"><label>오면서 볼 수 있는 것 (릴렉스용)</label><input type="text" id="obs" placeholder="예: 지게차가 바쁨, 사무실 상패, 최근 기사"></div>
+    <div style="margin-top:8px"><label>대표님 성향 (내가 보고 고르기, 묻지 않기)</label><select id="style"><option value="">모름</option><option value="결론형">결론형: 말이 짧고 결론·숫자부터 묻는다</option><option value="관계형">관계형: 가족·직원 이야기가 길고 사람을 본다</option><option value="분석형">분석형: 근거·조문을 묻고 메모한다</option><option value="신중형">신중형: "생각해 볼게요", 상의하고 천천히 정한다</option></select>
+      <div id="styleTip" class="muted" style="margin-top:4px"></div></div>
   </fieldset>
 
   <fieldset><legend>업체 상황 · 특이사항</legend>
@@ -330,8 +332,17 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','k1','k2','k3','goal','day','time','dur','introN','apMin'];
+const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','style','k1','k2','k3','goal','day','time','dur','introN','apMin'];
 const FLAGS=$$('input[id^=f_]').map(e=>e.id);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='style'){const t=STYLE[e.target.value];$('#styleTip').textContent=t?'보이는 신호: '+t.sign+' · 준비물: '+t.prep:''}});
+/* 대표님 성향별 진행 (보험인 MBTI «고객 궁합» 아이디어를 우리 말로. 성향은 묻지 않고 관찰해서 고른다) */
+const STYLE={
+ 결론형:{sign:'말이 짧다, 시계를 본다, "그래서 결론이 뭐예요?"',pace:'첫 1분에 오늘 목적과 시간을 먼저 말한다. 질문은 굵은 것 3개로 줄인다.',dont:'긴 사례, 돌려 말하기, 설명이 질문보다 길어지는 것',prep:'표 한 장: 핵심 숫자 3개 + 고를 길 2개. 장표는 적게',line:'"대표님, 결론부터 말씀드리면 오늘은 질문 세 개만 드리고, 다음에 숫자로 정리해 오겠습니다."',close:'날짜·시각을 내가 먼저 두 개 제시하고 고르시게 한다.'},
+ 관계형:{sign:'가족·직원·지인 이야기가 많다, 차를 권한다, 사담이 길다',pace:'릴렉스와 사례를 넉넉히. 대표님 이야기를 끊지 않고 끝까지 듣는다.',dont:'숫자로 바로 몰기, 시간 재촉, 차가운 표부터 꺼내기',prep:'비슷한 대표님 이야기 1개(실명 없이), 가족·회사 그림 한 장',line:'"그 이야기 조금 더 들려주시겠어요? 그게 제일 중요해 보여서요."',close:'소개요청이 가장 잘 되는 성향. ☆ 소개요청을 꼭 한다.'},
+ 분석형:{sign:'"그거 확실해요?", 근거·조문을 묻는다, 메모한다, 자료를 달라고 한다',pace:'말할 때마다 근거와 출처를 함께. 모르는 것은 그 자리에서 "확인해서 드리겠다".',dont:'"무조건·확정" 같은 단정, 과장, 아는 척',prep:'계산표, 조문·예규 근거, 장단점 비교표(단점도), [확인필요] 표시',line:'"그 부분은 정확한 숫자로 확인해서, 다음에 근거와 같이 보여 드리겠습니다."',close:'받아 올 자료 목록을 구체적으로 정해 두고 약속을 잡는다.'},
+ 신중형:{sign:'"생각해 볼게요", 배우자·세무사와 상의한다, 손해를 걱정한다',pace:'천천히, 한 번에 하나만. 위험과 손실 가능성을 먼저 말해 안심시킨다.',dont:'재촉, 마감 압박, 선택지를 많이 늘어놓기',prep:'단계별 순서(오늘은 확인만), 배우자와 함께 볼 쉬운 자료',line:'"오늘 정하실 건 없습니다. 다음에 한 가지만 같이 확인하시죠."',close:'다음 약속은 짧게(30분). 배우자 동석을 제안한다.'}};
+function styleBox(c,full){const t=STYLE[c.style];if(!t)return'';return`<div class="concept top" style="margin:8px 0"><div class="hd"><span class="nm">대표님 성향: ${c.style}</span><span class="badge">관찰로 고름</span></div>
+  <div><b>이렇게 진행:</b> ${esc(t.pace)}</div><div><b>피할 것:</b> ${esc(t.dont)}</div><div><b>한 문장:</b> ${esc(t.line)}</div><div><b>클로징:</b> ${esc(t.close)}</div>${full?`<div><b>PC 준비물:</b> ${esc(t.prep)}</div>`:''}</div>`}
 const SAMPLE={name:'김 대표님',co:'OO정밀',ind:'제조',form_:'개인',years:15,emp:5,sales:12,profit:1.1,age:50,sex:'남',kids:2,heir:'모름',rel:'기장',relYears:5,cert:'세무사',occ:'결산',obs:'지게차가 바쁘네요. 작년엔 안 그랬는데',
   k1:'예전에 "법인이 유리하냐"고 물어본 적 있음',k2:'자녀 둘에게 각각 2천만원씩 증여한 적 있음',k3:'공장 설비가 대표 개인 명의',goal:'',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',
   f_askedCorp:1,f_ownerAsset:1,f_noRetire:1,f_giftHistory:1};
@@ -916,7 +927,7 @@ const PC_SIGN=['적합성·설명의무 서류 준비 (상품설명서, 해지�
 function renderPC(){const el=$('#t-pc');if(!el||!last)return;const{c,dx,top}=last;
   if(!top){el.innerHTML='<div class="muted">업체를 분석하면 PC 준비가 만들어집니다.</div>';return}
   const a=last.amount||proposeAmount(c,top);const ks=dx.slice(0,2).filter(k=>PCMOD[k.id]);
-  el.innerHTML=`<h2>PC 준비 <span class="badge warn">내부용 · 고객에게 보여주지 않음</span></h2>
+  el.innerHTML=`<h2>PC 준비 <span class="badge warn">내부용 · 고객에게 보여주지 않음</span></h2>${styleBox(c,true)}
    ${(()=>{const P=preflags(c);return P.length?`<h3>제안 전 신호 <span class="muted" style="font-size:13px">실제 보류·철회 사례 기반</span></h3><ul class="t">${P.map(([lv,t])=>`<li><span class="dot" style="background:${LV[lv][1]}"></span> ${esc(t)}</li>`).join('')}</ul>`:''})()}
    <h3>PC 들어가기 전 확인</h3><div class="cl">${PC_ENTRY.map(t=>`<label><input type="checkbox" data-cl="PC:${esc(t)}" ${clState['PC:'+t]?'checked':''}><span>${esc(t)}</span></label>`).join('')}</div>
    ${ks.map((k,i)=>{const m=PCMOD[k.id];return`<div class="concept ${i?'':'top'}"><div class="hd"><span class="nm">${i+1}. ${esc(k.name)}</span></div>
@@ -1048,7 +1059,7 @@ function renderSc(){const{S}=last;let html='',cur='';const tm={진입:'5분',전
   S.forEach(s=>{if(s.blk!==cur){cur=s.blk;html+=`<div class="blk"><b>${cur}</b><span class="muted">${tm[cur]} (20분 기준)</span></div>`}
     html+=`<div class="step"><div class="sh"><span class="no">${s.no}</span><span class="tt">${s.tt}</span></div><div class="say">${esc(s.say).replace(/\[([^\]]*)\]/g,(m,a)=>a==='저항'?'<b>[저항]</b>':`<span class="ph">[${a}]</span>`)}</div><div class="pt">✓ ${s.pt}${s.warn?' · '+s.warn:''}</div></div>`});
   const hits=check(S.map(s=>s.say).join('\n'));
-  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><button class="b" onclick="window.print()">인쇄</button></div>`+html}
+  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><button class="b" onclick="window.print()">인쇄</button></div>`+styleBox(last.c,false)+html}
 function plain(){const{S}=last;return S.map(s=>`[${s.no}] ${s.tt}\n${s.say}\n`).join('\n')}
 function fillEdit(){$('#edit').value=plain();runCheck()}
 function runCheck(){const t=$('#edit').value;const h=check(t);const b=h.filter(x=>x.lv==='bad'),w=h.filter(x=>x.lv==='warn');
@@ -1114,7 +1125,7 @@ function renderPrompt(){const{c,dx,top,T}=last;const fl=FLAGS.filter(k=>c[k]).ma
 [상황카드]
 ① 상대 정보: ${c.name||'대표'} / ${c.co||'회사'} / ${c.ind} / ${c.form}${nz(c.years)?' / 업력 '+c.years+'년':''}${nz(c.sales)?' / 매출 '+c.sales+'억':''}${nz(c.profit)?' / 당기순이익 '+c.profit+'억':''}${nz(c.emp)?' / 직원 '+c.emp+'명':''}${nz(c.age)?' / 대표 '+c.age+'세 '+c.sex:''}${nz(c.kids)?' / 자녀 '+c.kids+'명(승계 자녀 '+c.heir+')':''}${c.form==='법인'&&nz(c.equity)?' / 순자산 '+c.equity+'억, 지분 '+(c.share??100)+'%':''}${c.form==='법인'&&nz(c.cash)?' / 법인 유휴현금 '+c.cash+'억':''}
    신호: ${fl.join(', ')||'없음'}
-② 나와의 관계: ${c.rel}${c.rel==='기장'&&nz(c.relYears)?' '+c.relYears+'년':''}${c.rel==='소개'?' (소개자: '+(c.referrer||'미입력')+')':''} / 내 자격: ${c.cert} / ${c.occ==='결산'?'가결산 미팅 겸':'AP 단독'} / 관찰: ${c.obs||'없음'}
+② 나와의 관계: ${c.rel}${c.rel==='기장'&&nz(c.relYears)?' '+c.relYears+'년':''}${c.rel==='소개'?' (소개자: '+(c.referrer||'미입력')+')':''} / 내 자격: ${c.cert} / ${c.occ==='결산'?'가결산 미팅 겸':'AP 단독'} / 관찰: ${c.obs||'없음'}${STYLE[c.style]?` / 대표 성향(관찰): ${c.style}, 진행 ${STYLE[c.style].pace} 피할 것 ${STYLE[c.style].dont}`:''}
 ③ 알고 있는 정보: 1) ${c.k1||'-'} 2) ${c.k2||'-'} 3) ${c.k3||'-'}
    업체 특이사항: ${c.notes||'-'}
    회사 공개 정보: ${c.bizinfo||'-'}

@@ -21,6 +21,7 @@ select,input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(-
 .q{padding:12px 0;border-top:1px solid var(--line)}.q:first-child{border-top:0}.qt{font-size:15px;margin-bottom:8px}.qn{color:var(--sub);font-size:12px;margin-right:6px}
 .lk{display:flex;gap:6px;flex-wrap:wrap}.lk button{flex:1 1 0;min-width:0;white-space:normal;line-height:1.2;min-height:38px;word-break:keep-all;font:inherit;font-size:12px;padding:8px 4px;border:1px solid var(--line);border-radius:100px;background:#fff;cursor:pointer}
 .ver{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ver button{font:inherit;text-align:left;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;display:flex;flex-direction:column;gap:4px}.ver button b{font-size:16px}.ver button span{font-size:12px;color:var(--sub);line-height:1.45}.ver button.on{border-color:#0052FF;background:#F0F5FF}.ver button.on b{color:#0052FF}@media(max-width:480px){.ver{grid-template-columns:1fr}}
+.emo{font-size:56px;line-height:1.1}.mrow{display:flex;gap:12px;align-items:center}
 .pair{display:grid;gap:6px;margin-top:8px}.pair span{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fafafa;font-size:14px}.pair b{color:#0052FF;margin-right:4px}
 .lk button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .bar{height:8px;background:#eef0f3;border-radius:8px;overflow:hidden;margin:10px 0 2px}.bar i{display:block;height:100%;background:var(--acc)}
@@ -62,7 +63,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <div class="wrap">
   <a class="brand" href="../index.html#home">4&amp;7 NEXT 허브</a>
   <h1>보험 MBTI <span style="font-size:15px;color:var(--sub);font-weight:400">전문직 설계사 성향검사 · 1차안</span></h1>
-  <p class="lead">좋은 자료를 줘도 사람마다 결과가 다릅니다. 이 검사는 «나는 어떤 방식으로 영업할 때 잘 되는 사람인지»를 알려 주고, 맞는 업체 규모·연습·코칭을 추천합니다. 9분, 52문항.</p>
+  <p class="lead">나는 16가지 중 어떤 설계사일까? 9분이면 내 영업 스타일, 나와 잘 맞는 업체와 연습, 환상의 동행 짝꿍까지 나와요. 52문항.</p>
 
   <section class="panel" id="verbox">
     <h2>버전 고르기</h2>
@@ -205,6 +206,9 @@ const Q = [
   ['w', -1, '큰 건은 지점장과 같이 간다||큰 건도 내가 끝까지 간다']
 ];
 /* 16유형: [만남][제안][설득][방식]. 별명 · 한 줄 · 이런 사람(장면) · 잘 맞는 판 · 코칭 한 마디 */
+const EMO = { ABNT:'🦁', ABNO:'🦅', ABST:'🎉', ABSO:'🐯', ACNT:'🧭', ACNO:'🦊', ACST:'🌻', ACSO:'🐎', RBNT:'♟️', RBNO:'🎯', RBST:'🤝', RBSO:'🔧', RCNT:'🏛️', RCNO:'🔬', RCST:'🌳', RCSO:'🛡️' };
+/* 환상의 동행 짝꿍: 제안·설득 글자를 뒤집은 유형 (내가 약한 쪽을 채워 줌) */
+const MATE = c => c[0] + (c[1] === 'B' ? 'C' : 'B') + (c[2] === 'N' ? 'S' : 'N') + c[3];
 const TYPES = {
   ABNT: ['판을 키우는 전략가', '먼저 다가가 숫자로 큰 그림을 그리고, 팀과 함께 밀어붙인다.', '처음 만난 제조업 대표에게 «법인 이익 3억이면 이렇게 쌓입니다» 표를 꺼내고, 다음 PC는 노무사와 같이 간다.', '순이익 10억 이상 법인, 여러 자격사 묶음 제안', '숫자 앞에 질문 하나. 대표가 말한 숫자로만 설득하기'],
   ABNO: ['숫자 사냥꾼', '혼자 새 업체를 뚫고, 계산과 근거로 큰 건을 직접 마무리한다.', '소개 없이 연락한 대표에게 재무제표 3년치를 받아 혼자 시뮬레이션을 돌려 월 천만 원 제안까지 간다.', '이익 큰 신규 법인, 재무 데이터가 있는 업체', '한도(재정심사) 먼저 보고, 큰 건은 PC만 동행'],
@@ -266,7 +270,7 @@ function renderQs(){
     + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">${VER === 'pro' ? '활동' : '미팅'} ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
   prog();
 }
-function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항`; }
+function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항` + (n === Q.length ? ' · 다 했어요! 결과를 열어 보세요 🎉' : n >= Q.length * 0.75 ? ' · 거의 다 왔어요' : n >= Q.length / 2 ? ' · 절반 넘었어요' : ''); }
 $('qs').addEventListener('click', e => { const w = e.target.closest('button[data-w]'); if (w) { const k = +w.parentElement.dataset.b; beh[k] = +w.dataset.w; w.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === w)); save(); return; } const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
 function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, beh, ver: VER, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
 function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); Object.assign(beh, o.beh || {}); VER = o.ver || ''; ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
@@ -290,8 +294,8 @@ function result(){
   const ap = [...new Set(P.map(p => POLE[p].ap))].join(' / ');
   $('result').hidden = false;
   $('result').innerHTML = `<section class="panel">
-    <div class="hint">${esc($('who').value || '나')}님의 보험 MBTI (${esc($('cert').value)} · ${VER === 'pro' ? '지점원' : '신입'} 버전)</div>
-    <div class="type">${R.code}</div><div class="nick">${esc((TYPES[R.code] || [nick])[0])} <span class="hint" style="font-weight:400">${esc(nick)}</span></div>
+    <div class="hint">${$('who').value ? esc($('who').value) + '님의' : '나의'} 보험 MBTI (${esc($('cert').value)} · ${VER === 'pro' ? '지점원' : '신입'} 버전)</div>
+    <div class="emo">${EMO[R.code] || '✨'}</div><div class="type">${R.code}</div><div class="nick">${esc((TYPES[R.code] || [nick])[0])} <span class="hint" style="font-weight:400">${esc(nick)}</span></div>
     ${TYPES[R.code] ? `<p style="margin:0 0 6px">${esc(TYPES[R.code][1])}</p><div class="card" style="background:#f7f9ff"><div><b>이런 사람</b> ${esc(TYPES[R.code][2])}</div><div><b>잘 맞는 판</b> ${esc(TYPES[R.code][3])}</div><div><b>코칭 한 마디</b> ${esc(TYPES[R.code][4])}</div></div>` : ''}
     ${R.ax.map(x => `<div class="axis"><div class="nm"><span>${x.a.neg[0]} ${x.a.neg[1]}</span><b>${x.a.name}</b><span>${x.a.pos[1]} ${x.a.pos[0]}</span></div><div class="track"><i style="left:${x.pct}%"></i></div></div>`).join('')}
     ${R.gap >= 2 ? `<p class="warn">비슷한 질문에 다르게 답한 곳이 ${R.gap}곳 있어요. 시간을 두고 한 번 더 해 보면 더 정확합니다.</p>` : ''}
@@ -299,9 +303,10 @@ function result(){
   <section class="panel"><h2>축별 강점 · 조심 · 처방</h2>
     ${R.ax.map(x => { const p = POLE[x.pole[0]]; return `<div class="card"><h3>${x.a.name}: ${x.pole[1]} (${x.pole[0]})${x.strong ? '' : ' <span class="hint">중간에 가까움</span>'}</h3><div><b>강점</b> ${esc(p.s)}</div><div><b>조심</b> ${esc(p.r)}</div><div><b>처방</b> ${esc(p.rx)}</div></div>`; }).join('')}
   </section>
-  <section class="panel"><h2>매니지먼트 포인트 <span class="hint" style="font-weight:400">지점장용 · ${VER === 'pro' ? '지점원' : '신입'}</span></h2>
-    <table>${R.ax.map(x => `<tr><th style="width:140px">${x.a.name} · ${x.pole[1]}</th><td>${esc(MGMT[x.pole[0]][VER === 'pro' ? 1 : 0])}</td></tr>`).join('')}</table>
-    ${VER === 'pro' ? '' : '<p class="hint">신입은 경험이 쌓이면 성향이 달라질 수 있어요. 3개월 뒤 «지점원 버전»으로 다시 해서 변화를 보세요.</p>'}
+  <section class="panel mate"><h2>환상의 동행 짝꿍</h2>
+    ${(() => { const m = MATE(R.code), t = TYPES[m] || ['']; return `<div class="mrow"><span class="emo" style="font-size:40px">${EMO[m] || '✨'}</span><div><b>${m} ${esc(t[0])}</b><div>${esc(t[1] || '')}</div><div class="hint">내가 약한 ${R.ax[1].pole[0] === 'B' ? '신중함' : '과감함'}과 ${R.ax[2].pole[0] === 'N' ? '이야기' : '숫자'}를 채워 줘요. 팀에서 이 유형을 찾아 같이 가 보세요.</div></div></div>`; })()}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="cardDl">결과 카드 저장 (단톡 공유용)</button></div>
+    ${VER === 'pro' ? '' : '<p class="hint">3개월 뒤 «지점원 버전»으로 다시 해 보면 내가 얼마나 바뀌었는지 볼 수 있어요.</p>'}
   </section>
   <section class="panel"><h2>나에게 맞는 영업</h2>
     <table><tr><th style="width:140px">제안 규모</th><td>${esc(comfort)}</td></tr>
@@ -313,7 +318,7 @@ function result(){
     <table><tr><th>대표님</th><th>나와 만나면</th></tr>${Object.entries(MATCH).map(([k, m]) => `<tr><td>${k}</td><td>${esc(P.map(p => m[p]).filter(Boolean)[0] || '무난함. 업체 분석 «대표님 성향» 안내를 따르세요')}</td></tr>`).join('')}</table>
   </section>
   <details class="panel"><summary style="cursor:pointer;font-weight:700">16가지 유형 한눈에 보기</summary>
-    <table style="margin-top:8px"><tr><th style="width:62px">유형</th><th style="width:150px">별명</th><th>이런 사람</th></tr>${Object.entries(TYPES).map(([k, t]) => `<tr${k === R.code ? ' style="background:#eef3ff"' : ''}><td><b>${k}</b></td><td>${esc(t[0])}</td><td>${esc(t[1])}</td></tr>`).join('')}</table></details>
+    <table style="margin-top:8px"><tr><th style="width:62px">유형</th><th style="width:150px">별명</th><th>이런 사람</th></tr>${Object.entries(TYPES).map(([k, t]) => `<tr${k === R.code ? ' style="background:#eef3ff"' : ''}><td>${EMO[k] || ''} <b>${k}</b></td><td>${esc(t[0])}</td><td>${esc(t[1])}</td></tr>`).join('')}</table></details>
   <section class="panel"><h2>다음 할 일</h2><ol>
     <li>«AP 롤플레이»에서 보강할 단계를 보통 난이도로 한 번 연습</li>
     <li>지점장에게 이 결과를 보여 주고 «나에게 맞는 업체 규모»로 다음 AP 대상 고르기</li>
@@ -324,12 +329,27 @@ function result(){
   <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다.</p>`;
   $('result').scrollIntoView({ behavior: 'smooth' });
   $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); Object.keys(beh).forEach(k => delete beh[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('cardDl').onclick = () => {
+    const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    g.fillStyle = '#0a0b0d'; g.fillRect(0, 0, W, H);
+    const F = "Pretendard, 'Malgun Gothic', sans-serif"; g.textAlign = 'center';
+    g.fillStyle = '#8a93a6'; g.font = `500 36px ${F}`; g.fillText('4&7 NEXT · 보험 MBTI', W / 2, 120);
+    g.font = `200px ${F}`; g.fillText(EMO[R.code] || '✨', W / 2, 380);
+    g.fillStyle = '#4d8bff'; g.font = `800 150px ${F}`; g.fillText(R.code, W / 2, 560);
+    g.fillStyle = '#fff'; g.font = `700 64px ${F}`; g.fillText((TYPES[R.code] || [nick])[0], W / 2, 660);
+    g.fillStyle = '#c9cfdb'; g.font = `400 34px ${F}`;
+    const line = (TYPES[R.code] || ['', ''])[1]; let row = '', y = 740; [...line].forEach(ch => { if (g.measureText(row + ch).width > 860) { g.fillText(row, W / 2, y); row = ''; y += 50; } row += ch; }); g.fillText(row, W / 2, y);
+    R.ax.forEach((x, k) => { const yy = 930 + k * 90; g.textAlign = 'left'; g.fillStyle = '#8a93a6'; g.font = `500 28px ${F}`; g.fillText(x.a.neg[1], 140, yy); g.textAlign = 'right'; g.fillText(x.a.pos[1], 940, yy); g.textAlign = 'center'; g.fillStyle = '#fff'; g.fillText(x.a.name, W / 2, yy);
+      g.fillStyle = '#2a2e36'; g.fillRect(140, yy + 18, 800, 10); g.fillStyle = '#4d8bff'; g.beginPath(); g.arc(140 + 800 * x.pct / 100, yy + 23, 16, 0, 7); g.fill(); });
+    g.fillStyle = '#8a93a6'; g.font = `400 30px ${F}`; g.textAlign = 'center'; g.fillText(`${$('who').value ? $('who').value + ' · ' : ''}${VER === 'pro' ? '지점원' : '신입'} 버전`, W / 2, 1290);
+    const a = document.createElement('a'); a.download = `보험MBTI_${R.code}.png`; a.href = cv.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove();
+  };
   $('send').onclick = () => {
     if ($('send').disabled) return;
     const TP = (() => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } })();
     if (!TP) { $('sendMsg').textContent = '팀 비밀번호를 넣은 기기에서만 저장할 수 있어요.'; return; }
     $('send').disabled = true; $('sendMsg').textContent = '저장하는 중…';
-    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), ver: VER === 'pro' ? '지점원' : '신입', beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), mgmt: R.ax.map(x => x.a.name + '(' + x.pole[1] + '): ' + MGMT[x.pole[0]][VER === 'pro' ? 1 : 0]).join(' / '), ver: VER === 'pro' ? '지점원' : '신입', beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
       .then(r => { $('sendMsg').textContent = r.ok ? '팀 기록에 저장했어요.' : (r.error || '저장하지 못했어요.'); if (r.ok) $('send').textContent = '저장 완료'; else $('send').disabled = false; }).catch(() => { $('sendMsg').textContent = '서버에 연결하지 못했어요.'; $('send').disabled = false; });
   };
 }

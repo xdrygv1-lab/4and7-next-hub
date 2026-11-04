@@ -408,6 +408,7 @@ th{background:var(--panel2)}
     <div class="navs" id="uwSub" hidden></div>
     <a class="navl" data-r="tool-rp" href="#tool-rp">AP 롤플레이<span class="nd">AI 대표님과 말로 연습 · 15단계 채점</span></a>
     <a class="navl" data-r="tool-mbti" href="#tool-mbti">보험 MBTI<span class="nd">내 영업 성향 · 맞춤 코칭</span></a>
+    <div class="navs" id="mbtiSub" hidden></div>
     <a class="navl" data-r="ask" href="#ask">물어보기<span class="nd">AI에게 컨셉·준비할 것 묻기</span></a>
     <a class="navl" data-r="learn" href="#learn">공부하기<span class="nd">컨셉·화법·상품 익히기</span></a>
     <div class="navs" id="learnSub" hidden></div>
@@ -787,6 +788,8 @@ function renderNav(h){
   document.querySelectorAll('#nav > .navl').forEach(a=>a.classList.toggle('on',a.dataset.r===fam));
   const sub=$('#learnSub');sub.hidden=fam!=='learn';
   sub.innerHTML=LEARN.map(c=>`<a class="navl ${c.h===cur?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
+  const ms=$('#mbtiSub'),mgrOn=/view=mgr/.test(location.hash);ms.hidden=h!=='tool-mbti';
+  ms.innerHTML=`<a class="navl ${h==='tool-mbti'&&!mgrOn?'on':''}" href="#tool-mbti">검사하기</a><a class="navl ${mgrOn?'on':''}" href="#tool-mbti?view=mgr">지점장 보기</a>`;
   const us=$('#uwSub');us.hidden=fam!=='uw';
   us.innerHTML=UWNAV.map(c=>`<a class="navl ${c.h===h?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
   document.querySelectorAll('.navfoot a').forEach(a=>a.classList.toggle('on',a.dataset.f===h))}

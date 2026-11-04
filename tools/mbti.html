@@ -134,19 +134,7 @@ const NEW = {
   49: '처음 만난 날 금액까지 꺼낸다||두 번째 만남부터 꺼낸다',
   50: '표 한 장으로 보여 준다||비슷한 사람의 사례 하나를 들려준다'
 };
-/* 활동 문항 (점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
-const BEH_PRO = [
-  ['최근 3개월 동안 새로 만난 대표 수', ['0~2명', '3~5명', '6~10명', '10명 넘게']],
-  ['최근 계약 중 소개로 온 비율', ['거의 없음', '절반 아래', '절반 넘게', '거의 전부']],
-  ['최근 3개월 동안 동행 미팅 횟수', ['0번', '1~2번', '3~5번', '6번 넘게']]
-];
-const BEH_NEW = [
-  ['그중 처음 보는 대표와의 미팅은 몇 번으로 채울까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
-  ['그중 소개받은 대표와의 미팅은 몇 번이면 좋을까요?', ['0~2번', '3~5번', '6~8번', '9~10번']],
-  ['그중 선배나 다른 전문가가 같이 가 줬으면 하는 미팅은 몇 번?', ['0번', '1~2번', '3~5번', '6번 넘게']]
-];
-let VER = '', BEH = BEH_NEW;
-const beh = {};
+let VER = '';
 const qText = i => (VER === 'new' && NEW[i]) || Q[i][2];
 const Q = [
   /* 만남: + 개척 A / − 관계 R */
@@ -262,21 +250,18 @@ const MATCH = {
 };
 function renderQs(){
   const PK = ['A 확실', 'A 쪽', '반반', 'B 쪽', 'B 확실'];
-  BEH = VER === 'pro' ? BEH_PRO : BEH_NEW;
   $('qs').hidden = $('done').parentElement.hidden = !VER;
   $('newHint').hidden = VER !== 'new';
   document.querySelectorAll('.ver button').forEach(b => b.classList.toggle('on', b.dataset.ver === VER));
   if (!VER) return;
   $('qs').innerHTML = '<h2>문항</h2>' + Q.map((q, i) => { const pr = qText(i).split('||'), two = pr.length === 2;
-    return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(pr[0])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('')
-    + (VER === 'pro' ? '<h2 style="margin-top:18px">최근 실제 활동</h2>' : '<h2 style="margin-top:18px">다음 달 미팅 10번을 내 마음대로 잡는다면</h2>')+'<p class="hint">유형 점수에는 들어가지 않고, 나중에 실적과 맞춰 보는 데 씁니다.</p>'
-    + BEH.map((b, i) => `<div class="q"><div class="qt"><span class="qn">${VER === 'pro' ? '활동' : '미팅'} ${i + 1}</span>${esc(b[0])}</div><div class="lk bh" data-b="${i}">${b[1].map((t, v) => `<button type="button" data-w="${v + 1}" class="${beh[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`).join('');
+    return `<div class="q"><div class="qt"><span class="qn">${i + 1}</span>${two ? `둘 중 어느 쪽에 더 가까운가요?<div class="pair"><span><b>A</b> ${esc(pr[0])}</span><span><b>B</b> ${esc(pr[1])}</span></div>` : esc(pr[0])}</div><div class="lk" data-i="${i}">${(two ? PK : LK).map((t, v) => `<button type="button" data-v="${v + 1}" class="${ans[i] === v + 1 ? 'on' : ''}">${t}</button>`).join('')}</div></div>`; }).join('');
   prog();
 }
 function prog(){ const n = Object.keys(ans).length; $('prog').style.width = (n / Q.length * 100) + '%'; $('cnt').textContent = `${n} / ${Q.length} 문항` + (n === Q.length ? ' · 다 했어요! 결과를 열어 보세요 🎉' : n >= Q.length * 0.75 ? ' · 거의 다 왔어요' : n >= Q.length / 2 ? ' · 절반 넘었어요' : ''); }
-$('qs').addEventListener('click', e => { const w = e.target.closest('button[data-w]'); if (w) { const k = +w.parentElement.dataset.b; beh[k] = +w.dataset.w; w.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === w)); save(); return; } const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
-function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, beh, ver: VER, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
-function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); Object.assign(beh, o.beh || {}); VER = o.ver || ''; ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
+$('qs').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b) return; const i = +b.parentElement.dataset.i; ans[i] = +b.dataset.v; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); prog(); save(); });
+function save(){ try { localStorage.setItem(KEY, JSON.stringify({ ans, ver: VER, who: $('who').value, cert: $('cert').value, career: $('career').value })); } catch (e) {} }
+function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return; Object.assign(ans, o.ans || {}); VER = o.ver || ''; ['who','cert','career'].forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch (e) {} }
 function score(){
   const sum = {}, cnt = {};
   Q.forEach((q, i) => { if (!ans[i]) return; const v = (ans[i] - 3) * q[1]; sum[q[0]] = (sum[q[0]] || 0) + v; cnt[q[0]] = (cnt[q[0]] || 0) + 1; });
@@ -331,7 +316,7 @@ function result(){
   </section>
   <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다.</p>`;
   $('result').scrollIntoView({ behavior: 'smooth' });
-  $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); Object.keys(beh).forEach(k => delete beh[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('cardDl').onclick = () => {
     const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
     g.fillStyle = '#0a0b0d'; g.fillRect(0, 0, W, H);
@@ -352,12 +337,12 @@ function result(){
     const TP = (() => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } })();
     if (!TP) { $('sendMsg').textContent = '팀 비밀번호를 넣은 기기에서만 저장할 수 있어요.'; return; }
     $('send').disabled = true; $('sendMsg').textContent = '저장하는 중…';
-    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), mgmt: R.ax.map(x => x.a.name + '(' + x.pole[1] + '): ' + MGMT[x.pole[0]][VER === 'pro' ? 1 : 0]).join(' / '), ver: VER === 'pro' ? '지점원' : '신입', beh: BEH.map((b, i) => beh[i] ? b[1][beh[i] - 1] : '').join(' / ') }) })).then(r => r.json())
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), mgmt: R.ax.map(x => x.a.name + '(' + x.pole[1] + '): ' + MGMT[x.pole[0]][VER === 'pro' ? 1 : 0]).join(' / '), ver: VER === 'pro' ? '지점원' : '신입' }) })).then(r => r.json())
       .then(r => { $('sendMsg').textContent = r.ok ? '팀 기록에 저장했어요.' : (r.error || '저장하지 못했어요.'); if (r.ok) $('send').textContent = '저장 완료'; else $('send').disabled = false; }).catch(() => { $('sendMsg').textContent = '서버에 연결하지 못했어요.'; $('send').disabled = false; });
   };
 }
 $('verbox').addEventListener('click', e => { const b = e.target.closest('button[data-ver]'); if (!b || b.dataset.ver === VER) return;
-  VER = b.dataset.ver; Object.keys(beh).forEach(k => delete beh[k]);
+  VER = b.dataset.ver;
   const c = $('career'); if (VER === 'new' && +c.value > 1) c.value = '0'; if (VER === 'pro' && +c.value < 1) c.value = '2';
   save(); renderQs(); $('result').hidden = true; });
 $('done').onclick = result;

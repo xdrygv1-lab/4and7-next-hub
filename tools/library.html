@@ -201,6 +201,7 @@ function card(p){
   const specs = (p.specs||[]).map(([k,v]) => `<tr><th>${esc(k)}</th><td>${rich(v)}</td></tr>`).join('');
   const list = (arr, cls) => arr && arr.length ? `<ul class="l ${cls||''}">${arr.map(x => `<li>${rich(x)}</li>`).join('')}</ul>` : '';
   const calc = p.kind === 'annuity' ? '' : ` <a href="uw-calc.html">계산기</a>`;
+  const ours = hubDocs(p);
   return `<article class="card" style="--bar:${BRAND[p.ins]}">
     <div class="ins">${esc(p.ins)}</div>
     <h3>${esc(p.name)}</h3>
@@ -208,6 +209,7 @@ function card(p){
     <p class="one">${esc(p.oneLine)}</p>
     <table class="kv">${specs}</table>
     <div class="uw"><b>재정:</b> ${esc(p.uw)}${calc}</div>
+    ${ours.length ? `<div class="uw" style="margin-top:6px"><b>우리 상품 자료:</b> ${ours.map(d => `<a href="../index.html#${esc(d.id)}">${esc(d.title.replace(/^(상품 요약|요약_|FAQ|약관 정리):?\s*/, ''))}</a>`).join(' · ')}</div>` : ''}
     <details class="more"><summary>판매 포인트·주의·자료 ${(p.docs||[]).length}건</summary>
       ${p.points && p.points.length ? '<h4>판매 포인트</h4>' + list(p.points) : ''}
       ${p.cautions && p.cautions.length ? '<h4>주의</h4>' + list(p.cautions, 'warn') : ''}
@@ -216,6 +218,20 @@ function card(p){
     </details>
   </article>`;
 }
+
+/* 허브 «공부하기»의 상품 문서와 자동 연결 (manifest.json 제목으로 찾음, 문서가 늘면 저절로 붙음). 개발팀 11/04 */
+const HUB_RULE = {
+  met_usd_ceo: /(The\s?Classic).*경영인정기|달러경영인정기|경영인정기보험 12개|경영인정기보험·단기납종신|전환특약/,
+  met_maverick: /MAVERICK|변액리치정기|변액 경영인정기|변액보험 판매상품/,
+  met_3y: /3년\s?내고\s?만족/, met_million: /백만인/, met_modu: /모두의\s?달러종신/, met_modu_krw: /모두의\s?종신|단기납종신 환급률/,
+  met_odalyeon: /달러연금|오늘의 달러/,
+  kb_ceo: /경영인정기보험 12개|경영인정기보험·단기납종신/, sh_ceo: /경영인정기보험 12개|경영인정기보험·단기납종신/,
+  kb_partner: /단기납종신 환급률|종신보험 법인·개인/, kb_7years: /단기납종신 환급률/,
+  sh_vip: /상속세 재원|종신보험 법인·개인/, sh_silsok: /단기납종신 환급률|종신보험 법인·개인/, sh_seven: /단기납종신 환급률/
+};
+let HUB = [];
+function hubDocs(p){ const re = HUB_RULE[p.id]; if (!re || !HUB.length) return []; const all = HUB.filter(d => re.test(d.title)); if (p.kind !== 'annuity') all.push(...HUB.filter(d => /청약서 작성 가이드/.test(d.title))); return [...new Map(all.map(d => [d.id, d])).values()].slice(0, 6); }
+fetch('../manifest.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(m => { if (m && m.docs) { HUB = m.docs.filter(d => /^(prod|prodmet|prodguide|faq|guide|concept)$/.test(d.gid)); render(); } }).catch(() => {});
 
 function render(){
   const ps = L.products.filter(visible);

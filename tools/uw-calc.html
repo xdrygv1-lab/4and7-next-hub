@@ -188,6 +188,10 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
           <label class="f">직위<select id="pos"><option value="ceo">대표이사</option><option value="exec">등기임원</option><option value="staff">미등기임원·직원</option></select></label>
         </div>
         <div class="row" style="margin-top:10px">
+          <label class="f"><span class="lt">생년월일 <span class="unit">넣으면 보험나이 자동 · 저장 안 함</span></span><input type="date" id="birth"></label>
+          <div class="f" id="ageOut" style="font-size:13px;color:var(--sub);align-self:end;padding-bottom:6px"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
           <label class="f"><span class="lt">연소득 <span class="unit">억원</span></span><input type="number" id="income" min="0" step="0.1"></label>
           <label class="f"><span class="lt">지분율 <span class="unit">%</span></span><input type="number" id="share" min="0" max="100" step="1"></label>
         </div>
@@ -575,6 +579,17 @@ const EX = {
   3: { kind:'ceo', uw:'general', age:55, sex:'M', pos:'ceo', income:1.5, share:80, founded:ymd(8), conversion:false, ni1:-0.5, ni2:0.3, ni3:1.0, prior:2, fx:1400, wantPrem:300, wantAmt:10 }
 };
 
+/* ---------- 보험나이·상령일 (개발팀 11/04) ---------- */
+function insAgeAt(b,d){let m=(d.getFullYear()-b.getFullYear())*12+(d.getMonth()-b.getMonth());if(d.getDate()<b.getDate())m--;return{full:Math.floor(m/12),ins:Math.floor(m/12)+(m%12>=6?1:0)}}
+function insAgeInfo(v){if(!v)return null;const b=new Date(v+'T00:00:00');if(isNaN(b))return null;const t=new Date();t.setHours(0,0,0,0);if(b>t)return{err:'생년월일이 오늘보다 뒤예요'};
+  const now=insAgeAt(b,t);let nx=null;for(let i=1;i<=370;i++){const d=new Date(t);d.setDate(t.getDate()+i);if(insAgeAt(b,d).ins>now.ins){nx=d;break}}
+  const f=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const left=nx?Math.round((nx-t)/864e5):null;
+  return{full:now.full,ins:now.ins,next:nx?f(nx):'',left,text:`만 ${now.full}세 · 보험나이 ${now.ins}세 · 다음 상령일 ${nx?f(nx):'-'}${left!=null?` (D-${left}, 이날부터 ${now.ins+1}세)`:''}${left!=null&&left<=30?' · 상령일 전에 청약하면 지금 나이로 가입':''}`}}
+$('birth').addEventListener('input', e => { e.stopPropagation(); const r = insAgeInfo(e.target.value); $('ageOut').textContent = r ? (r.err || r.text) : ''; if (r && !r.err) { $('age').value = r.ins; render(); } });
+$('birth').addEventListener('change', e => e.stopPropagation());
+$('f').addEventListener('input', e => { if (e.target.id !== 'birth') try{ localStorage.setItem('uwcalc-t', Date.now()); }catch(err){} });
+
 /* ---------- 이벤트 ---------- */
 document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -594,8 +609,9 @@ $('mNext').textContent = R.meta.nextCheck;
 renderRules();
 let saved = null; try{ saved = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){}
 if (saved) load(saved); else { $('fx').value = 1400; }
-/* 업체 분석(ap-generator)에서 넘어온 숫자 (?from=ap). 개발팀 11/04 추가 */
-(function(){ const Q = new URLSearchParams(location.search); if (Q.get('from') !== 'ap') return;
+/* 업체 분석(ap-generator)에서 넘어온 숫자. ?from=ap 이거나, 업체 분석에 더 최근에 넣은 숫자(localStorage 'nx-ap-uw')가 있으면 채움. 개발팀 11/04 */
+(function(){ let Q = new URLSearchParams(location.search);
+  if (Q.get('from') !== 'ap') { try{ const h = JSON.parse(localStorage.getItem('nx-ap-uw') || 'null'), mine = +(localStorage.getItem('uwcalc-t') || 0); if (h && h.qs && h.t > mine) Q = new URLSearchParams(h.qs); else return; }catch(e){ return; } }
   const o = { kind: Q.get('kind') || 'ceo', uw: 'general', pos: 'ceo' };
   ['contractor','age','sex','income','share','ni1','ni2','ni3','wantPrem'].forEach(k => { const v = Q.get(k); if (v !== null && v !== '') o[k] = v; });
   ['income','ni2','ni3','wantAmt','prior'].forEach(k => { if (o[k] == null) o[k] = ''; });

@@ -161,7 +161,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div><label>직원 수(명)</label><input type="number" id="emp" min="0"></div>
       <div><label>연 매출(억)</label><input type="number" id="sales" step="0.1"></div>
       <div><label>당기순이익(억)</label><input type="number" id="profit" step="0.1"></div>
-      <div><label>대표 나이</label><input type="number" id="age" min="20" max="90"></div>
+      <div><label>대표 나이 (보험나이)</label><input type="number" id="age" min="20" max="90"><input type="date" id="birth" title="생년월일을 넣으면 보험나이와 상령일이 나옵니다 (저장 안 함)" style="margin-top:4px"><div id="ageOut" class="muted" style="font-size:12px;margin-top:2px"></div></div>
       <div><label>대표 성별</label><select id="sex"><option>남</option><option>여</option></select></div>
       <div><label>대표 연소득(억)</label><input type="number" id="ceoInc" step="0.1" placeholder="급여+배당, 재정심사용"></div>
       <div><label>자녀 수</label><input type="number" id="kids" min="0"></div>
@@ -335,6 +335,14 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','ceoInc','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','style','k1','k2','k3','goal','day','time','dur','introN','apMin'];
 const FLAGS=$$('input[id^=f_]').map(e=>e.id);
+/* 보험나이·상령일 (개발팀 11/04). 생년월일은 저장하지 않고 보험나이만 칸에 넣음 */
+function insAgeAt(b,d){let m=(d.getFullYear()-b.getFullYear())*12+(d.getMonth()-b.getMonth());if(d.getDate()<b.getDate())m--;return{full:Math.floor(m/12),ins:Math.floor(m/12)+(m%12>=6?1:0)}}
+function insAgeInfo(v){if(!v)return null;const b=new Date(v+'T00:00:00');if(isNaN(b))return null;const t=new Date();t.setHours(0,0,0,0);if(b>t)return{err:'생년월일이 오늘보다 뒤예요'};
+  const now=insAgeAt(b,t);let nx=null;for(let i=1;i<=370;i++){const d=new Date(t);d.setDate(t.getDate()+i);if(insAgeAt(b,d).ins>now.ins){nx=d;break}}
+  const f=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const left=nx?Math.round((nx-t)/864e5):null;
+  return{full:now.full,ins:now.ins,next:nx?f(nx):'',left,text:`만 ${now.full}세 · 보험나이 ${now.ins}세 · 다음 상령일 ${nx?f(nx):'-'}${left!=null?` (D-${left}, 이날부터 ${now.ins+1}세)`:''}${left!=null&&left<=30?' · 상령일 전에 청약하면 지금 나이로 가입':''}`}}
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='birth'){const r=insAgeInfo(e.target.value);$('#ageOut').textContent=r?(r.err||r.text):'';if(r&&!r.err){const a=$('#age');a.value=r.ins;a.dispatchEvent(new Event('input',{bubbles:true}));a.dispatchEvent(new Event('change',{bubbles:true}))}}});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='style'){const t=STYLE[e.target.value];$('#styleTip').textContent=t?'보이는 신호: '+t.sign+' · 준비물: '+t.prep:''}});
 /* 대표님 성향별 진행 (보험인 MBTI «고객 궁합» 아이디어를 우리 말로. 성향은 묻지 않고 관찰해서 고른다) */
 const STYLE={
@@ -758,6 +766,8 @@ function uwQS(c,a){const q=new URLSearchParams({from:'ap',kind:'ceo',contractor:
   put('age',c.age);q.set('sex',c.sex==='여'?'F':'M');put('income',c.ceoInc);if(c.form==='법인')put('share',c.share??100);put('years',c.years);
   const n=i=>{const el=$('#f3_ni_'+i);return el&&el.value!==''?+el.value:null};const ni=[n(2),n(1),n(0)];if(ni[0]==null&&nz(c.profit))ni[0]=c.profit;ni.forEach((v,i)=>put('ni'+(i+1),v));
   if(a&&a.mid)put('wantPrem',Math.round(a.mid/1e4));return q.toString()}
+/* 업체 분석에 숫자가 들어올 때마다 재정심사 계산기가 읽을 자리에 남김 (같은 브라우저 안에서만) */
+function shareUw(c,a){try{if(!(c.form==='법인'||nz(c.profit)))return;const qs=uwQS(c,a),o=JSON.parse(localStorage.getItem('nx-ap-uw')||'null');if(!o||o.qs!==qs)localStorage.setItem('nx-ap-uw',JSON.stringify({t:Date.now(),qs}))}catch(e){}}
 function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,top);const prods=productsFor(c,top);
   const items=[...CL.common.map(t=>['공통',t]),...(top&&CL[top.id]||[]).map(t=>[top.name,t]),...(dx[1]&&CL[dx[1].id]||[]).slice(0,3).map(t=>[dx[1].name,t]),...prods.flatMap(p=>(PCL[p]||[]).map(t=>['상품: '+p,t]))];
   const done=items.filter(([,t])=>clState[t]).length;
@@ -776,7 +786,7 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
   document.querySelectorAll('[data-cl]').forEach(x=>x.onchange=()=>{clState[x.dataset.cl]=x.checked;saveCL();renderAmount()});
   const pa=$('#planAmt');if(pa)pa.oninput=()=>{last.plan=pa.value};
   const tu=$('#toUw');if(tu&&window.top!==window)tu.onclick=e=>{e.preventDefault();try{window.top.location.hash='#tool-uw?'+uwQS(c,a)}catch(err){window.open(tu.href,'_blank')}};
-  last.amount=a;last.clItems=items}
+  last.amount=a;last.clItems=items;shareUw(c,a)}
 
 
 /* 상속세 대략 (주식만, 일괄공제 5억, 현행 누진세율) : 제안 명분용 내부 참고 */

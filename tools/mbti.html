@@ -77,7 +77,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <label class="f">자격<select id="cert"><option>세무사</option><option>회계사</option><option>노무사</option><option>변리사</option><option>변호사</option><option>기타</option></select></label>
       <label class="f">설계사 경력<select id="career"><option value="0">위촉 전·MBA</option><option value="1">1년 미만</option><option value="2">1~3년</option><option value="3">3년 이상</option></select></label>
     </div>
-    <p class="hint">정답이 없습니다. «되고 싶은 나»가 아니라 «지금 실제로 하는 나»에 가깝게 고르세요. 비슷한 질문이 일부러 두 번 나옵니다.<span id="newHint" hidden> 영업 경험이 아직 없으면 본업(세무·노무·특허 상담)이나 평소 모습으로 답하세요.</span></p>
+    <p class="hint">정답이 없습니다. «되고 싶은 나»가 아니라 «지금 실제로 하는 나»에 가깝게 고르세요. 비슷한 질문이 일부러 두 번 나옵니다.<span id="newHint" hidden> 영업 경험이 아직 없으면 본업(세무·노무·특허 상담)이나 평소 모습으로 답하세요. 잘 모르겠으면 먼저 떠오르는 쪽으로 고르세요.</span></p>
   </section>
 
   <section class="panel" id="qs"></section>
@@ -121,7 +121,14 @@ const NEW = {
   29: '상품 설명보다 "대표님이 없을 때 가족은?" 같은 질문이 더 잘 통할 것 같다.',
   35: '누군가와 같이 가면 내 페이스를 잃는 느낌이 든다.',
   36: '중요한 자리일수록 누군가 옆에 있으면 말이 더 잘 나온다.',
-  49: '처음 만난 날 금액까지 꺼낸다||두 번째 만남부터 꺼낸다'
+  22: '새로운 것을 배울 때 원리와 근거부터 따져 본다.',
+  30: '같이 가 줄 사람이 있으면 약속을 더 자주 잡게 된다.',
+  32: '다른 전문가(노무사·변리사 등)와 함께 일하는 게 좋다.',
+  37: '누군가와 일정을 맞추느니 혼자 먼저 가는 게 낫다고 느낀다.',
+  43: '말하기 어려운 이야기도 필요하면 먼저 꺼내는 편이다.',
+  46: '혼자보다 누군가와 함께할 때 일이 더 잘 풀린다.',
+  49: '처음 만난 날 금액까지 꺼낸다||두 번째 만남부터 꺼낸다',
+  51: '중요한 일은 선배와 같이 한다||중요한 일도 내가 끝까지 한다'
 };
 /* 활동 문항 (점수에 넣지 않고 기록만, 나중에 실적과 맞춰 봄) */
 const BEH_PRO = [
@@ -229,6 +236,17 @@ const POLE = {
   T: { s:'동행·조인업에서 시너지가 크다. 다른 자격사와 묶음 제안에 강하다.', r:'혼자 가야 할 때 미루고, 동행 일정에 실적이 묶인다.', rx:'동행 미팅을 주 단위로 미리 잡기. 혼자 가는 첫 단계(AP)는 롤플레이로 연습하고 PC부터 동행.', ap:'15 다음 약속(동행 일정 포함)' },
   O: { s:'준비가 꼼꼼하고 스스로 끝까지 간다.', r:'큰 건·낯선 컨셉에서 혼자 버티다 놓친다.', rx:'자료(보고서·PPT)를 충분히 받아 혼자 가되, 금액이 내 범위를 넘으면 PC만 동행.', ap:'11 대안제시·PC 준비' }
 };
+/* 지점장용 매니지먼트 포인트: 글자 → [신입, 지점원] */
+const MGMT = {
+  A: ['모임·세미나 자리에 데리고 다니며 첫 인사를 맡기세요. 바로 본론으로 가지 않게 AP 진입(1~5단계)부터 연습시키세요.', '새 지역·새 업종 목록을 주고 주간 새 접점 목표를 같이 정하세요. 관계가 얕은 곳은 2차 약속이 잡혔는지 확인하세요.'],
+  R: ['본인 기장 거래처·지인 목록을 같이 뽑아 첫 대상 5곳을 정해 주세요. 소개 요청 멘트를 먼저 연습시키세요.', '기존 거래처 중 아직 제안하지 않은 곳을 같이 짚어 주세요. 소개가 실제로 나오는지 달마다 확인하세요.'],
+  B: ['큰 금액을 말하는 데 거리낌이 없으니, 처음부터 재정심사 계산기로 한도를 먼저 보는 습관을 들이게 하세요.', '제안 전에 재정심사 한도와 유지 가능성을 같이 점검하세요. 큰 건은 PC 전에 한 번 봐 주세요.'],
+  C: ['작은 금액에서 첫 성공 경험을 먼저 만들게 도와주세요. 상품 하나를 깊게 공부시키면 자신감이 붙습니다.', '비슷한 업체의 실제 사례(금액·결과)를 보여 주며 납득 범위를 넓혀 주세요. 큰 건은 동행으로 경험시키세요.'],
+  N: ['상품·세금 구조 자료를 먼저 주세요. 숫자 앞에 사례 하나를 넣는 연습을 같이 시키세요.', '설명을 표 한 장으로 줄이는 연습을 시키고, 롤플레이에서 관계형 대표 역을 붙여 주세요.'],
+  S: ['선배 사례를 많이 들려주고, 핵심 숫자 3개(이익·세금·보험료)만 먼저 외우게 하세요.', '근거 질문에 흔들리지 않게 분석형 대표 롤플레이를 붙이고, 숫자 자료를 미리 챙겨 주세요.'],
+  T: ['첫 3개월은 동행을 주 단위로 먼저 잡아 주세요. 같이 갈 때 실력이 빨리 늡니다.', '동행 일정을 미리 잡아 주되, 혼자 가는 미팅 목표도 같이 정하세요.'],
+  O: ['자료와 스크립트를 충분히 주고 혼자 해 보게 두되, 미팅 뒤 바로 짧게 되짚어 주세요.', '간섭은 줄이고, 큰 건·낯선 컨셉에서만 동행을 제안하세요. 결과를 나누는 주기를 정해 두세요.']
+};
 const MATCH = {
   결론형: { N:'표 한 장으로 바로 결론. 잘 맞음', S:'이야기는 30초 안에 끊고 숫자로', B:'속도가 맞음. 재정심사만 확인', C:'결론을 먼저 말하는 연습 필요' },
   관계형: { S:'잘 맞음. 가족 이야기로 열기', N:'표는 나중에, 사람 이야기 먼저', R:'잘 맞음', A:'서두르지 말고 한 번 더 만나기' },
@@ -272,7 +290,7 @@ function result(){
   const ap = [...new Set(P.map(p => POLE[p].ap))].join(' / ');
   $('result').hidden = false;
   $('result').innerHTML = `<section class="panel">
-    <div class="hint">${esc($('who').value || '나')}님의 보험 MBTI (${esc($('cert').value)})</div>
+    <div class="hint">${esc($('who').value || '나')}님의 보험 MBTI (${esc($('cert').value)} · ${VER === 'pro' ? '지점원' : '신입'} 버전)</div>
     <div class="type">${R.code}</div><div class="nick">${esc((TYPES[R.code] || [nick])[0])} <span class="hint" style="font-weight:400">${esc(nick)}</span></div>
     ${TYPES[R.code] ? `<p style="margin:0 0 6px">${esc(TYPES[R.code][1])}</p><div class="card" style="background:#f7f9ff"><div><b>이런 사람</b> ${esc(TYPES[R.code][2])}</div><div><b>잘 맞는 판</b> ${esc(TYPES[R.code][3])}</div><div><b>코칭 한 마디</b> ${esc(TYPES[R.code][4])}</div></div>` : ''}
     ${R.ax.map(x => `<div class="axis"><div class="nm"><span>${x.a.neg[0]} ${x.a.neg[1]}</span><b>${x.a.name}</b><span>${x.a.pos[1]} ${x.a.pos[0]}</span></div><div class="track"><i style="left:${x.pct}%"></i></div></div>`).join('')}
@@ -280,6 +298,10 @@ function result(){
   </section>
   <section class="panel"><h2>축별 강점 · 조심 · 처방</h2>
     ${R.ax.map(x => { const p = POLE[x.pole[0]]; return `<div class="card"><h3>${x.a.name}: ${x.pole[1]} (${x.pole[0]})${x.strong ? '' : ' <span class="hint">중간에 가까움</span>'}</h3><div><b>강점</b> ${esc(p.s)}</div><div><b>조심</b> ${esc(p.r)}</div><div><b>처방</b> ${esc(p.rx)}</div></div>`; }).join('')}
+  </section>
+  <section class="panel"><h2>매니지먼트 포인트 <span class="hint" style="font-weight:400">지점장용 · ${VER === 'pro' ? '지점원' : '신입'}</span></h2>
+    <table>${R.ax.map(x => `<tr><th style="width:140px">${x.a.name} · ${x.pole[1]}</th><td>${esc(MGMT[x.pole[0]][VER === 'pro' ? 1 : 0])}</td></tr>`).join('')}</table>
+    ${VER === 'pro' ? '' : '<p class="hint">신입은 경험이 쌓이면 성향이 달라질 수 있어요. 3개월 뒤 «지점원 버전»으로 다시 해서 변화를 보세요.</p>'}
   </section>
   <section class="panel"><h2>나에게 맞는 영업</h2>
     <table><tr><th style="width:140px">제안 규모</th><td>${esc(comfort)}</td></tr>

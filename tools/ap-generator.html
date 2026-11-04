@@ -163,6 +163,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div><label>당기순이익(억)</label><input type="number" id="profit" step="0.1"></div>
       <div><label>대표 나이</label><input type="number" id="age" min="20" max="90"></div>
       <div><label>대표 성별</label><select id="sex"><option>남</option><option>여</option></select></div>
+      <div><label>대표 연소득(억)</label><input type="number" id="ceoInc" step="0.1" placeholder="급여+배당, 재정심사용"></div>
       <div><label>자녀 수</label><input type="number" id="kids" min="0"></div>
       <div><label>사업 물려받을 자녀</label><select id="heir"><option value="모름">모름</option><option value="있음">있음</option><option value="없음">없음</option></select></div>
     </div>
@@ -332,7 +333,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','style','k1','k2','k3','goal','day','time','dur','introN','apMin'];
+const FIELDS=['notes','bizinfo','name','co','ind','form_','years','emp','sales','profit','age','sex','ceoInc','kids','heir','equity','share','cash','rel','relYears','referrer','cert','occ','obs','style','k1','k2','k3','goal','day','time','dur','introN','apMin'];
 const FLAGS=$$('input[id^=f_]').map(e=>e.id);
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='style'){const t=STYLE[e.target.value];$('#styleTip').textContent=t?'보이는 신호: '+t.sign+' · 준비물: '+t.prep:''}});
 /* 대표님 성향별 진행 (보험인 MBTI «고객 궁합» 아이디어를 우리 말로. 성향은 묻지 않고 관찰해서 고른다) */
@@ -512,7 +513,7 @@ function incomeType(c){if(c.form==='법인')return'B';if(c.f_realEstate&&!(nz(c.
 function productHint(c,top){const a=c.age,m=c.sex!=='여';const out=[];
   if(c.form==='법인'&&nz(a)){if(a<50)out.push('대표 40대 이하: 경영인정기 우선 (환급률 90%대). 경정기 시뮬레이터에서 나이별 확인');
     else if(a<(m?63:68))out.push(`대표 ${a}세: 경정기 환급률 하락 구간 → 원금형 종신(제로백) 비교 (남 63세·여 68세까지)`);
-    else out.push(`대표 ${a}세: 원금형 종신 가입 한계 초과 → 간편심사 종신(모두의 종신, 세븐PlusⅡ 등)`)}
+    else out.push(`대표 ${a}세: 원금형 종신 가입 한계 초과 → 간편심사 종신(모두의 종신, 신한 든든한 VIP상속·실속 종신 등. 세븐PlusⅡ·KB 7년의약속은 2026-09-21 판매중단)`)}
   if(top&&['usdWhole'].includes(top.id))out.push('목적자금: 달러 단기납 종신(백만종). 10년 유지·환율 조건 고지');
   if(c.form==='법인'&&nz(c.years)&&c.years<2)out.push('신설법인(설립 2년 미만): 달러경영인정기는 설립 2년 이상 법인 대표·임원만 가입 → 변액리치정기(MAVERICK, 법인·개인 가입) 검토. 법인비용 처리는 "세법 요건 충족 시 가능, 환급 시 익금"으로만 안내, 세무사 검토');
   if(nz(a)&&a<=70&&(top&&['protect','ceo','inherit','estate','family','retire'].includes(top.id)||c.f_familyLoss)){const p1=a<70?'90세 만기':'90세 만기(간편)';out.push(`가장 사망보장을 낮은 보험료로 + 환급·전환까지: 변액리치정기(MAVERICK, ${p1}). 연소득 3~5배 보장, 7년 후 종신·연금·달러 전환 가능. 메트 변액 펀드는 3년·5년·누적 장기 실적이 강점(생보협회 공시실 화면을 기준일과 함께 보여 주기, 과거 수익률은 미래 보장 안 함). 변액이라 원금 손실 가능 고지, 법인 계약 손금은 세무사 검토`)}
@@ -752,6 +753,11 @@ function clKey(){return'cl:'+(($('#co')||{}).value||'업체')}
 function loadCL(){try{clState=JSON.parse(localStorage.getItem(clKey())||'{}')}catch(e){clState={}}}
 function saveCL(){try{localStorage.setItem(clKey(),JSON.stringify(clState))}catch(e){}}
 function productsFor(c,top){const ps=[];if(c.form==='법인'||top&&['ceo','inherit','exitRet','corpConv'].includes(top.id))ps.push(nz(c.age)&&c.age>=50?'원금형 종신':'경영인정기');if(nz(c.age)&&c.age>=50&&c.form==='법인')ps.push('경영인정기');if(top&&top.id==='usdWhole')ps.push('달러 상품');if(top&&top.id==='cashBld')ps.push('달러 상품');return[...new Set(ps)]}
+/* 재정심사 계산기로 넘길 숫자 (tools/uw-calc.html 이 from=ap 일 때 읽음) */
+function uwQS(c,a){const q=new URLSearchParams({from:'ap',kind:'ceo',contractor:c.form==='법인'?'corp':'self'});const put=(k,v)=>{if(v!==''&&v!=null&&!isNaN(v))q.set(k,v)};
+  put('age',c.age);q.set('sex',c.sex==='여'?'F':'M');put('income',c.ceoInc);if(c.form==='법인')put('share',c.share??100);put('years',c.years);
+  const n=i=>{const el=$('#f3_ni_'+i);return el&&el.value!==''?+el.value:null};const ni=[n(2),n(1),n(0)];if(ni[0]==null&&nz(c.profit))ni[0]=c.profit;ni.forEach((v,i)=>put('ni'+(i+1),v));
+  if(a&&a.mid)put('wantPrem',Math.round(a.mid/1e4));return q.toString()}
 function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,top);const prods=productsFor(c,top);
   const items=[...CL.common.map(t=>['공통',t]),...(top&&CL[top.id]||[]).map(t=>[top.name,t]),...(dx[1]&&CL[dx[1].id]||[]).slice(0,3).map(t=>[dx[1].name,t]),...prods.flatMap(p=>(PCL[p]||[]).map(t=>['상품: '+p,t]))];
   const done=items.filter(([,t])=>clState[t]).length;
@@ -760,7 +766,8 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
    <div class="amt"><div><span class="muted">A안 (보수적)</span><b>월 ${man(a.low)}</b><span class="muted">연 ${man(a.low*12)}</span></div><div class="mid"><span class="muted">기준안</span><b>월 ${man(a.mid)}</b><span class="muted">연 ${man(a.mid*12)}</span></div><div><span class="muted">B안 (적극적)</span><b>월 ${man(a.high)}</b><span class="muted">연 ${man(a.high*12)}</span></div></div>
    <div class="muted">계산 근거: ${a.why.join(' · ')} · 신뢰도 ${a.conf}</div>
    <ul class="t"><li>처음에는 <b>A안~기준안</b>으로 이야기하세요. 큰 금액을 먼저 말했다가 재정심사에서 안 나오면 세일즈가 어려워집니다.</li><li>가입 전 재정심사(연소득·기계약 합산)를 먼저 확인하고 금액을 확정합니다.</li><li>"하실래요?" 대신 "A안과 기준안 중 어느 쪽이 편하세요?"처럼 고르게 합니다.</li></ul>
-   <div class="btns"><a class="b" href="simulator.html?age=${c.age||45}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}&bud=${Math.round(a.mid/1e4)}" target="_blank">기준안으로 경정기 비교 계산기 열기</a></div>`}
+   <div class="btns"><a class="b" href="simulator.html?age=${c.age||45}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}&bud=${Math.round(a.mid/1e4)}" target="_blank">기준안으로 경정기 비교 계산기 열기</a><a class="b p" id="toUw" href="uw-calc.html?${uwQS(c,a)}" target="_blank">이 숫자로 재정심사 한도 확인</a></div>
+   <div class="muted">재정심사 계산기에서 메트·KB·신한별로 얼마까지 되는지, 어디서 먼저 막히는지 봅니다. 대표 연소득과 기계약은 거기서 한 번 더 확인하세요.</div>`}
    ${inhBlock(c,a)}
    <div style="margin-top:10px"><label>실제로 제안할 월 보험료 (만원, 최종 점검에 사용)</label><input type="number" id="planAmt" style="max-width:200px" value="${last.plan||''}"></div>
    <h2 style="margin-top:22px">제안 전 최소 체크리스트 <span class="badge">${done} / ${items.length}</span></h2>
@@ -768,6 +775,7 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
    <div class="cl">${items.map(([g,t])=>`<label><input type="checkbox" data-cl="${esc(t)}" ${clState[t]?'checked':''}><span><span class="badge">${esc(g)}</span> ${esc(t)}</span></label>`).join('')}</div>`;
   document.querySelectorAll('[data-cl]').forEach(x=>x.onchange=()=>{clState[x.dataset.cl]=x.checked;saveCL();renderAmount()});
   const pa=$('#planAmt');if(pa)pa.oninput=()=>{last.plan=pa.value};
+  const tu=$('#toUw');if(tu&&window.top!==window)tu.onclick=e=>{e.preventDefault();try{window.top.location.hash='#tool-uw?'+uwQS(c,a)}catch(err){window.open(tu.href,'_blank')}};
   last.amount=a;last.clItems=items}
 
 
@@ -912,6 +920,10 @@ function preflags(c){const out=[],add=(lv,t)=>out.push([lv,t]);
   if(c.f_publicCareer)add('r','향후 공직·공공기관 진출 계획: 청약 현장에서 서명이 보류된 사례가 있습니다. PC 전에 계약 유지 가능 여부를 먼저 확인');
   if(c.f_seasonal||c.f_newBiz||c.f_acquired)add('o','현금흐름 변동이 큽니다: 월납은 보수적으로(A안부터), 달러 상품이면 환율이 오를 때 원화 부담이 커진다는 점을 미리 설명');
   if(c.f_multiDecider||c.f_coCEO)add('o','의사결정자가 여럿: 1인 기준이 아니라 전체 효과를 숫자로 보여 주고, 결정권자 모두 PC에 참석');
+  if(c.form==='법인'&&nz(c.profit)&&c.profit<0)add('r','재정심사: KB 경영인정기는 직전 당기순손실 법인이면 진행 불가. 메트 달러경정·신한은 법인재정 한도가 0 이하가 되어 어려움 (재정심사 계산기에서 확인)');
+  if(c.form==='법인'&&nz(c.years)&&c.years<2)add('o','재정심사(설립 2년 미만): 메트 달러경정·신한 경정은 원칙상 불가(법인전환은 폐업사실증명원 등으로 가능), KB는 최대 월 199만, 신한은 월 200만 미만이면 재정심사 없이, 변액리치정기(MAVERICK)는 제한 없음');
+  if(c.form==='법인'&&nz(c.ceoInc)&&nz(c.profit)&&c.profit>c.ceoInc*2)add('o',`재정심사: 대표 연소득(${c.ceoInc}억)이 법인 이익보다 많이 작아요. 소득으로만 보는 곳(메트·신한)에서 먼저 막히고, 법인 이익을 더해 주는 KB가 크게 나올 수 있어요`);
+  if(c.form==='법인'&&!nz(c.ceoInc))add('o','재정심사: 대표 연소득을 모르면 한도를 알 수 없어요. F.F에서 급여·배당(소득금액증명원)과 기계약 사망보험금 합산을 받아 오기');
   add('o','인수·재정심사 한도 확인 전에는 금액을 확정하지 않기 (한도 축소로 철회된 사례)');
   return out}
 /* 재정심사 임시 기준: 지점 보관 안내문(7~8월 한시 기준) 요지. 보험사·현재 유효 여부 확인 필요, 정식 기준 오면 교체 */
@@ -1123,7 +1135,7 @@ function renderPrompt(){const{c,dx,top,T}=last;const fl=FLAGS.filter(k=>c[k]).ma
   const kind=($('#aiKind')||{}).value||'all';const txt=`${AIHEAD[kind]}
 
 [상황카드]
-① 상대 정보: ${c.name||'대표'} / ${c.co||'회사'} / ${c.ind} / ${c.form}${nz(c.years)?' / 업력 '+c.years+'년':''}${nz(c.sales)?' / 매출 '+c.sales+'억':''}${nz(c.profit)?' / 당기순이익 '+c.profit+'억':''}${nz(c.emp)?' / 직원 '+c.emp+'명':''}${nz(c.age)?' / 대표 '+c.age+'세 '+c.sex:''}${nz(c.kids)?' / 자녀 '+c.kids+'명(승계 자녀 '+c.heir+')':''}${c.form==='법인'&&nz(c.equity)?' / 순자산 '+c.equity+'억, 지분 '+(c.share??100)+'%':''}${c.form==='법인'&&nz(c.cash)?' / 법인 유휴현금 '+c.cash+'억':''}
+① 상대 정보: ${c.name||'대표'} / ${c.co||'회사'} / ${c.ind} / ${c.form}${nz(c.years)?' / 업력 '+c.years+'년':''}${nz(c.sales)?' / 매출 '+c.sales+'억':''}${nz(c.profit)?' / 당기순이익 '+c.profit+'억':''}${nz(c.emp)?' / 직원 '+c.emp+'명':''}${nz(c.age)?' / 대표 '+c.age+'세 '+c.sex:''}${nz(c.ceoInc)?' / 대표 연소득 '+c.ceoInc+'억':''}${nz(c.kids)?' / 자녀 '+c.kids+'명(승계 자녀 '+c.heir+')':''}${c.form==='법인'&&nz(c.equity)?' / 순자산 '+c.equity+'억, 지분 '+(c.share??100)+'%':''}${c.form==='법인'&&nz(c.cash)?' / 법인 유휴현금 '+c.cash+'억':''}
    신호: ${fl.join(', ')||'없음'}
 ② 나와의 관계: ${c.rel}${c.rel==='기장'&&nz(c.relYears)?' '+c.relYears+'년':''}${c.rel==='소개'?' (소개자: '+(c.referrer||'미입력')+')':''} / 내 자격: ${c.cert} / ${c.occ==='결산'?'가결산 미팅 겸':'AP 단독'} / 관찰: ${c.obs||'없음'}${STYLE[c.style]?` / 대표 성향(관찰): ${c.style}, 진행 ${STYLE[c.style].pace} 피할 것 ${STYLE[c.style].dont}`:''}
 ③ 알고 있는 정보: 1) ${c.k1||'-'} 2) ${c.k2||'-'} 3) ${c.k3||'-'}

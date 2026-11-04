@@ -594,6 +594,15 @@ $('mNext').textContent = R.meta.nextCheck;
 renderRules();
 let saved = null; try{ saved = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){}
 if (saved) load(saved); else { $('fx').value = 1400; }
+/* 업체 분석(ap-generator)에서 넘어온 숫자 (?from=ap). 개발팀 11/04 추가 */
+(function(){ const Q = new URLSearchParams(location.search); if (Q.get('from') !== 'ap') return;
+  const o = { kind: Q.get('kind') || 'ceo', uw: 'general', pos: 'ceo' };
+  ['contractor','age','sex','income','share','ni1','ni2','ni3','wantPrem'].forEach(k => { const v = Q.get(k); if (v !== null && v !== '') o[k] = v; });
+  ['income','ni2','ni3','wantAmt','prior'].forEach(k => { if (o[k] == null) o[k] = ''; });
+  const y = parseFloat(Q.get('years')); if (!isNaN(y)) o.founded = ymd(y);
+  load(o); if (!$('fx').value) $('fx').value = 1400;
+  $('f').insertAdjacentHTML('afterbegin', '<p class="hint" style="background:#eef3ff;border-radius:10px;padding:8px 10px">업체 분석에서 넘어온 숫자입니다. 대표 연소득과 기계약 사망보험금은 꼭 확인해 넣으세요.</p>');
+})();
 render();
 })();
 </script>

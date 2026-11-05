@@ -406,6 +406,7 @@ th{background:var(--panel2)}
     <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석 → 제안 준비<span class="nd">분석 보고서 · AP · PC 준비까지</span></a>
     <a class="navl" data-r="uw" href="#uw">재정심사 → 청약<span class="nd">한도 계산 · 청약 점검 · 상품 자료</span></a>
     <div class="navs" id="uwSub" hidden></div>
+    <a class="navl" data-r="tool-dl" href="#tool-dl">상품 자료 받기<span class="nd">원수사·상품별 자료 내려받기</span></a>
     <a class="navl" data-r="tool-rp" href="#tool-rp">AP 롤플레이<span class="nd">AI 대표님과 말로 연습 · 15단계 채점</span></a>
     <a class="navl" data-r="tool-mbti" href="#tool-mbti">보험 MBTI<span class="nd">내 영업 성향 · 맞춤 코칭</span></a>
     <div class="navs" id="mbtiSub"><a class="navl" href="#tool-mbti">검사하기</a><a class="navl" href="#tool-mbti?view=mgr">지점장 보기</a></div>
@@ -544,6 +545,7 @@ th{background:var(--panel2)}
     <div class="nx-tstack">
       <a class="card" href="#tool-check"><b>청약 체크리스트</b><span>원수사·상품·계약 형태를 고르면 이번 청약에 해당하는 항목만 남습니다.</span><div class="nx-facts" id="uwFactsCheck"></div><span class="nx-go">체크리스트 열기 →</span></a>
       <a class="card" href="#tool-lib"><b>상품 자료실</b><span>상품 요약과 5. 상품 폴더의 파일 위치, 준법 유효기간을 한 장씩 정리했습니다.</span><div class="nx-facts" id="uwFactsLib"></div><span class="nx-go">자료실 열기 →</span></a>
+      <a class="card" href="#tool-dl"><b>상품 자료 받기</b><span>안내장·교육자료·청약 서식을 원수사·상품별로 모아 바로 내려받습니다.</span><span class="nx-go">자료 받으러 가기 →</span></a>
     </div>
   </div>
 
@@ -693,7 +695,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html']};
+const TOOLS={'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
 const UWNAV=[{h:'uw',label:'한눈에 보기'},{h:'tool-uw',label:'재정심사 계산기'},{h:'tool-check',label:'청약 체크리스트'},{h:'tool-lib',label:'상품 자료실'}];
 const ALIAS={improve:'together',contribute:'together',concept:'concepts'};
 const LEARN=[
@@ -777,7 +779,7 @@ async function loadContribs(el,target,empty){
 /* ---------- 메뉴 ---------- */
 function familyOf(h){
   if(UWNAV.some(x=>x.h===h))return 'uw';
-  if(h==='home'||h==='about'||h==='tool-ap'||h==='tool-rp'||h==='tool-mbti'||h==='ask')return h;
+  if(h==='home'||h==='about'||h==='tool-dl'||h==='tool-ap'||h==='tool-rp'||h==='tool-mbti'||h==='ask')return h;
   if(h==='how'||h==='demo')return 'how';
   if(h==='together'||h==='todo')return 'together';
   if(h==='learn'||catByHash(h))return 'learn';

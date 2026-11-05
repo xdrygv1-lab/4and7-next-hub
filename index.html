@@ -701,9 +701,9 @@ const ALIAS={improve:'together',contribute:'together',concept:'concepts'};
 const LEARN=[
   {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},
   {h:'learn-ap',label:'첫 미팅 화법',desc:'AP 15단계, 화법, 반론 대응',gids:['ap']},
-  {h:'learn-faq',label:'상품 Q&A',desc:'주력 상품 비교와 자주 묻는 질문',gids:['faq']},
+  {h:'learn-faq',label:'상품별 정리',desc:'상품마다 요약·FAQ·약관을 한 문서로',gids:['faq']},
   {h:'learn-guide',label:'신입 가이드',desc:'보험용어, 청약서, 영업 흐름',gids:['guide']},
-  {h:'learn-prod',label:'상품 자료',desc:'상품 요약, 약관 정리, 비교표',gids:['prod','prodmet']},
+  {h:'learn-prod',label:'상품 비교',desc:'원수사 상품 비교표, 판매 상품 목록',gids:['prod','prodmet']},
   {h:'tool-sim',label:'경정기 비교 계산기',desc:'나이·금액별 상품 보험료와 환급률 비교',gids:[]},
 ];
 const EXTRA={'learn-example':{h:'learn-example',label:'자동작성 예시',desc:'업체 분석 → 제안 준비 결과 예시',gids:['example']}};
@@ -827,6 +827,7 @@ async function show(){
   if(cat){tpl('tpl-rules');const ds=M.docs.filter(d=>cat.gids.includes(d.gid));
     $('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › ${esc(cat.label)}</div><h1>${esc(cat.label)}</h1><p class="lede">${esc(cat.desc)}</p><div class="list">${docRows(ds)||'<div class="row"><span class="t">문서가 없습니다.</span></div>'}</div>`;return}
   const d=M.docs.find(x=>x.id===h);
+  if(!d&&M.merged&&M.merged[h]){location.replace('#'+M.merged[h]);return}
   if(!d){tpl('tpl-rules');$('#view').innerHTML='<h1>문서를 찾을 수 없습니다</h1><p><a href="#home">홈으로</a></p>';return}
   return showDoc(d)}
 

@@ -402,7 +402,7 @@ th{background:var(--panel2)}
   <nav id="nav" aria-label="주 메뉴">
     <a class="navl" data-r="home" href="#home">홈</a>
     <a class="navl" data-r="about" href="#about">이 사이트 이야기<span class="nd">처음이라면 여기부터</span></a>
-    <a class="navl" data-r="how" href="#how">어떻게 만들었나<span class="nd">구조 한눈에 · 3분 시연</span></a>
+    <a class="navl" data-r="how" href="#how">사용법 · 만든 구조<span class="nd">메뉴별 쓰는 법 · 3분 시연</span></a>
     <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석 → 제안 준비<span class="nd">분석 보고서 · AP · PC 준비까지</span></a>
     <a class="navl" data-r="uw" href="#uw">재정심사 → 청약<span class="nd">한도 계산 · 청약 점검 · 상품 자료</span></a>
     <div class="navs" id="uwSub" hidden></div>
@@ -460,17 +460,58 @@ th{background:var(--panel2)}
       <div><b>한 줄 쓰고 파일을 붙입니다.</b> 30MB까지, 큰 녹음은 드라이브 링크. <div class="ex"><code>이 PPT로 제안서 디자인 배워 줘</code><code>이 녹음에서 반론 대응 뽑아 줘</code><code>이 사례 컨셉 진단에 반영해 줘</code></div></div>
       <div><b>보내기를 누르면 끝.</b> 그날 밤 11시에 반영되고 "AI가 최근에 배운 것"에 보여요.</div>
     </div>
-    <p class="small" style="margin:0">글은 문서 위 <b>"바로 고치기"</b>로 바로 고칠 수 있어요. 구조가 궁금하면 <a href="#how">어떻게 만들었나</a>.</p>
+    <p class="small" style="margin:0">글은 문서 위 <b>"바로 고치기"</b>로 바로 고칠 수 있어요. 쓰는 법과 구조는 <a href="#how">사용법 · 만든 구조</a>.</p>
   </details>
-  <p class="small"><a href="#about">이 사이트 이야기</a> · <a href="#how">어떻게 만들었나</a> · <span id="homeStat"></span></p>
+  <p class="small"><a href="#about">이 사이트 이야기</a> · <a href="#how">사용법 · 만든 구조</a> · <span id="homeStat"></span></p>
 </template>
 
 
 
 <template id="tpl-how">
-  <h1>이 사이트는 이렇게 만들어졌어요</h1>
+  <h1>사용법과 만든 구조</h1>
   <p class="lede">우리가 가진 교육자료·컨셉·상품 자료와 회사 공개 자료를 AI가 읽고, 정해 둔 기준으로 판단해서 <b>미팅 준비 초안</b>을 만듭니다. 사람은 확인하고 고치기만 하면 됩니다.</p>
-  <div class="btnrow" style="margin:0 0 18px"><a class="btn p" href="#demo">3분 시연 먼저 보기</a><a class="btn" href="#tool-ap">직접 써 보기</a></div>
+  <div class="btnrow" style="margin:0 0 18px"><a class="btn p" href="#manual">메뉴별 쓰는 법</a><a class="btn" href="#demo">3분 시연 보기</a><a class="btn" href="#tool-ap">직접 써 보기</a></div>
+
+  <h2 id="howManual">메뉴별 쓰는 법</h2>
+  <p class="small" style="margin-top:0">필요한 메뉴만 골라 쓰면 됩니다. 쓰면서 불편한 점은 "AI에게 가르치기"로 알려 주세요. 지킬 것은 <a href="#rules">사용 원칙</a>에 있습니다.</p>
+  <div class="cards">
+    <div class="card"><b>업체 분석 → 제안 준비</b><span>첫 미팅(AP) 전에 씁니다.</span>
+      <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
+      <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
+      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li></ul>
+      <a class="btn p" style="margin-top:10px;align-self:flex-start" href="#tool-ap">열기</a></div>
+    <div class="card"><b>재정심사 → 청약</b><span>제안 금액이 나온 다음, 청약 전에.</span>
+      <ul><li>재정심사 계산기: 나이·소득·지분율·순이익을 넣으면 메트·KB·신한별 가능 금액과 먼저 걸리는 쪽이 나옵니다.</li>
+      <li>청약 체크리스트: 원수사·상품·계약 형태를 고르면 이번 청약에 해당하는 항목만 남습니다.</li>
+      <li>상품 자료실: 상품마다 요약·주의할 점·준법 유효기간.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#uw">열기</a></div>
+    <div class="card"><b>상품 자료 받기</b><span>안내장·교육자료·청약 서식이 필요할 때.</span>
+      <ul><li>원수사·상품별로 모아 두었습니다. 상품 자료실 카드의 «자료 받기»를 눌러도 여기로 옵니다.</li>
+      <li>내려받을 때 팀 비밀번호를 한 번 넣습니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-dl">열기</a></div>
+    <div class="card"><b>AP 롤플레이 · 보험 MBTI</b><span>연습하고 싶을 때.</span>
+      <ul><li>AP 롤플레이: AI 대표님과 말로 연습하고 15단계로 채점받습니다.</li>
+      <li>보험 MBTI: 내 영업 성향과 맞춤 코칭을 봅니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-rp">열기</a></div>
+    <div class="card"><b>물어보기</b><span>AI 상담입니다.</span>
+      <ul><li>업체 상황(업종, 매출, 순이익, 대표 나이)을 적고 질문합니다.</li>
+      <li>답과 함께 참고한 컨셉 문서가 나옵니다.</li>
+      <li>고객 이름·회사명은 쓰지 않습니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#ask">열기</a></div>
+    <div class="card"><b>경정기 비교 계산기</b><span>제안(PC) 준비할 때.</span>
+      <ul><li>대표 나이·성별·금액을 넣으면 상품별 보험료와 환급률을 비교합니다.</li>
+      <li>파란 글씨는 추정값입니다. 고객에게는 가입설계서 기준으로 안내합니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-sim">열기</a></div>
+    <div class="card"><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품별 정리, 신입 가이드.</span>
+      <ul><li>문서 맨 위 "한눈에"만 읽어도 핵심이 잡힙니다.</li>
+      <li>"꼭 확인할 것"은 눌러서 체크할 수 있습니다.</li>
+      <li>자세한 원문은 맨 아래 "원문 전체 보기"에 접혀 있습니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#learn">열기</a></div>
+    <div class="card"><b>함께 만들기</b><span>누구나 보낼 수 있습니다.</span>
+      <ul><li>문서 위 "바로 고치기"로 누구나 바로 고칠 수 있습니다.</li>
+      <li>"AI에게 가르치기"로 자료와 요청을 보내면 매일 밤 AI가 학습해 반영합니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#together">열기</a></div>
+  </div>
 
   <h2>왜 만들었나요</h2>
   <div class="cards">
@@ -483,7 +524,7 @@ th{background:var(--panel2)}
   <div class="flow">
     <div class="st"><h3>업체자료 불러오기</h3><dl><dt>무엇으로</dt><dd>고객에게 받은 재무제표(붙여넣기·연도별 숫자), 전자공시, 인터넷 공개 정보(선택·유료)</dd><dt>어떻게</dt><dd>상호명으로 공시를 찾거나, 재무제표를 붙여넣으면 숫자를 읽어 채움</dd></dl><div class="up">"무료 회사 가치 평가"를 명분으로 최근 3년 재무제표를 받아요</div></div>
     <div class="st"><h3>업체 분석 (신호등 8가지)</h3><dl><dt>무엇으로</dt><dd>재무 숫자 + 체크한 상황</dd><dt>어떻게</dt><dd>회사 가치·잉여금·급여배당·퇴직금·가지급금·유고자금·주주·상속세를 빨강/주황/초록으로. 자료가 없으면 회색</dd></dl><div class="up">→ 실제 사례가 쌓일수록 <b>색 기준이 정확해져요</b></div></div>
-    <div class="st"><h3>컨셉 진단</h3><dl><dt>무엇으로</dt><dd>공부하기의 컨셉 카드 50여 개</dd><dt>어떻게</dt><dd>카드마다 적힌 "이런 업체에 맞다" 신호와 대조해 1~3순위</dd></dl><div class="up">→ 계약·보류 사례가 들어가면 <b>순위가 정교해져요</b></div></div>
+    <div class="st"><h3>컨셉 진단</h3><dl><dt>무엇으로</dt><dd>공부하기의 컨셉 카드</dd><dt>어떻게</dt><dd>카드마다 적힌 "이런 업체에 맞다" 신호와 대조해 1~3순위</dd></dl><div class="up">→ 계약·보류 사례가 들어가면 <b>순위가 정교해져요</b></div></div>
     <div class="st"><h3>첫 미팅(AP) 스크립트</h3><dl><dt>무엇으로</dt><dd>AP 15단계 표준, 화법·반론 자료</dd><dt>어떻게</dt><dd>업체 상황에 맞춰 단계별 멘트, 상품명 금지어 검사, 대략 점수</dd></dl><div class="up">→ 실제 녹음이 들어가면 <b>현장 말투</b>가 돼요</div></div>
     <div class="st"><h3>제안(PC) 준비</h3><dl><dt>무엇으로</dt><dd>PC 준비 표준, 컨셉별 제안 순서, 실제 보류·철회 사례</dd><dt>어떻게</dt><dd>제안서 순서·계산·반론·클로징, 금액 세 안, 제안 전 신호, 재정심사 미리 보기</dd></dl><div class="up">→ 정식 재정심사 기준이 오면 <b>금액이 실제와 맞아요</b></div></div>
     <div class="st"><h3>제안 PPT</h3><dl><dt>무엇으로</dt><dd>위 분석 결과</dd><dt>어떻게</dt><dd>네이비·골드 디자인, 그래프, 장마다 발표 스크립트(발표자 메모)</dd></dl><div class="up">→ 잘 만든 PPT 원본이 오면 <b>그 모양 그대로</b></div></div>
@@ -557,42 +598,7 @@ th{background:var(--panel2)}
 </template>
 
 
-<template id="tpl-manual">
-  <h1>사용법</h1>
-  <p class="lede">메뉴는 여섯 개입니다. 필요한 것만 골라 보세요.</p>
-  <div class="beta"><b>초안 · 보완 필요</b><span>쓰면서 불편한 점을 "AI에게 가르치기"로 알려 주시면 계속 고칩니다.</span></div>
-  <div class="cards">
-    <div class="card"><b>업체 분석 → 제안 준비</b><span>첫 미팅(AP) 전에 씁니다.</span>
-      <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
-      <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
-      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li></ul>
-      <a class="btn p" style="margin-top:10px;align-self:flex-start" href="#tool-ap">열기</a></div>
-    <div class="card"><b>재정심사 → 청약</b><span>제안 금액이 나온 다음, 청약 전에.</span>
-      <ul><li>재정심사 계산기: 나이·소득·지분율·순이익을 넣으면 메트·KB·신한별 가능 금액과 먼저 걸리는 쪽이 나옵니다.</li>
-      <li>청약 체크리스트: 원수사·상품·계약 형태를 고르면 이번 청약에 해당하는 항목만 남습니다.</li>
-      <li>상품 자료실: 상품 요약, 5. 상품 폴더 위치, 준법 유효기간.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#uw">열기</a></div>
-    <div class="card"><b>물어보기</b><span>AI 상담입니다.</span>
-      <ul><li>업체 상황(업종, 매출, 순이익, 대표 나이)을 적고 질문합니다.</li>
-      <li>답과 함께 참고한 컨셉 문서가 나옵니다.</li>
-      <li>고객 이름·회사명은 쓰지 않습니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#ask">열기</a></div>
-    <div class="card"><b>경정기 비교 계산기</b><span>제안(PC) 준비할 때.</span>
-      <ul><li>대표 나이·성별·금액을 넣으면 상품별 보험료와 환급률을 비교합니다.</li>
-      <li>파란 글씨는 추정값입니다. 고객에게는 가입설계서 기준으로 안내합니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-sim">열기</a></div>
-    <div class="card"><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 신입 가이드.</span>
-      <ul><li>문서 맨 위 "한눈에"만 읽어도 핵심이 잡힙니다.</li>
-      <li>"꼭 확인할 것"은 눌러서 체크할 수 있습니다.</li>
-      <li>자세한 원문은 맨 아래 "원문 전체 보기"에 접혀 있습니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#learn">열기</a></div>
-    <div class="card"><b>함께 만들기</b><span>누구나 보낼 수 있습니다.</span>
-      <ul><li>문서 위 "바로 고치기"로 누구나 바로 고칠 수 있습니다.</li>
-      <li>"AI에게 가르치기"로 자료와 요청을 보내면 매일 밤 AI가 학습해 반영합니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#together">열기</a></div>
-  </div>
-  <p class="small">지킬 것은 <a href="#rules">사용 원칙</a>에 모아 두었습니다.</p>
-</template>
+
 
 <template id="tpl-rules">
   <h1>사용 원칙</h1>
@@ -780,7 +786,7 @@ async function loadContribs(el,target,empty){
 function familyOf(h){
   if(UWNAV.some(x=>x.h===h))return 'uw';
   if(h==='home'||h==='about'||h==='tool-dl'||h==='tool-ap'||h==='tool-rp'||h==='tool-mbti'||h==='ask')return h;
-  if(h==='how'||h==='demo')return 'how';
+  if(h==='how'||h==='demo'||h==='manual')return 'how';
   if(h==='together'||h==='todo')return 'together';
   if(h==='learn'||catByHash(h))return 'learn';
   const d=M.docs.find(x=>x.id===h);if(d)return 'learn';
@@ -813,7 +819,7 @@ async function show(){
     $('#tpBtn').onclick=()=>{$('#tp').hidden=!$('#tp').hidden;$('#tpBtn').textContent=$('#tp').hidden?'AI에게 가르치기':'닫기'};return}
   if(h==='home'){tpl('tpl-home');homeUw();$('#homeStat').innerHTML=`업데이트 ${esc(M.built||'')} · 문서 ${M.docs.length}개 · <a href="#manual">사용법 보기</a>`;return}
   if(h==='uw'){tpl('tpl-uw');renderUw();return}
-  if(h==='manual'){tpl('tpl-manual');return}
+  if(h==='manual'){tpl('tpl-how');const m=$('#howManual');if(m)setTimeout(()=>m.scrollIntoView({block:'start'}),0);return}
   if(h==='how'){tpl('tpl-how');return}
   if(h==='demo'){tpl('tpl-demo');return}
   if(h==='about')return showAbout();

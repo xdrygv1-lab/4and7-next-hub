@@ -1,6 +1,6 @@
 {
  "repo": "xdrygv1-lab/4and7-next-hub",
- "built": "2026-11-11 21:44",
+ "built": "2026-11-12 13:44",
  "docs": [
   {
    "id": "da308dcb2",
@@ -559,6 +559,16 @@
    "readable": true
   },
   {
+   "id": "dc8d84e6b",
+   "file": "docs/dc8d84e6b.md",
+   "group": "AP · 화법",
+   "gid": "ap",
+   "title": "휴먼터치 보강 변경점",
+   "updated": "2026-11-12",
+   "todo": [],
+   "readable": true
+  },
+  {
    "id": "d7fa7fdcb",
    "file": "docs/d7fa7fdcb.md",
    "group": "상품 FAQ",
@@ -865,6 +875,6 @@
  ],
  "about": {
   "file": "docs/about.md",
-  "updated": "2026-11-11"
+  "updated": "2026-11-12"
  }
 }

@@ -268,7 +268,10 @@ function render(){
   $('count').textContent = `${ps.length} / ${L.products.length}개 상품`;
   const groups = ['공통','메트라이프','한화생명','KB라이프','신한라이프','삼성생명'].filter(g => st.ins === '전체' || g === st.ins || g === '공통');
   const q = st.q.toLowerCase();
-  $('common').innerHTML = `<h2>서식·매뉴얼·청약 서류</h2><p style="margin:0">원수사별 청약서 작성법, 제지급 서식, 모니터링 스크립트는 <a class="dlgo" href="downloads.html${st.ins !== '전체' ? '?ins=' + encodeURIComponent(st.ins) : ''}">상품 자료 받기 →</a> 에 원수사별로 모아 두었습니다.</p>`;
+  $('common').innerHTML = `<h2>서식·매뉴얼·청약 서류</h2><p style="margin:0">원수사별 청약서 작성법, 제지급 서식, 모니터링 스크립트는 <a class="dlgo" href="downloads.html${st.ins !== '전체' ? '?ins=' + encodeURIComponent(st.ins) : ''}">상품 자료 받기 →</a> 에 원수사별로 모아 두었습니다.</p>` + groups.map(g => {
+    const rows = (L.common || []).filter(c => c.ins === g && (!q || (c.t + ' ' + c.path).toLowerCase().includes(q)));
+    return rows.length ? `<h3>${g}</h3><ul class="docs">${rows.map(docRow).join('')}</ul>` : '';
+  }).join('');
   try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){}
 }
 

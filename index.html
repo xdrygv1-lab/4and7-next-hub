@@ -463,6 +463,7 @@ th{background:var(--panel2)}
     <a class="navl" data-r="about" href="#about">사이트 안내<span class="nd">이야기 · 쓰는 법 · 만든 구조</span></a>
     <div class="navs" id="guideSub" hidden></div>
     <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석 → 제안 준비<span class="nd">분석 보고서 · AP · PC 준비까지</span></a>
+    <div class="navs" id="apSub" hidden></div>
     <a class="navl" data-r="uw" href="#uw">재정심사 → 청약<span class="nd">한도 계산 · 청약 점검 · 상품 자료</span></a>
     <div class="navs" id="uwSub" hidden></div>
     <a class="navl" data-r="practice" href="#tool-rp">연습하기<span class="nd">AP 롤플레이 · 보험 MBTI</span></a>
@@ -529,7 +530,8 @@ th{background:var(--panel2)}
     <div class="card"><b>업체 분석 → 제안 준비</b><span>첫 미팅(AP) 전에 씁니다.</span>
       <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
       <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
-      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li></ul>
+      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li>
+      <li>회사 서류로 깊게 볼 때: <a href="#tool-ca">업체 분석 보고서</a>에 세무조정계산서·감사보고서를 넣으면 주식가치·잉여금·CEO 리스크·계정 점검·AP 질문까지 나옵니다.</li></ul>
       <a class="btn p" style="margin-top:10px;align-self:flex-start" href="#tool-ap">열기</a></div>
     <div class="card"><b>재정심사 → 청약</b><span>제안 금액이 나온 다음, 청약 전에.</span>
       <ul><li>재정심사 계산기: 나이·소득·지분율·순이익을 넣으면 메트·KB·신한별 가능 금액과 먼저 걸리는 쪽이 나옵니다.</li>
@@ -740,7 +742,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
+const TOOLS={'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-ca':['업체 분석 보고서','tools/company-analysis.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
 const GUIDE=[{h:'about',label:'이 사이트는'},{h:'manual',label:'메뉴별 쓰는 법'},{h:'how',label:'만든 구조'},{h:'demo',label:'3분 시연'},{h:'rules',label:'사용 원칙'},{h:'updates',label:'최근 업데이트'}];
 const UWNAV=[{h:'uw',label:'한눈에 보기'},{h:'tool-uw',label:'재정심사 계산기'},{h:'tool-check',label:'청약 체크리스트'},{h:'tool-lib',label:'상품 자료실'}];
 const ALIAS={improve:'together',contribute:'together',concept:'concepts',practice:'tool-rp',guide:'about'};
@@ -828,6 +830,7 @@ async function loadContribs(el,target,empty){
 function familyOf(h){
   if(UWNAV.some(x=>x.h===h))return 'uw';
   if(h==='home'||h==='tool-ap')return h;
+  if(h==='tool-ca')return 'tool-ap';
   if(GUIDE.some(x=>x.h===h))return 'about';
   if(h==='tool-rp'||h==='tool-mbti')return 'practice';
   if(h==='together'||h==='todo')return 'together';
@@ -841,6 +844,8 @@ function renderNav(h){
   sub.innerHTML=LEARN.map(c=>`<a class="navl ${c.h===cur?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
   const ms=$('#practiceSub'),mgrOn=/view=mgr/.test(location.hash);ms.hidden=fam!=='practice';
   ms.innerHTML=`<a class="navl ${h==='tool-rp'?'on':''}" href="#tool-rp">AP 롤플레이</a><a class="navl ${h==='tool-mbti'&&!mgrOn?'on':''}" href="#tool-mbti">보험 MBTI</a><a class="navl ${mgrOn?'on':''}" href="#tool-mbti?view=mgr">MBTI 지점장 보기</a>`;
+  const as=$('#apSub');as.hidden=fam!=='tool-ap';
+  as.innerHTML=`<a class="navl ${h==='tool-ap'?'on':''}" href="#tool-ap">제안 준비 (AP·PC)</a><a class="navl ${h==='tool-ca'?'on':''}" href="#tool-ca">업체 분석 보고서 (회사 서류)</a>`;
   const gs=$('#guideSub');gs.hidden=fam!=='about';
   gs.innerHTML=GUIDE.map(c=>`<a class="navl ${c.h===h?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
   const us=$('#uwSub');us.hidden=fam!=='uw';

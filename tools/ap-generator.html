@@ -137,7 +137,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div style="margin:6px 0 8px;padding:10px;border:1px dashed var(--acc);border-radius:8px">
       <b>재무제표 파일 넣기</b> <span class="muted">(PDF · 위하고 엑셀 · 여러 개 한꺼번에)</span><br>
       <input type="file" id="fsFile" accept=".pdf,.xlsx,.xls,.csv,.txt" multiple style="margin-top:6px">
-      <div class="muted" style="margin-top:4px">재무상태표·손익계산서를 함께 넣으면 당기·전기 숫자를 읽어 아래 연도별 표까지 채웁니다. 2025년 파일과 2024년 파일을 같이 넣으면 3년이 채워져요. <b>파일은 이 컴퓨터 안에서만 읽고 어디로도 보내지 않습니다.</b> 사진을 찍어 만든 PDF(스캔본)는 글자가 없어 못 읽어요.</div>
+      <div class="muted" style="margin-top:4px">재무상태표·손익계산서를 함께 넣으면 당기·전기 숫자를 읽어 아래 연도별 표까지 채웁니다. 세무조정계산서·결산보고서·홈택스 신고서·표준재무제표증명 PDF도 됩니다. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어요. 2025년 파일과 2024년 파일을 같이 넣으면 3년이 채워져요. <b>파일은 이 컴퓨터 안에서만 읽고 어디로도 보내지 않습니다.</b> 사진을 찍어 만든 PDF(스캔본)는 글자가 없어 못 읽어요.</div>
       <div id="fsFileMsg" class="muted" style="margin-top:4px"></div>
     </div>
     <textarea id="fsText" rows="6" placeholder="예)&#10;(단위: 원)&#10;매출액 1,200,000,000 ...&#10;당기순이익 110,000,000&#10;이익잉여금 ...&#10;자본총계 ...&#10;주.임.종단기채권 ..."></textarea>
@@ -712,24 +712,36 @@ const FS_KEYS=[
  ['profit','당기순이익',/^(당기순이익|당기순손익|당기순손실)/],
  ['pretax','법인세차감전이익',/^(법인세비용차감전|법인세차감전)/],
  ['equity','자본총계',/^자본총계/],
- ['retained','이익잉여금',/^(이익잉여금|미처분이익잉여금)/],
+ ['retained','이익잉여금',/^(이익잉여금|미처분이익잉여금|미처리결손금|결손금$)/],
+ ['ctax','법인세비용',/^법인세(비용|등)$/],
  ['capital','자본금',/^자본금/],
  ['assets','자산총계',/^자산총계/],
- ['debt','부채총계',/^부채총계/],
- ['cash','현금및현금성자산',/^(현금및현금성자산|현금 및 현금성자산)/],
- ['stfin','단기금융상품',/^단기금융상품/],
- ['loan','가지급금(주주·임원 대여)',/^(주[.·]?임[.·]?종|가지급금|주주임원종업원단기|임원단기대여)/],
+ ['debt','부채총계',/^부[채재]총계/],
+ ['cash','현금및현금성자산',/^(현금및현금성자산|현금 및 현금성자산|현금및현금등가물)/],
+ ['stfin','단기금융상품',/^(단기금융상품|단기예금|정기예금)/],
+ /* 주임종 «차입금»은 회사가 빌린 돈(부채)이라 가지급금이 아님 */
+ ['loan','가지급금(주주·임원 대여)',/^(주[.·]?임[.·]?종(?!.*차입)|가지급금|주주[.·]?임원[.·]?(?:종업원|직원)단기(?:대여|채권)|임원단기대여)/],
  ['land','토지',/^토지(?![가-힣])/],['bldg','건물',/^건물(?![가-힣])/],
  ['ins','보험(장기금융·보험예치금)',/^(보험예치금|장기금융상품|보험료자산)/],
- ['labor','급여·인건비',/^(급여|급료와임금|인건비)/],
+ ['labor','급여·인건비',/^(급여|급료와임금|인건비)(?!보조)/],
  ['gasu','가수금(대표가 회사에 넣은 돈)',/^가수금/],
 ];
-function fsNum(s){const m=s.match(/\(?-?[\d,]+(?:\.\d+)?\)?/g);if(!m)return null;for(const t of m){const neg=t.startsWith('(')||t.startsWith('-');const v=parseFloat(t.replace(/[(),\-]/g,''));if(!isNaN(v)&&v!==0&&t.replace(/[^\d]/g,'').length>=1)return neg?-v:v}return null}
+/* 첫 숫자를 당기 값으로. 0도 값으로 받음(당기 0을 건너뛰고 전기 값을 집지 않게).
+   쉼표 없이 소수점이 있는 값(100.00·63.7)은 비율(%)이라 건너뜀 */
+function fsNum(s){const m=s.match(/[(△▲-]?[\d,]+(?:\.\d+)?\)?/g);if(!m)return null;for(const t of m){if(!/,/.test(t)&&/\./.test(t))continue;const neg=/^[(△▲-]/.test(t);const v=parseFloat(t.replace(/[^\d.]/g,''));if(!isNaN(v))return neg?-v:v}return null}
+/* 단위는 «(단위: 원)» 줄에서만 판단 (본문의 «3백만원» 같은 글에 속지 않게) */
+function unitFrom(lines){const u=lines.filter(l=>/단\s*위/.test(l)).join(' ');return /백\s*만\s*원/.test(u)?1e6:/천\s*원/.test(u)?1e3:1}
 function parseFS(txt){
-  const unit=/백만원/.test(txt)?1e6:/천원/.test(txt)?1e3:1;const out={};
-  txt.split(/\r?\n/).forEach(raw=>{const l=raw.trim().replace(/^(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|\(?\d{1,2}[.)]|\(?[가-하][.)])\s*/,'').replace(/\s+/g,' ').trim();
-    for(const[k,,re]of FS_KEYS){if(out[k]!=null)continue;const nk=l.replace(/\s/g,'');if(re.test(nk)){const rest=l.replace(/^[^\d(-]*/,'');const v=fsNum(rest);const loss=/^(영업|당기|법인세|소득세)[^\d]*손실/.test(nk);if(v!=null)out[k]=(loss?-v:v)*unit/1e8}}});
-  out._corp=/자본금|법인세/.test(txt);return out}
+  let lines=txt.split(/\r?\n/);const unit=unitFrom(lines);const out={};let cashPart=null;
+  /* 홈택스 표준재무제표(«과목 코드 금액»이 한 줄에 두 개씩)는 과목·금액 묶음으로 풀어서 읽음 */
+  if(/표\s*준\s*(재\s*무\s*상\s*태|대\s*차|손\s*익)/.test(txt))lines=stdSplit(lines.map(l=>[l])).map(r=>r.join(' '));
+  lines.forEach(raw=>{const l=raw.trim().replace(/^(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|[IVX]+\.|\(?\d{1,2}[.)]|\(?[가나다라마바사아자차카타파하][.)])\s*/,'').replace(/\s+/g,' ').trim();
+    const nk=l.replace(/\s/g,'').replace(/[\d,()△▲.\-]+$/,'');
+    /* 위하고는 현금·보통예금이 따로 → «현금및현금성자산» 줄이 없을 때 합쳐서 씀 */
+    if(/^(현금|보통예금|당좌예금)$/.test(nk.replace(/[\d,()△▲.\-\t]+.*$/,''))){const v=fsNum(l.replace(/^[^\d(△▲-]*/,''));if(v!=null)cashPart=(cashPart||0)+v}
+    for(const[k,,re]of FS_KEYS){if(out[k]!=null)continue;if(re.test(nk)){const rest=l.replace(/^[^\d(△▲-]*/,'');const v=fsNum(rest);const loss=/^(영업|당기|법인세|소득세)[^\d]*손실/.test(nk)||/^(미처리)?결손금/.test(nk);if(v!=null)out[k]=(loss&&v>0?-v:v)*unit/1e8}}});
+  if(out.cash==null&&cashPart!=null)out.cash=cashPart*unit/1e8;
+  out._corp=/자본금|법인세/.test(txt.replace(/\s/g,''));return out}
 const FS3=['sales','op','ni','equity','debt','retained','loan','cash'];
 (function(){const y=new Date().getFullYear();[0,1,2].forEach(n=>{const e=$('#fy'+n);if(e&&!e.value)e.value=String(y-3+n)})})();
 /* CRM·메트로 받은 3년 숫자를 표에도 채워 둠 */
@@ -757,7 +769,15 @@ function applyFS(){const f=parseFS($('#fsText').value);lastFS=f;const r=x=>x==nu
   if(f.gasu!=null&&f.gasu>=0.5)flags.push(`가수금 ${r(f.gasu)}: 대표가 회사에 넣은 돈. 갚을 계획(상환·출자전환) 질문 거리`);
   if(f.ins!=null&&f.ins>0)flags.push(`보험 관련 자산 ${r(f.ins)}: 기존 법인 보험 있음, 가입 스토리 확인`);
   toggle();
-  $('#fsOut').innerHTML=`<table><tr><th>항목</th><th>읽은 값</th></tr>${FS_KEYS.filter(([k])=>f[k]!=null).map(([k,n])=>`<tr><td>${n}</td><td>${r(f[k])}</td></tr>`).join('')}</table>
+  /* 확인 장치: 다섯 칸(매출·순이익·자본총계·이익잉여금·가지급금)을 «읽은 값»으로 먼저 보여 주고, 이상하면 «자료를 확인하세요» */
+  const W=[];
+  if(f.sales!=null&&f.sales<0)W.push('매출이 음수예요');
+  if((f.sales!=null&&f.sales>1e5)||(f.assets!=null&&f.assets>1e5))W.push('금액이 10조 원을 넘어요 (단위가 잘못 읽혔을 수 있음)');
+  if(f.assets!=null&&f.debt!=null&&f.equity!=null&&Math.abs(f.assets-(f.debt+f.equity))>Math.max(0.01,Math.abs(f.assets)*0.01))W.push(`자산총계 ${r(f.assets)}가 부채 ${r(f.debt)} + 자본 ${r(f.equity)}와 안 맞아요`);
+  if(f.sales==null&&f.profit==null&&f.equity==null)W.push('매출·순이익·자본을 하나도 못 읽었어요');
+  const five=[['매출',f.sales],['당기순이익',f.profit!=null?f.profit:f.pretax],['자본총계',f.equity],['이익잉여금',f.retained],['가지급금',f.loan]];
+  $('#fsOut').innerHTML=`<div style="margin-bottom:6px"><b>읽은 값</b> ${five.map(([n,v])=>`${n} <b>${v==null?'–':r(v)}</b>`).join(' · ')}</div>`+
+    (W.length?`<div style="color:#c0392b;font-weight:700;margin-bottom:6px">⚠ 자료를 확인하세요: ${W.join(' / ')}</div>`:'')+`<table><tr><th>항목</th><th>읽은 값</th></tr>${FS_KEYS.filter(([k])=>f[k]!=null).map(([k,n])=>`<tr><td>${n}</td><td>${r(f[k])}</td></tr>`).join('')}</table>
    ${flags.length?`<div class="muted" style="margin-top:6px">자동 체크</div><ul class="t">${flags.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}
    <div class="muted">${f._corp?'법인 재무제표로 판단해 사업 형태를 "법인"으로 바꿨습니다. ':''}읽은 값이 맞는지 꼭 확인하세요. 직원 수·대표 나이·관계는 직접 입력해야 합니다.</div>`;
   run()}
@@ -772,40 +792,115 @@ async function pdfRows(buf){const lib=await needPdf();const doc=await lib.getDoc
   for(let p=1;p<=doc.numPages;p++){const tc=await (await doc.getPage(p)).getTextContent();const ln={};
     tc.items.forEach(it=>{if(!it.str)return;const y=Math.round(it.transform[5]/3);(ln[y]=ln[y]||[]).push([it.transform[4],it.str,it.width||0])});
     /* 글자가 한 자씩 따로 올 때가 많아 붙이고, 칸 사이가 벌어진 곳만 띄움 */
+    rows.push([PAGE+p]);
     Object.keys(ln).sort((a,b)=>b-a).forEach(y=>{let t='',end=-1e9;ln[y].sort((a,b)=>a[0]-b[0]).forEach(([x,str,w])=>{if(t&&x-end>3&&!/\s$/.test(t))t+=' ';t+=str;end=x+w});t=t.replace(/\s+/g,' ').trim();if(t)rows.push([t])})}
+  return rows.some(r=>!String(r[0]).startsWith(PAGE))?rows:[]}
+const PAGE='\u0001PAGE';
+/* 스캔본(글자 없는 PDF): 쪽을 그림으로 그린 뒤 글자 인식(Tesseract, 한국어). 10쪽까지만 (1쪽에 5초쯤) */
+async function ocrPdf(buf,onp){const lib=await needPdf();const doc=await lib.getDocument({data:buf}).promise;
+  if(doc.numPages>10)throw new Error(`스캔본이 ${doc.numPages}쪽이라 글자 인식을 건너뛰었어요 (10쪽까지). 재무상태표·손익계산서 쪽만 따로 저장해 넣어 주세요`);
+  if(!window.Tesseract)await loadJs('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+  onp('글자 인식 도구 준비 중… (처음 한 번은 한국어 사전을 받느라 시간이 걸려요)');
+  const w=await Tesseract.createWorker('kor+eng');const rows=[];
+  try{for(let p=1;p<=doc.numPages;p++){onp(`글자 인식 중… ${p}/${doc.numPages}쪽`);
+      const page=await doc.getPage(p),v1=page.getViewport({scale:1}),vp=page.getViewport({scale:Math.min(4,2480/v1.width)});
+      const cv=document.createElement('canvas');cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      /* 흑백 처리: 등기부의 노란 위변조 방지 무늬를 지움 (가장 어두운 색 채널 기준 150) */
+      const im=ctx.getImageData(0,0,cv.width,cv.height),d=im.data;for(let i=0;i<d.length;i+=4){const v=Math.min(d[i],d[i+1],d[i+2])<150?0:255;d[i]=d[i+1]=d[i+2]=v}ctx.putImageData(im,0,0);
+      const {data}=await w.recognize(cv);rows.push([PAGE+p]);data.text.split('\n').map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean).forEach(s=>rows.push([s]))}}
+  finally{await w.terminate()}
   return rows}
-/* 엑셀은 칸 그대로. 위하고 형식(과목·당기소계·당기합계·전기소계·전기합계)은 합계 칸을 먼저 */
-async function xlsxRows(buf){const X=await needXlsx();const wb=X.read(buf,{type:'array'});const rows=[];
-  wb.SheetNames.forEach(n=>X.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false,defval:''}).forEach(r=>{
-    if(r.length>=5&&String(r[0]).trim()&&!r.slice(1).some(v=>/[가-힣]/.test(v))){const c=String(r[2]).trim()||String(r[1]).trim(),p=String(r[4]).trim()||String(r[3]).trim();rows.push([r[0],c,p].filter(v=>String(v).trim()!==''))}
-    else rows.push(r.filter(v=>String(v).trim()!==''))}));return rows}
-const FS_SUM={cash:/^(현금및현금성자산|현금|보통예금|당좌예금)$/,loan:/^(주[.·]?임[.·]?종.*|가지급금|대표자대여금|임원단기대여금)$/};
-function fsYears(txt){const b=[...txt.matchAll(/(20\d\d)\s*[\/.\-]\s*12\s*[\/.\-]\s*31|(20\d\d)\s*년\s*12\s*월\s*31\s*일/g)].map(m=>+(m[1]||m[2]));
+/* 글자 인식(OCR) 결과 손질: 표 테두리(| [ ])를 지우고, «517,605.181»·«216.422.602»처럼 쉼표를 점으로 읽은 금액을 고치고,
+   «2025 12월 31일»처럼 빠진 «년»을 넣음 */
+function ocrClean(rows){return rows.map(r=>{const t0=String(r[0]);if(t0.startsWith(PAGE))return r;
+  let t=t0.replace(/[|\[\]{}®¢!"'`_~ㅣ]/g,' ').replace(/(20\d\d)\s+(\d{1,2})\s*월/g,'$1년 $2월');
+  t=t.split(/\s+/).map(w=>/^[(△▲\-]?\d{1,3}([.,]\d{3})+\)?$/.test(w)&&/\./.test(w)&&((w.match(/[.,]/g)||[]).length>=2||/,/.test(w))?w.replace(/\./g,','):w).join(' ');
+  return [t.replace(/\s+/g,' ').trim()]}).filter(r=>r[0])}
+/* 세무조정계산서처럼 여러 서식이 섞인 PDF: 제목이 «재무상태표·손익계산서»인 쪽만 읽음 (업체 분석 보고서와 같은 방식).
+   그런 쪽이 없고 홈택스 «표준재무상태표·표준손익계산서»만 있으면 그 쪽만 골라 «과목·코드·금액» 묶음으로 풀어 당기 1년만 읽음 */
+function fsPages(rows,ocr){const pages=[];let cur=null;rows.forEach(r=>{if(String(r[0]).startsWith(PAGE)){cur=[];pages.push(cur)}else{if(!cur){cur=[];pages.push(cur)}cur.push(r)}});
+  const head=pg=>pg.slice(0,8).map(r=>String(r.join('')).replace(/[\s()]/g,''));
+  const isFS=pg=>head(pg).some(t=>/^(재[무부]상[태테]표|대[차치]대조표|(포괄)?손[익의]계산서)$/.test(t.replace(/[^가-힣]/g,'')));
+  const other=pg=>head(pg).some(t=>/^(자본변동표|현금흐름표|이익잉여금처분계산서|결손금처리계산서|제조원가명세서|합계잔액시산표|주석|표준.*|합계표준.*|.*명세서|.*조정계산서|.*신고서)$/.test(t)||/^\d+\.\s*\S/.test(t)&&/회사의개요|중요한회계정책/.test(t));
+  const isStd=pg=>head(pg).some(t=>/표준(재무상태표|대차대조표|손익계산서)/.test(t)&&!/합계표준|지출증명|검토/.test(t));
+  const sel=[];let on=false;pages.forEach(pg=>{if(isFS(pg)){sel.push(pg);on=true}else if(on&&!other(pg)&&pg.length)sel.push(pg);else on=false});
+  /* 글자 인식(스캔본)은 제목이 깨지기 쉬워, 재무 과목이 3개 넘게 보이는 쪽도 함께 읽음 */
+  if(ocr){const kw=pg=>{const t=pg.map(r=>r.join('')).join('').replace(/\s/g,'');return ['자산총계','부채총계','자본총계','매출액','당기순','유동자산','매출원가','판매비','영업이익','이익잉여금'].filter(k=>t.includes(k)).length};
+    const all=pages.filter(pg=>sel.includes(pg)||kw(pg)>=3);return{rows:all.flat(),std:false}} // 재무제표 쪽이 없으면(표지뿐) 아무것도 안 읽음
+  if(sel.length)return{rows:sel.flat(),std:false};
+  const st=pages.filter(isStd);if(st.length)return{rows:stdSplit(st.flat()),std:true,year:fsYears(st.flat().map(r=>r.join(' ')).join(' '))};
+  return{rows:pages.flat(),std:false}}
+/* 표준재무제표 한 줄: «1.현금 및 현금성자산 003 164,387,902 부채총계(Ⅰ+Ⅱ) 333 3,611,430,023» → [과목, 금액] 여러 개 (코드는 버림) */
+const STD_SEG=/((?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.|[IVX]+\.|\(?\d{1,2}[.)]|[가나다라마바사아자차카타파하]\.)?\s*[^\d\s:][^\d:]*?)\s+(\d{1,3})\s+(-?[\d,]+)(?=\s|$)/g;
+function stdSplit(rows){const out=[];rows.forEach(r=>{const l=String(r.join(' ')).replace(/\s+/g,' ').trim();
+    if(/단\s*위/.test(l))out.push([l]);
+    for(const m of (' '+l+' ').matchAll(STD_SEG)){const v=m[3];if(!/,/.test(v)&&v!=='0'&&!/^-/.test(v)&&v.length<4)continue;let nm=m[1].trim();
+      /* «나.주주·임원·직원»은 대여금(코드 027)과 차입금(코드 236)에 똑같이 쓰여 코드로 가름 */
+      if(/주주\s*[·.]?\s*임원\s*[·.]?\s*직원$/.test(nm)){const c=+m[2];nm=c===27?'주주임원직원단기대여금':c===236?'주주임원직원단기차입금':nm}
+      out.push([nm,v])}});return out}
+/* 엑셀은 칸 그대로. 시트가 여러 개면 재무제표 과목이 가장 많은 시트 하나만 (같은 숫자가 시트마다 있으면 합쳐지므로).
+   위하고 «비율(%)»·«비고» 칸은 빼고, 위하고 형식(과목·당기소계·당기합계·전기소계·전기합계)은 합계 칸을 먼저 */
+async function xlsxRows(buf){const X=await needXlsx();const wb=X.read(buf,{type:'array'});let best=null,bestN=-1;
+  wb.SheetNames.forEach(n=>{let aoa=X.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false,defval:''}).map(r=>r.map(v=>String(v)));
+    const drop=new Set();aoa.slice(0,20).forEach(r=>r.forEach((v,i)=>{if(i>0&&/^(비\s*율|비\s*고)/.test(v.trim()))drop.add(i)}));
+    if(drop.size)aoa=aoa.map(r=>r.filter((v,i)=>!drop.has(i)));
+    const rows=[];aoa.forEach(r=>{
+      if(r.length>=5&&r[0].trim()&&!r.slice(1).some(v=>/[가-힣]/.test(v))){const c=r[2].trim()||r[1].trim(),p=r[4].trim()||r[3].trim();rows.push([r[0],c,p].filter(v=>v.trim()!==''))}
+      else rows.push(r.filter(v=>v.trim()!==''))});
+    const hits=rows.filter(r=>/매출액|자산총계|부채총계|자본총계|당기순/.test(r.join('').replace(/\s/g,''))).length;
+    if(hits>bestN){best=rows;bestN=hits}});
+  return best||[]}
+/* 현금: «현금및현금성자산» 합계 줄이 있으면 그것만, 없으면 현금·보통예금·당좌예금을 더함 */
+const FS_SUM={cashT:/^(현금및현금성자산|현금및현금등가물|현금성자산)$/,cash:/^(현금|보통예금|당좌예금)$/,loan:/^(주[.·]?임[.·]?종(?!.*차입).*|가지급금|대표자대여금|임원단기대여금|주주[.·]?임원[.·]?(?:종업원|직원)단기(?:대여금|채권))$/};
+/* 회계연도: «2024년 12월 31일» 또는 중간결산 «2024년 09월 30일 현재 / 까지» (발급일 같은 다른 날짜는 안 봄) */
+function fsYears(txt){const b=[...txt.matchAll(/(20\d\d)\s*[\/.\-]\s*12\s*[\/.\-]\s*31|(20\d\d)\s*년?\s*12\s*월\s*31\s*일|(20\d\d)\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(?:현\s*재|까\s*지)/g)].map(m=>+(m[1]||m[2]||m[3])).filter(y=>y>=1990&&y<=new Date().getFullYear()+1);
   const ys=[...new Set(b)].sort((x,y)=>y-x);return ys.length?ys:null}
-function parseRows(rows){const cur={},prev={},unit=rows.some(r=>/백만원/.test(r.join('')))?1e6:rows.some(r=>/천원/.test(r.join('')))?1e3:1;
-  const n=t=>{t=String(t).trim();if(!/\d/.test(t))return null;const neg=/^\(|^-|^△|^▲/.test(t);const d=t.replace(/[^\d.]/g,'');if(!d||(!/,/.test(t)&&d.length<4&&+d!==0))return null;const v=parseFloat(d);return isNaN(v)?null:(neg?-v:v)};
+/* 결산보고서처럼 금액 줄 바로 아래에 과목 이름이 따로 찍힌 표: «7,015,639,985원 2,864,940,038원» + «자본총계» → 한 줄로 */
+function mergeLabelRows(rows){const out=[];for(let i=0;i<rows.length;i++){const t=rows[i].map(String).join(' ').trim(),nx=rows[i+1]?rows[i+1].map(String).join(' ').trim():'';
+    if(!t.startsWith(PAGE)&&!/[가-힣]/.test(t.replace(/원/g,''))&&/\d{1,3},\d{3}/.test(t)&&/^[가-힣()·\s]{2,20}$/.test(nx)){out.push([nx+' '+t]);i++}else out.push(rows[i])}return out}
+function parseRows(rows){rows=mergeLabelRows(rows);const cur={},prev={},unit=unitFrom(rows.map(r=>r.join(' ')));
+  /* 쉼표 없이 소수점이 있는 값(비율 100.00·63.7)과 쉼표 없는 3자리 이하(코드)는 금액으로 안 봄 */
+  const n=t=>{t=String(t).trim().replace(/원$/,'');if(!/\d/.test(t))return null;if(/,/.test(t)&&!/^[(△▲\-]?\d{1,3}(,\d{3})+(\.\d+)?\)?$/.test(t))return null;if(!/,/.test(t)&&/\./.test(t))return null;const neg=/^\(|^-|^△|^▲/.test(t);const d=t.replace(/[^\d.]/g,'');if(!d||(!/,/.test(t)&&d.length<4&&+d!==0))return null;const v=parseFloat(d);return isNaN(v)?null:(neg?-v:v)};
+  let prevL='';
   rows.forEach(r=>{let cells=r.map(String);let name=cells[0];
+    /* 위하고 재무상태표 맨 아래 «( 당 기 순 이 익 )» 다음 줄 «당기 : 121,912,525 원» → 손익계산서가 없거나 못 읽어도 순이익으로 씀 */
+    {const jl=cells.join(' ').replace(/\s+/g,' ').trim(),pl=prevL;prevL=jl;const mb=jl.match(/^당\s*기\s*:?\s*(-?[\d,]{4,})\s*원?$/);
+     if(mb&&/\(?\s*당\s*기\s*순\s*(이\s*익|손\s*실)\s*\)?$/.test(pl)){const v=+mb[1].replace(/,/g,'');if(cur.niBS==null)cur.niBS=/손\s*실/.test(pl)&&v>0?-v:v;return}}
     /* PDF 는 한 줄이 한 덩어리로 올 때가 있어 숫자 앞을 과목으로 */
-    if(cells.length===1||!/[가-힣]/.test(name)){const j=cells.join(' ').replace(/^\s*(?:\(\d+\)|\d+\.|[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.)\s*/,'');const m=j.match(/^([^\d(△▲-]+)(.*)$/);if(!m)return;name=m[1];cells=[name,...(m[2].match(/[(△▲-]?[\d,]+(?:\.\d+)?\)?/g)||[])]}
-    const key=name.replace(/^[\sⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|\(\d+\)|^\d+\.|\s/g,'');if(!key)return;
+    if(cells.length===1||!/[가-힣]/.test(name)){const j=cells.join(' ').replace(/^\s*(?:\(\d+\)|\d+\.|[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.|[IVX]+\.)\s*/,'');const m=j.match(/^([^\d(△▲-]+)(.*)$/);if(!m)return;name=m[1];cells=[name,...(m[2].match(/[(△▲-]?[\d,]+(?:\.\d+)?\)?/g)||[])]}
+    const key=name.replace(/^[.,·:;\s]+/,'').replace(/^[\sⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|^[IVXLivxl]{1,4}\.|\(\d+\)|^\d+\.|^[가나다라마바사아자차카타파하]\.|\s/g,'').replace(/^[가나다라마바사아자차카타파하]\./,'');if(!key)return;
     const vals=cells.slice(1).map(n).filter(v=>v!=null);if(!vals.length)return;
-    /* 위하고·홈택스는 손실 난 해에 «영업손실 2억»처럼 양수로 적음 → 이익 기준으로 부호를 바꿈 */
-    const loss=/(영업|순|차감전)손실$|손실$/.test(key)&&/^(영업|당기|법인세|소득세)/.test(key);
-    const c=loss?-vals[0]:vals[0],p=vals.length>1?(loss?-vals[1]:vals[1]):null;
+    /* 위하고·홈택스는 손실 난 해에 «영업손실 2억»처럼 양수로 적고, 같은 줄 전기 이익은 음수로 적음 → 부호를 뒤집어 이익 기준으로.
+       당기 값이 이미 음수(괄호)인 자료는 부호를 그대로 둠 */
+    const loss=/(영업|순|차감전)손실$|손실$/.test(key)&&/^(영업|당기|법인세|소득세)/.test(key)||/^(미처리)?결손금$/.test(key);const flip=loss&&vals[0]>0;
+    const c=flip?-vals[0]:vals[0],p=vals.length>1?(flip?-vals[1]:vals[1]):null;
     for(const[k,re]of Object.entries(FS_SUM))if(re.test(key)){cur[k]=(cur[k]||0)+c;if(p!=null)prev[k]=(prev[k]||0)+p;return}
     for(const[k,,re]of FS_KEYS){if(k==='cash'||k==='loan')continue;if(re.test(key)){if(cur[k]==null){cur[k]=c;if(p!=null)prev[k]=p}break}}
-    if(/^영업(이익|손실)/.test(key)&&cur.op==null){cur.op=c;if(p!=null)prev.op=p}});
-  const sc=o=>{Object.keys(o).forEach(k=>o[k]=o[k]*unit/1e8);return o};return{cur:sc(cur),prev:sc(prev),corp:rows.some(r=>/자본금|법인세/.test(r.join('')))}}
+    if(/^영업(이익|손실|손익)/.test(key)&&cur.op==null){cur.op=c;if(p!=null)prev.op=p}});
+  [cur,prev].forEach(o=>{if(o.cashT!=null)o.cash=o.cashT;delete o.cashT;if(o.profit==null&&o.niBS!=null)o.profit=o.niBS;delete o.niBS;if(o.profit==null&&o.pretax!=null&&o.ctax!=null)o.profit=o.pretax-o.ctax});
+  const sc=o=>{Object.keys(o).forEach(k=>o[k]=o[k]*unit/1e8);return o};return{cur:sc(cur),prev:sc(prev),corp:rows.some(r=>/자본금|법인세/.test(r.join('').replace(/\s/g,'')))}}
 $('#fsFile').onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const msg=$('#fsFileMsg');msg.textContent='읽는 중…';
-  const byYear={},notes=[];let corp=false;
-  for(const f of files){try{const buf=await f.arrayBuffer();const rows=/\.pdf$/i.test(f.name)?await pdfRows(buf):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):(await f.text()).split(/\r?\n/).map(l=>[l]);
-      if(!rows.length){notes.push(`${f.name}: 글자가 없어요(스캔본). 글자가 있는 PDF나 엑셀로 넣어 주세요.`);continue}
-      const head=rows.slice(0,12).map(r=>r.join(' ')).join(' ');const ys=fsYears(head)||fsYears(rows.slice(0,40).map(r=>r.join(' ')).join(' '));
-      const r=parseRows(rows);corp=corp||r.corp;const nk=Object.keys(r.cur).length;
+  const byYear={},pri={},notes=[],diffs=[];let corp=false;const DN={sales:'매출',profit:'당기순이익',equity:'자본총계'},r2=x=>Math.round(x*100)/100;
+  for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name);let raw=isPdf?await pdfRows(buf.slice(0)):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):(await f.text()).split(/\r?\n/).map(l=>[l]);
+      /* 글자 층이 거의 비어 있는 PDF(쪽당 30자 미만)도 스캔본으로 봄 */
+      if(isPdf&&raw.length){const np=raw.filter(r=>String(r[0]).startsWith(PAGE)).length||1,nc=raw.filter(r=>!String(r[0]).startsWith(PAGE)).map(r=>r.join('')).join('').replace(/\s/g,'').length;if(nc<30*np)raw=[]}
+      let ocr=false;if(!raw.length&&isPdf){raw=ocrClean(await ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`));ocr=true}
+      if(!raw.length){notes.push(`${f.name}: 글자가 없어요(스캔본). 글자가 있는 PDF나 엑셀로 넣어 주세요.`);continue}
+      if(ocr)notes.push(`${f.name}: <span style="color:#c0392b">스캔본이라 글자 인식으로 읽었어요. 숫자가 틀릴 수 있으니 꼭 원본과 맞춰 보세요.</span>`);
+      const pg=fsPages(raw,ocr),rows=pg.rows;
+      const head=rows.slice(0,12).map(r=>r.join(' ')).join(' ');const hy=()=>{const h=rows.map(r=>r.join(' ')).find(l=>/구\s*분|과\s*목|계\s*정/.test(l)&&(l.match(/(?<!\d)20\d\d(?!\d)/g)||[]).length>=2);return h?[Math.max(...h.match(/(?<!\d)20\d\d(?!\d)/g).map(Number))]:null};
+      const ys=pg.std?pg.year:(fsYears(head)||fsYears(rows.slice(0,40).map(r=>r.join(' ')).join(' '))||hy());
+      const r=parseRows(rows);corp=corp||r.corp;if(pg.std)r.prev={};const nk=Object.keys(r.cur).length;
       if(!nk){notes.push(`${f.name}: 재무제표 항목을 찾지 못했어요.`);continue}
-      const y0=ys?ys[0]:new Date().getFullYear()-1;[[y0,r.cur],[y0-1,r.prev]].forEach(([y,o])=>{if(!Object.keys(o).length)return;byYear[y]={...(byYear[y]||{}),...o}});
-      notes.push(`${f.name}: ${y0}년${Object.keys(r.prev).length?'·'+(y0-1)+'년':''} ${nk}개 항목`)}
+      const y0=ys?ys[0]:new Date().getFullYear()-1;
+      /* 값이 모두 0인 해(설립 첫해 재무제표의 «전기» 칸)는 만들지 않음. 같은 해가 여러 파일에 있으면 그 해가 «당기»인 파일을 우선 */
+      [[y0,r.cur,2],[y0-1,r.prev,1]].forEach(([y,o,p])=>{if(!Object.values(o).some(v=>v))return;const b=byYear[y]=byYear[y]||{},q=pri[y]=pri[y]||{};
+        Object.entries(o).forEach(([k,v])=>{if(b[k]!=null&&DN[k]&&Math.abs(b[k]-v)>Math.max(0.01,Math.abs(v)*0.01))diffs.push(`${y}년 ${DN[k]} ${r2(b[k])}억 / ${r2(v)}억`);
+          if(q[k]==null||p>=q[k]){b[k]=v;q[k]=p}})});
+      notes.push(`${f.name}: ${y0}년${Object.keys(r.prev).length&&byYear[y0-1]?'·'+(y0-1)+'년':''} ${nk}개 항목${pg.std?' (표준재무제표, 당해 1년)':''}`)}
     catch(err){notes.push(`${f.name}: ${err.message||err}`)}}
+  if(diffs.length)notes.push(`<span style="color:#c0392b">같은 해 숫자가 파일마다 달라요: ${[...new Set(diffs)].slice(0,4).join(', ')}. 그 해가 «당기»인 파일(없으면 나중 파일) 값을 썼어요. 최종 신고본이 맞는지 확인하세요.</span>`);
   const yrs=Object.keys(byYear).map(Number).sort().slice(-3);
   if(!yrs.length){msg.innerHTML=notes.join('<br>');return}
   /* 가장 최근 해는 위 "읽어서 채우기"와 같은 방식으로 (자동 체크 포함) */

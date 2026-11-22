@@ -1031,6 +1031,7 @@ function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(
   $('#brOpen').onclick=open;$('#brPass').addEventListener('keydown',e=>{if(e.key==='Enter')open()});
   const adm=(body,ok)=>{const t=$('#adTok').value.trim();if(!t){$('#adMsg').textContent='관리자 키를 넣어 주세요.';return}post({action:'branchcfg',token:t,...body}).then(j=>{$('#adMsg').textContent=j.ok?`${ok} 지금 지점: ${j.names.join(', ')||'없음'}`:(j.error||'바꾸지 못했어요.');if(j.ok){$('#adPass').value='';names()}}).catch(()=>{$('#adMsg').textContent='서버에 연결하지 못했어요.'})};
   $('#adAdd').onclick=()=>adm({add:{name:$('#adName').value,pass:$('#adPass').value}},'저장했어요.');$('#adDel').onclick=()=>adm({del:$('#adName').value},'뺐어요.');
+  try{if(sessionStorage.getItem('hub-openadm')){sessionStorage.removeItem('hub-openadm');const d=document.querySelector('details.adm');if(d){d.open=true;d.scrollIntoView({block:'start'});$('#adTok').focus()}}}catch(e){}
   names().then(()=>{if(ss.b&&ss.p)open()})}
 function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}
 function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span>${ADM()?`<span class="d">${d.updated}</span>`:''}</a>`).join('')}
@@ -1045,7 +1046,7 @@ async function show(){
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
     main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     document.title=t+' · 4&7 NEXT 허브';return}
-  if(h==='admin'){try{localStorage.setItem('hub-admin','1')}catch(e){}document.documentElement.classList.add('admin');location.replace('#home');return}
+  if(h==='admin'){try{localStorage.setItem('hub-admin','1');sessionStorage.setItem('hub-openadm','1')}catch(e){}document.documentElement.classList.add('admin');location.replace('#branch');return}
   if(h==='admin-off'){try{localStorage.removeItem('hub-admin')}catch(e){}document.documentElement.classList.remove('admin');location.replace('#home');return}
   if(h==='home'){tpl('tpl-home');homeInit();return}
   if(h==='start'){tpl('tpl-start');startInit();return}

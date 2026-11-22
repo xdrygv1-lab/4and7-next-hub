@@ -1915,5 +1915,57 @@ details.sigBox > summary{cursor:pointer;font-weight:700}
   if(q.get('sample')==='3'){const b=$1('#sample3');if(b)setTimeout(()=>b.click(),300)}
 })();
 </script>
+<style>
+/* 11/22 처음 쓰는 사람용: 맨 위 «이 세 가지만» 상자 (업체 분석 → 제안 준비 · 업체 분석 보고서 공통) */
+.qs{border:1px solid var(--acc,#2f5bd3);border-radius:14px;padding:14px;margin:0 0 14px;background:var(--acc-soft,var(--tint,#eef3ff));display:grid;gap:10px;color:inherit}
+.qs h3{margin:0;font-size:16px}
+.qs .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc,#2f5bd3);color:#fff;font-size:12px;font-weight:700;margin-right:6px;flex:none}
+.qs .row{display:flex;align-items:flex-start;gap:4px}
+.qs .drop{flex:1;min-width:0;border:2px dashed var(--acc,#2f5bd3);border-radius:12px;padding:14px;text-align:center;cursor:pointer;background:var(--card,var(--panel,#fff))}
+.qs .drop.on{background:var(--acc-soft,#e8f0fa)}
+.qs .drop b{display:block;font-size:15px}.qs .drop small{display:block;opacity:.75;margin-top:4px;font-size:12px}
+.qs .three{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.qs .three label{display:grid;gap:2px;font-size:12px}
+.qs .three input,.qs .three select{width:100%;min-width:0;padding:7px 8px;border:1px solid var(--line,#ccd);border-radius:8px;font:inherit;background:var(--card,#fff);color:inherit}
+.qs .go{flex:1;padding:11px;border:0;border-radius:10px;background:var(--acc,#2f5bd3);color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.qs .st{font-size:13px;line-height:1.5}.qs .st .warn{color:var(--r,#c0392b);font-weight:700}
+.qs .alt{font-size:12px;opacity:.8}
+@media (max-width:520px){.qs .three{grid-template-columns:1fr 1fr}.qs .three label:last-child{grid-column:1/-1}}
+</style>
+<script>
+(function(){
+  const $1=s=>document.querySelector(s);
+  const AP=!!$1('#fsFile'),fin=$1(AP?'#fsFile':'#impFile'),msg=$1(AP?'#fsFileMsg':'#impMsg');if(!fin)return;
+  const host=AP?$1('#form'):$1('aside');if(!host)return;
+  const old=$1('.qguide');if(old)old.remove();
+  const box=document.createElement('section');box.className='qs';
+  const isSample=()=>AP?($1('#co')||{}).value==='OO정밀':/^B사/.test(($1('#co')||{}).value||'');
+  box.innerHTML=`<h3>처음이면 이 ${AP?'세':'두'} 가지만 <small style="font-weight:400;opacity:.75">${AP?'결과: 보고서 · 컨셉 · 스크립트 · PC · 제안자료':'결과: 회사 가치 · 잉여금 · CEO 리스크 · AP 질문'}</small></h3>
+   <div class="row"><span class="n">1</span><div class="drop" tabindex="0" role="button"><b>세무조정계산서 PDF를 여기로 끌어 놓거나 눌러서 고르기</b><small>결산보고서·홈택스 신고서·위하고 PDF·엑셀도 됩니다. 여러 개 한꺼번에. 파일은 이 컴퓨터 안에서만 읽어요.</small></div></div>
+   ${AP?`<div class="row"><span class="n">2</span><div class="three"><label>대표 나이<input type="number" id="qsAge" min="20" max="90" placeholder="예: 52"></label><label>성별<select id="qsSex"><option>남</option><option>여</option></select></label><label>대표 연소득 (억, 급여+배당)<input type="number" id="qsInc" step="0.1" placeholder="모르면 비움"></label></div></div>
+   <div class="row"><span class="n">3</span><button type="button" class="go" id="qsGo">분석 시작</button></div>`
+   :`<div class="row"><span class="n">2</span><button type="button" class="go" id="qsGo">결과 보기</button></div>`}
+   <div class="st" id="qsSt"></div>
+   <div class="alt">${AP?'먼저 구경만 하려면 아래 «예시 1»을 누르세요. 회사 이름·대표·지분율은 파일에서 저절로 채워지고, 나머지 칸은 몰라도 됩니다.':'회사 이름·대표·주주·재무 칸은 파일에서 저절로 채워집니다. 결과는 바로 바뀌어요.'}</div>`;
+  host.prepend(box);
+  const drop=box.querySelector('.drop'),pick=document.createElement('input');pick.type='file';pick.multiple=true;pick.accept=fin.accept;pick.hidden=true;box.appendChild(pick);
+  const give=files=>{if(!files||!files.length)return;const dt=new DataTransfer();[...files].forEach(f=>dt.items.add(f));fin.files=dt.files;fin.dispatchEvent(new Event('change',{bubbles:true}))};
+  drop.onclick=()=>pick.click();drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick.click()}};
+  pick.onchange=()=>{give(pick.files);pick.value=''};
+  ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('on')}));
+  ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('on')}));
+  drop.addEventListener('drop',e=>give(e.dataTransfer.files));
+  if(AP){const pair=[['#qsAge','#age'],['#qsSex','#sex'],['#qsInc','#ceoInc']];
+    const pull=()=>pair.forEach(([a,b])=>{const x=$1(a),y=$1(b);if(x&&y&&document.activeElement!==x&&x.value!==y.value)x.value=y.value});
+    pair.forEach(([a,b])=>{const x=$1(a);x.addEventListener('input',()=>{const y=$1(b);if(!y)return;y.value=x.value;y.dispatchEvent(new Event('input',{bubbles:true}));y.dispatchEvent(new Event('change',{bubbles:true}))})});
+    pull();setInterval(pull,1500)}
+  $1('#qsGo').onclick=()=>{if(AP){const g=$1('#gen');if(g)g.click()}else{const o=$1('#out');if(o)o.scrollIntoView({behavior:'smooth'})}};
+  const st=box.querySelector('#qsSt');
+  const upd=()=>{const t=(msg&&msg.innerText||'').trim();const need=[];
+    if(AP&&!isSample()){if(!($1('#age')||{}).value)need.push('대표 나이');if(!($1('#ceoInc')||{}).value)need.push('대표 연소득(재정심사에 필요)')}
+    st.innerHTML=(isSample()?`<span class="warn">지금 ${AP?'오른쪽':'옆'} 결과는 예시 회사(${AP?'OO정밀':'B사'})입니다.</span> 파일을 넣으면 우리 업체로 바뀝니다.`:t?esc2(t.split('\n').slice(0,3).join(' · ')):'')+(need.length?`<br>비어 있는 칸: ${need.join(', ')}`:'')};
+  const esc2=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  upd();setInterval(upd,1200)})();
+</script>
 </body>
 </html>

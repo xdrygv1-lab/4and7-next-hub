@@ -438,10 +438,13 @@ html:not(.admin) .skinbar,html:not(.admin) .adm{display:none!important}
 .fab,.scrim{display:none}
 @media(max-width:860px){
  .shell,.shell.collapsed{grid-template-columns:1fr}
- aside{position:fixed!important;top:0;left:0;bottom:0;width:min(300px,86vw);height:100vh!important;z-index:80;transform:translateX(-102%);transition:transform .22s;border-right:1px solid var(--side-line,var(--line));padding-top:calc(env(safe-area-inset-top,0px) + 18px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px)!important}
+ aside{position:fixed!important;top:0;left:0;bottom:0;width:min(300px,86vw);height:100vh!important;height:100dvh!important;overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;z-index:80;transform:translateX(-102%);transition:transform .22s;border-right:1px solid var(--side-line,var(--line));padding-top:calc(env(safe-area-inset-top,0px) + 18px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px)!important}
  .shell.collapsed aside{display:flex!important;visibility:visible!important}
  .shell.open aside{transform:none}
  .navl .nd{display:block!important}
+ .navl{padding:8px 10px!important}
+ .navg{padding-top:10px}
+ #nav{padding-bottom:96px}
  .railbtn{display:none}
  .fab{display:flex;align-items:center;gap:8px;position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:70;border:0;border-radius:999px;padding:12px 18px;background:var(--accent-bg,var(--accent));color:#fff;font:inherit;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer}
  .shell.open .scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.35)}
@@ -476,6 +479,9 @@ html:not(.admin) .skinbar,html:not(.admin) .adm{display:none!important}
 .tool-hint{font-size:13px;color:var(--sub);font-weight:400;margin-left:8px}
 @media(max-width:600px){.tool-hint{display:none}}
 .dev-note{opacity:.85}
+.mbti1{display:grid;gap:4px;text-decoration:none;color:inherit;border:1px solid var(--accent);border-radius:18px;padding:18px 20px;margin:22px 0 8px;background:linear-gradient(135deg,var(--tint),var(--panel))}
+.mbti1 .k{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.04em}.mbti1 b{font-size:19px}.mbti1 span:not(.k){color:var(--sub);font-size:14px}.mbti1 em{font-style:normal;font-weight:700;color:var(--accent)}
+.mbti1:hover{box-shadow:0 0 0 2px var(--accent) inset}
 .toolbar{padding-inline:16px!important}
 
 </style>
@@ -540,9 +546,10 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div class="eyebrow" data-a="up">4&amp;7 NEXT 허브</div>
     <h1 data-a="up" data-d="1">업체 하나를 골라 <em>미팅 준비</em>부터<br>연습, 재정심사, 청약까지.</h1>
     <p class="lede" data-a="up" data-d="2">재무제표를 넣으면 컨셉과 첫 미팅 멘트가 나오고, AI 대표님과 미리 연습하고, 원수사별 한도까지 확인합니다. 어디서 시작할지 모르겠다면 아래에서 지금 내 상황을 골라 보세요.</p>
-    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#start">5분 따라하기</a><a class="btn ghost" href="#tool-ap">바로 업체 분석</a></div>
+    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#tool-mbti">보험 MBTI로 시작 (9분)</a><a class="btn ghost" href="#start">5분 따라하기</a></div>
   </section>
 
+  <a class="mbti1" href="#tool-mbti"><span class="k">먼저 나부터</span><b>보험 MBTI · 52문항 9분</b><span>나는 어떤 영업 체질일까? 결과로 나에게 맞는 업체 규모, 잘 맞는 컨셉, 먼저 연습할 AP 단계를 추천받아요. 끝나면 «팀 기록에 저장»을 눌러 지점장과 함께 봅니다.</span><em>시작하기 →</em></a>
   <h2>나는 지금…</h2>
   <div class="who3" id="who3">
     <button type="button" data-w="new"><b>처음이에요</b><span>무엇부터 봐야 할지 모르겠어요</span></button>
@@ -554,6 +561,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div class="quote" id="quote"></div>
 
   <div class="nx-route" aria-label="영업 흐름">
+    <a href="#tool-mbti"><b>⓪ 나 알기</b><span>보험 MBTI</span></a>
     <a href="#tool-ap"><b>① 업체 분석</b><span>재무제표 넣기</span></a>
     <a href="#tool-ap"><b>② 첫 미팅 멘트</b><span>15단계 스크립트</span></a>
     <a href="#tool-rplive"><b>③ 연습</b><span>AI 대표님과 말로</span></a>
@@ -595,11 +603,12 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 </template>
 
 <template id="tpl-start">
-  <h1>5분 따라하기: 가상 업체 하나로 끝까지</h1>
+  <h1>따라하기: 나부터 알고, 가상 업체 하나로 끝까지</h1>
   <p class="lede">가상 업체 <b>OO정밀</b>(제조업 개인사업자)로 업체 분석부터 청약 점검까지 한 번 따라가 봅니다. 단계마다 버튼을 누르면 그 화면이 열리고, 해 본 단계는 체크해 두세요.</p>
   <div class="kv"><div><b>업종 · 형태</b>제조업 · 개인사업자 15년</div><div><b>매출 · 순이익</b>12억 · 1.1억</div><div><b>대표</b>50세 남, 자녀 2명</div><div><b>관계</b>기장거래처 5년, 가결산 미팅 겸</div></div>
   <div class="prog" aria-hidden="true"><i id="stProg"></i></div><p class="small" id="stCnt"></p>
   <div class="steps8" id="steps8">
+    <div class="st" data-k="0"><h3>먼저 나 알기: 보험 MBTI</h3><p>52문항, 9분. 내 영업 체질과 잘 맞는 업체 규모·컨셉, 먼저 연습할 AP 단계를 추천받습니다. 따라하기 내내 이 결과를 떠올리며 보세요.</p><div class="btnrow"><a class="btn p sm" href="#tool-mbti">보험 MBTI</a><label class="ck"><input type="checkbox" data-ck="0"> 해 봤어요</label></div></div>
     <div class="st" data-k="1"><h3>업체 분석: 예시 넣고 분석 시작</h3><p>«업체 분석 → 제안 준비»를 열고 <b>예시 1: 제조업 대표</b>를 누릅니다. 실제 업체라면 위하고 재무제표 PDF·엑셀을 넣습니다 (<a href="#data">무엇을 넣나</a>).</p><p>보고서 탭에 신호등이 나옵니다. 빨강·주황이 오늘 미팅에서 꺼낼 이야기입니다.</p><div class="btnrow"><a class="btn p sm" href="#tool-ap?sample=1">예시로 열기</a><label class="ck"><input type="checkbox" data-ck="1"> 해 봤어요</label></div></div>
     <div class="st" data-k="2"><h3>컨셉 진단: 무엇을 이야기할까</h3><p><b>컨셉 진단</b> 탭에서 1~3순위 컨셉과 근거 신호를 봅니다. OO정밀은 이익이 커진 개인사업자라 <b>법인전환</b>이 위로 올라옵니다. 처음 보는 컨셉은 이름을 눌러 «컨셉 사전»에서 "한눈에"만 읽어 보세요.</p><div class="btnrow"><a class="btn sm" href="#concepts">컨셉 사전</a><label class="ck"><input type="checkbox" data-ck="2"> 해 봤어요</label></div></div>
     <div class="st" data-k="3"><h3>첫 미팅(AP) 스크립트</h3><p><b>AP 스크립트</b> 탭에 15단계 멘트가 나옵니다. 가결산 겸인데 컨셉을 안 고르면 <b>B형(니즈 파악)</b>, 컨셉을 고르면 <b>A형(니즈 환기)</b>입니다. 07단계에 "1.1억이라 35% 구간"처럼 이 업체 숫자가 들어가 있어요.</p><p><code>[ ]</code>는 대표님 입에서 받을 숫자입니다. 상품 이름은 AP에서 말하지 않습니다.</p><div class="btnrow"><a class="btn sm" href="#learn-ap">첫 미팅 화법</a><label class="ck"><input type="checkbox" data-ck="3"> 해 봤어요</label></div></div>
@@ -929,6 +938,7 @@ async function loadContribs(el,target,empty){
 const NAVDEF=[
  {g:'시작'},
  {h:'home',ic:'home',t:'홈',d:'나에게 맞는 순서'},
+ {h:'tool-mbti',ic:'puzzle',t:'보험 MBTI',d:'9분, 나부터 알아보기'},
  {h:'start',ic:'compass',t:'처음이라면',d:'5분 따라하기 · 쓰는 법 · 무엇을 넣나',sub:'guide'},
  {g:'준비하기 · 미팅 전'},
  {h:'tool-ap',ic:'search',t:'업체 분석 → 제안 준비',d:'재무제표 넣고 컨셉·AP·PC까지'},
@@ -937,7 +947,6 @@ const NAVDEF=[
  {g:'연습하기'},
  {h:'tool-rplive',ic:'mic',t:'실전 롤플레이',d:'AI 대표님과 목소리로',sub:'rp'},
  {h:'tool-rp',ic:'chat',t:'AP 롤플레이',d:'15단계 연습하고 채점'},
- {h:'tool-mbti',ic:'puzzle',t:'보험 MBTI',d:'내 영업 성향과 코칭'},
  {g:'공부하기'},
  {h:'learn',ic:'book',t:'공부하기',d:'컨셉 · 화법 · 상품 · 계산기',sub:'learn'},
  {h:'ask',ic:'help',t:'물어보기',d:'AI에게 컨셉·준비할 것'},
@@ -1239,9 +1248,9 @@ window.addEventListener('hashchange',show);
 
 /* ---------- 첫 화면: 나는 지금… ---------- */
 const WHO={
- new:{t:'처음이라면 이 순서로',s:[['#start','5분 따라하기','가상 업체 하나로 분석부터 청약 점검까지 한 번'],['#learn-guide','신입 가이드','보험 용어, 청약서, 영업 흐름'],['#tool-mbti','보험 MBTI','내 영업 성향을 알고 맞는 업체 규모·컨셉 추천받기'],['#tool-rp','AP 롤플레이','AI 대표님과 첫 미팅을 연습하고 채점받기']]},
- low:{t:'다음 약속이 잡히게',s:[['#review','최근 미팅 녹음·스크립트 검토받기','어느 단계에서 막혔는지 바로 보입니다'],['#tool-ap','다음 업체로 업체 분석','B형(니즈 파악) 스크립트로 질문 위주로'],['#tool-rplive','실전 롤플레이','10단계 선거절, 15단계 약속 확정을 말로 반복'],['#learn-ap','첫 미팅 화법','반론 대응 모음']]},
- top:{t:'더 크게, 더 많이',s:[['#tool-uw','재정심사 계산기','원수사별 한도 차이로 금액 키우기'],['#tool-ca','업체 분석 보고서','법인 서류로 주식가치·잉여금·CEO 리스크까지'],['#concepts','컨셉 사전','승계·노무·특허 같은 2차 컨셉'],['#review','내 방식 공유하기','잘된 녹음·PPT를 올리면 이름 빼고 팀 예시로']]}};
+ new:{t:'처음이라면 이 순서로',s:[['#tool-mbti','보험 MBTI','9분, 내 영업 체질과 맞는 업체 규모·컨셉부터'],['#start','5분 따라하기','가상 업체 하나로 분석부터 청약 점검까지 한 번'],['#learn-guide','신입 가이드','보험 용어, 청약서, 영업 흐름'],['#tool-rp','AP 롤플레이','AI 대표님과 첫 미팅을 연습하고 채점받기']]},
+ low:{t:'다음 약속이 잡히게',s:[['#tool-mbti','보험 MBTI','내 체질에 맞지 않는 업체·화법을 붙잡고 있는지부터'],['#review','최근 미팅 녹음·스크립트 검토받기','어느 단계에서 막혔는지 바로 보입니다'],['#tool-ap','다음 업체로 업체 분석','B형(니즈 파악) 스크립트로 질문 위주로'],['#tool-rplive','실전 롤플레이','10단계 선거절, 15단계 약속 확정을 말로 반복'],['#learn-ap','첫 미팅 화법','반론 대응 모음']]},
+ top:{t:'더 크게, 더 많이',s:[['#tool-mbti','보험 MBTI','잘하는 이유를 알면 팀에 나눌 수 있어요'],['#tool-uw','재정심사 계산기','원수사별 한도 차이로 금액 키우기'],['#tool-ca','업체 분석 보고서','법인 서류로 주식가치·잉여금·CEO 리스크까지'],['#concepts','컨셉 사전','승계·노무·특허 같은 2차 컨셉'],['#review','내 방식 공유하기','잘된 녹음·PPT를 올리면 이름 빼고 팀 예시로']]}};
 const QUOTES=[['10 선거절처리','"다들 그렇지 않냐 하실 수 있습니다. 맞습니다. 그런데 이익이 안 나는 회사는 이런 고민 자체를 안 합니다."'],
  ['15 다음 약속','"자료는 제가 만들어 오겠습니다. 목요일 오후 2시로 하겠습니다. 한 시간 잡아 주셔야 합니다."'],
  ['저항 "보험 얘기 아니에요?"','"보험을 활용하는 방법으로 쓸 수도 있습니다. 그런데 오늘 그걸 제안드리는 건 아닙니다."'],
@@ -1250,7 +1259,10 @@ const QUOTES=[['10 선거절처리','"다들 그렇지 않냐 하실 수 있습�
  ['08 니즈환기','"대표님은 이 사업을 열심히 하시는 원동력이 어떤 거세요?"'],
  ['☆ 소개요청','"대표님처럼 같은 고민을 하시는 분 딱 두 분만 소개해 주시면 좋겠습니다."'],
  ['05 시간확보','"20분 정도 괜찮으실까요? 진짜 필요한 게 뭔지 알아야 해서 질문을 좀 드릴 겁니다."']];
-function homeInit(){
+function homeMbti(){let s=null;try{s=JSON.parse(store.get('hub-mbti')||'null')}catch(e){}const el=document.querySelector('.mbti1');if(!el||!s||!s.code)return;
+  const pl=(s.plan||[]).slice(0,4),d=s.done||{},n=pl.filter((_,i)=>d[i]).length;
+  el.outerHTML=`<div class="mbti1"><span class="k">내 보험 MBTI · ${esc(s.code)} ${esc(s.nick||'')}</span><b>이번 주 할 일 ${n}/${pl.length}</b><ol style="margin:4px 0 0;padding-left:1.2em">${pl.map((p,i)=>`<li${d[i]?' style="text-decoration:line-through;opacity:.6"':''}>${esc(p[0])} <span class="small">${esc(p[1])}</span>${p[2]?` <a href="#${p[2]}">열기</a>`:''}</li>`).join('')}</ol><span><a href="#tool-mbti">결과 다시 보기·다시 검사</a></span></div>`}
+function homeInit(){homeMbti();
   const pick=w=>{store.set('hub-who',w);document.querySelectorAll('#who3 button').forEach(b=>b.classList.toggle('on',b.dataset.w===w));const P=WHO[w];
     $('#whoPath').innerHTML=`<b>${P.t}</b><ol>${P.s.map(([href,t,s])=>`<li><a href="${href}">${t}</a> <span class="small">${s}</span></li>`).join('')}</ol>`;$('#whoPath').hidden=false};
   document.querySelectorAll('#who3 button').forEach(b=>b.onclick=()=>pick(b.dataset.w));
@@ -1258,7 +1270,7 @@ function homeInit(){
   let qi=Math.floor(Math.random()*QUOTES.length);const q=()=>{const[a,b]=QUOTES[qi%QUOTES.length];$('#quote').innerHTML=`<small>오늘의 한마디 · ${a}</small><q>${esc(b)}</q><button type="button" id="qn">다른 말 보기</button>`;$('#qn').onclick=()=>{qi++;q()}};q()}
 function startInit(){
   let done={};try{done=JSON.parse(store.get('hub-start')||'{}')}catch(e){}
-  const upd=()=>{const n=Object.values(done).filter(Boolean).length;$('#stProg').style.width=(n/8*100)+'%';$('#stCnt').textContent=`따라하기 ${n}/8 단계 해 봤어요${n===8?' · 다 하셨어요! 이제 실제 업체로 해 보세요.':''}`;
+  const upd=()=>{const n=Object.values(done).filter(Boolean).length;$('#stProg').style.width=(n/9*100)+'%';$('#stCnt').textContent=`따라하기 ${n}/9 단계 해 봤어요${n===9?' · 다 하셨어요! 이제 실제 업체로 해 보세요.':''}`;
     document.querySelectorAll('#steps8 .st').forEach(s=>s.classList.toggle('done',!!done[s.dataset.k]))};
   document.querySelectorAll('[data-ck]').forEach(c=>{c.checked=!!done[c.dataset.ck];c.onchange=()=>{done[c.dataset.ck]=c.checked;store.set('hub-start',JSON.stringify(done));upd()}});upd()}
 const DATA_HTML=`<h2>1. 업체 분석 → 제안 준비</h2><div class="tw"><table><thead><tr><th>넣는 것</th><th>어떻게</th><th>결과</th></tr></thead><tbody><tr><td><b>재무상태표 · 손익계산서</b> (PDF 또는 엑셀)</td><td>위하고·홈택스에서 저장한 파일을 «재무제표 파일 넣기»에 그대로. 여러 해 파일을 한꺼번에 넣으면 3년이 채워집니다</td><td>됨</td></tr><tr><td>재무제표 글자 복사</td><td>PDF·화면의 글자를 긁어 «재무자료 붙여넣기» → «읽어서 채우기». 단위(원·천원·백만원) 표기가 함께 있어야 합니다</td><td>됨</td></tr><tr><td>전자공시(DART)</td><td>상장사·외부감사 법인만. 상호명으로 찾기</td><td>됨</td></tr><tr><td>사진·스캔 PDF</td><td>글자가 없는 그림이라 못 읽습니다. 숫자 몇 개만 «연도별 숫자 직접 넣기»에</td><td>안 됨</td></tr></tbody></table></div><h2>2. 업체 분석 보고서 (법인)</h2><div class="tw"><table><thead><tr><th>넣는 것</th><th>무엇이 채워지나</th></tr></thead><tbody><tr><td><b>세무조정계산서 PDF</b> (법인세 신고서 묶음)</td><td>회사 정보, 3년 재무, 주주명부(주식등변동상황명세서), 계정 점검</td></tr><tr><td>감사보고서 (DART)</td><td>외부감사 법인의 재무와 주석</td></tr><tr><td>법인 등기부등본</td><td>임원, 설립일, 목적 (스캔본도 글자 인식)</td></tr><tr><td>엑셀 재무제표</td><td>3년 재무</td></tr></tbody></table></div><h2>3. 재정심사 계산기</h2><p>대표 나이·성별, 대표 소득(원천징수영수증이나 종합소득세 신고서의 숫자), 지분율(주주명부), 법인 순이익. 파일은 넣지 않고 숫자만 넣습니다.</p><h2>4. 검토받기</h2><div class="tw"><table><thead><tr><th>올리는 것</th><th>꼴</th></tr></thead><tbody><tr><td>AP·PC 녹음</td><td>휴대폰 녹음 파일 (m4a·mp3), 30MB까지. 더 크면 구글 드라이브 공유 링크</td></tr><tr><td>녹취 글 · 내 스크립트</td><td>한글·워드·텍스트, 또는 그냥 붙여넣기</td></tr><tr><td>제안 PPT · 보고서</td><td>PPT·PDF</td></tr><tr><td>계약·보류 사례</td><td>업종, 매출·이익 범위, 대표 나이대, 금액, 결과 한 줄씩</td></tr></tbody></table></div><div class="notice"><b>올리기 전에 지울 것:</b> 고객 이름, 회사명, 연락처, 주민번호, 사업자번호. 업체 분석 도구에는 호칭(김 대표님, OO정밀)으로 넣어도 결과가 똑같이 나옵니다.</div>`;

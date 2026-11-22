@@ -65,7 +65,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 })();</script>
 
 <div class="wrap">
-  <a class="brand" href="../index.html#home">4&amp;7 NEXT 허브</a>
+  <a class="brand" href="../#home" target="_top">4&amp;7 NEXT 허브</a>
   <h1>보험 MBTI <span style="font-size:15px;color:var(--sub);font-weight:400">전문직 설계사 성향검사 · 1차안</span></h1>
   <p class="lead">나는 16가지 중 어떤 설계사일까? 9분이면 내 영업 스타일, 나와 잘 맞는 업체와 연습, 환상의 동행 짝꿍까지 나와요. 52문항.</p>
 
@@ -218,6 +218,40 @@ const TYPES = {
   RCST: ['동행 멘토', '사람을 아끼고 천천히 신뢰를 쌓으며, 동료와 함께할 때 가장 편하다.', '오래된 거래처 사모님까지 챙기며, 큰 이야기는 지점장과 함께 가서 꺼낸다.', '가족 중심 개인사업자, 상속·가족 보장', '동행 일정을 먼저 잡아 미루지 않기'],
   RCSO: ['조용한 수호자', '오래된 고객을 묵묵히 지키고, 확신하는 것만 조심스럽게 권한다.', '거래처가 먼저 «혹시 이런 것도 봐 주실 수 있어요?»라고 물어 올 때 제안이 시작된다.', '오래된 거래처, 신중형 대표, 월 200~300 범위', '먼저 꺼내는 연습. 롤플레이 «쉬움»부터 주 1회']
 };
+/* 유형에 맞춘 이번 주 연습 처방 (11/22): 글자마다 [할 일, 몇 번, 허브 화면] */
+const PLAN = {
+  A: [['실전 롤플레이에서 AP 03 명분·05 시간확보만 매번 다르게 말해 보기', '3번', 'tool-rplive'], ['새 대표 2명에게 «이야기 하나 듣고 나오기»만 목표로 만나기', '이번 주 2명', ''], ['만난 뒤 AP 후 기록지에 받은 정보 적기', '만날 때마다', 'tool-ap']],
+  R: [['기장 거래처 중 아직 제안 안 한 1곳을 업체 분석에 넣어 보기', '1곳', 'tool-ap'], ['소개요청 «딱 두 분만» 멘트를 AP 롤플레이에서 말로', '5번', 'tool-rp'], ['03 «포지션을 바꿨습니다» 명분을 내 경험으로 써서 검토받기', '1번', 'review']],
+  B: [['제안 전에 재정심사 계산기로 원수사별 한도부터 보기', '업체마다', 'tool-uw'], ['09 문제제기를 «필요액 vs 준비액» 숫자 두 개로만 말하기', '3번', 'tool-rp'], ['15 다음 약속: 일자·시각·소요시간까지 말로 확정하기', '5번', 'tool-rplive']],
+  C: [['순이익 2~5억 업체 하나로 업체 분석부터 PC 준비까지 끝까지 해 보기', '1곳', 'tool-ap'], ['내가 확신하는 컨셉 하나를 골라 «한눈에»를 소리 내 읽기', '3번', 'concepts'], ['내 범위를 넘는 큰 건은 검토받기에 «동행 요청»으로 올리기', '해당할 때', 'review']],
+  N: [['숫자 앞에 «비슷한 대표님 이야기» 하나 붙여 06·13 단계 연습', '3번', 'tool-rp'], ['업체 분석 보고서를 표 한 장으로 줄여 1분 안에 설명해 보기', '2번', 'tool-ca'], ['관계형 대표를 상대로 실전 롤플레이', '2번', 'tool-rplive']],
+  S: [['예시 업체 보고서로 핵심 숫자 3개(이익·세금·필요자금) 말해 보기', '3번', 'tool-ap?sample=1'], ['07 «우리 회사 숫자» 단계만 AP 롤플레이로', '5번', 'tool-rp'], ['근거를 묻는 대표 대비: 첫 미팅 화법의 반론 대응 읽기', '1번', 'learn-ap']],
+  T: [['이번 주 동행 일정을 지점장·다른 자격사와 먼저 잡기', '1~2건', ''], ['혼자 가는 AP는 실전 롤플레이로 먼저 연습', '3번', 'tool-rplive'], ['동행 미팅 녹음을 검토받기에 올리기', '1건', 'review']],
+  O: [['한 업체를 업체 분석부터 PPT까지 혼자 완성해 보기', '1곳', 'tool-ap'], ['11 대안제시를 «구조가 있습니다»까지만 말하고 멈추기', '5번', 'tool-rp'], ['금액이 내 범위를 넘으면 PC만 동행 요청', '해당할 때', 'review']]
+};
+const HUB = k => k ? `<a href="../#${k}" target="_top">열기</a>` : '';
+function planOf(P) { return P.map(p => PLAN[p][0]).concat(P.map(p => PLAN[p][1])); }
+/* 코치의 한마디 (11/22): 칭찬 → 더 잘하려면 → 키울 부분 → 이렇게 시작 */
+const OPP = { A:'R', R:'A', B:'C', C:'B', N:'S', S:'N', T:'O', O:'T' };
+const PRAISE = { A:'처음 보는 대표님 앞에서도 먼저 말을 거는 힘이 있어요. 소개 없이도 판을 여는 건 아무나 못 합니다.', R:'한 번 맺은 관계를 오래 지키는 사람이에요. 대표님들이 «이 사람 말이면 믿는다»고 하는 쪽입니다.',
+  B:'큰 금액도 자연스럽게 꺼낼 줄 알아요. 대표님의 고민을 크게 보고 크게 풀어 주는 사람입니다.', C:'무리한 제안을 하지 않아 고객이 믿어요. 계약이 오래 유지되는 건 이 신중함 덕분입니다.',
+  N:'숫자와 근거로 설명하는 힘이 좋아요. 분석형 대표님이 «정리가 잘 되네요»라고 할 사람입니다.', S:'대표님 이야기를 끝까지 들어 주는 공감이 깊어요. 가족 이야기까지 나오는 건 마음을 열었다는 뜻입니다.',
+  T:'다른 사람과 힘을 합칠 줄 알아요. 노무사·변리사와 묶은 큰 제안에서 빛나는 사람입니다.', O:'준비가 꼼꼼하고 혼자서도 끝까지 갑니다. 맡기면 믿고 기다릴 수 있는 사람이에요.' };
+const GROW = { A:'처음 만난 자리에서도 «이야기 하나 듣고 나오기»를 목표로 먼저 말을 거는 힘', R:'한 번 만난 대표님을 두 번, 세 번 다시 찾아가 관계를 쌓는 힘',
+  B:'필요하면 금액을 먼저 꺼내는 힘', C:'제안 전에 한도와 유지 가능성을 한 번 더 점검하는 신중함',
+  N:'핵심 숫자 3개로 짧게 근거를 대는 힘', S:'숫자 앞에 비슷한 대표님 이야기 하나를 먼저 꺼내는 힘',
+  T:'중요한 자리에 동료·다른 자격사와 같이 가는 힘', O:'혼자서도 첫 미팅(AP)을 끝까지 해내는 힘' };
+function coach(R, P) {
+  const ax = [...R.ax].sort((a, b) => Math.abs(b.pct - 50) - Math.abs(a.pct - 50));
+  const top = ax[0].pole[0], sec = ax[1].pole[0], low = ax[ax.length - 1];
+  const growP = OPP[top], start = (PLAN[top] || [[]])[0];
+  return `<section class="panel coach"><h2>코치의 한마디</h2>
+    <div class="card"><b>잘하고 있어요</b><div>${esc(PRAISE[top])} ${esc(PRAISE[sec])}</div></div>
+    <div class="card"><b>더 잘하려면</b><div>${esc(POLE[top].rx)}</div><div class="hint">강점이 지나치면: ${esc(POLE[top].r)}</div></div>
+    <div class="card"><b>키우면 좋을 부분</b><div>지금 강점은 그대로 두고, 반대쪽 힘인 <b>${esc(GROW[growP])}</b>을 조금만 키우면 만날 수 있는 대표님이 넓어집니다.${low.strong ? '' : ` «${esc(low.a.name)}»은 아직 중간이라, 상황에 따라 두 쪽을 골라 쓰는 연습이 잘 맞아요.`}</div></div>
+    <div class="card"><b>이렇게 시작해 보세요</b><div>${esc(start[0] || '')} <b>${esc(start[1] || '')}</b> ${HUB(start[2])}</div><div class="hint">AP에서 먼저 보강할 단계: ${esc(POLE[top].ap)}</div></div>
+  </section>`;
+}
 const LK = ['전혀 아니다','아니다','보통','그렇다','매우 그렇다'];
 const ans = {};
 /* 축 끝마다: 강점·조심·처방·AP 보강 단계 */
@@ -288,6 +322,7 @@ function result(){
     ${R.ax.map(x => `<div class="axis"><div class="nm"><span>${x.a.neg[0]} ${x.a.neg[1]}</span><b>${x.a.name}</b><span>${x.a.pos[1]} ${x.a.pos[0]}</span></div><div class="track"><i style="left:${x.pct}%"></i></div></div>`).join('')}
     ${R.gap >= 2 ? `<p class="warn">비슷한 질문에 다르게 답한 곳이 ${R.gap}곳 있어요. 시간을 두고 한 번 더 해 보면 더 정확합니다.</p>` : ''}
   </section>
+  ${coach(R, P)}
   <section class="panel"><h2>축별 강점 · 조심 · 처방</h2>
     ${R.ax.map(x => { const p = POLE[x.pole[0]]; return `<div class="card"><h3>${x.a.name}: ${x.pole[1]} (${x.pole[0]})${x.strong ? '' : ' <span class="hint">중간에 가까움</span>'}</h3><div><b>강점</b> ${esc(p.s)}</div><div><b>조심</b> ${esc(p.r)}</div><div><b>처방</b> ${esc(p.rx)}</div></div>`; }).join('')}
   </section>
@@ -302,6 +337,11 @@ function result(){
     <tr><th>AP에서 보강할 단계</th><td>${esc(ap)}. «AP 롤플레이»에서 이 단계를 집중 연습하세요.</td></tr>
     <tr><th>동행<div class="hint" style="font-weight:400">선배·다른 전문가와 같이 미팅에 가는 것(조인웍)</div></th><td>${P[3] === 'T' ? '동행형입니다. 지점장·다른 자격사와 동행 일정을 주 단위로 먼저 잡으세요.' : '독립형입니다. 자료를 충분히 받아 혼자 가되, 금액이 내 범위를 넘으면 PC만 동행하세요.'}</td></tr></table>
   </section>
+  <section class="panel" id="planBox"><h2>이번 주 이렇게 해 보세요</h2>
+    <p class="hint">내 유형에 맞춘 연습 처방입니다. 위 네 개가 먼저, 나머지는 여유 있을 때. 해 본 것은 체크하면 허브 첫 화면에도 표시돼요.</p>
+    <table>${planOf(P).map((x, i) => `<tr${i >= 4 ? ' class="pl2"' : ''}><td style="width:28px"><input type="checkbox" data-pl="${i}"></td><td>${esc(x[0])}</td><td style="white-space:nowrap">${esc(x[1])}</td><td style="white-space:nowrap">${HUB(x[2])}</td></tr>`).join('')}</table>
+    <p class="hint">한 달 해 보고 다시 검사하면 내가 어디가 바뀌었는지 보입니다. 해 본 녹음·스크립트는 <a href="../#review" target="_top">검토받기</a>에 올려 보세요.</p>
+  </section>
   <section class="panel"><h2>대표님 성향별 궁합</h2><p class="hint">업체 분석의 «대표님 성향» 칸과 짝입니다.</p>
     <table><tr><th>대표님</th><th>나와 만나면</th></tr>${Object.entries(MATCH).map(([k, m]) => `<tr><td>${k}</td><td>${esc(P.map(p => m[p]).filter(Boolean)[0] || '무난함. 업체 분석 «대표님 성향» 안내를 따르세요')}</td></tr>`).join('')}</table>
   </section>
@@ -311,11 +351,15 @@ function result(){
     <li>«AP 롤플레이»에서 보강할 단계를 보통 난이도로 한 번 연습</li>
     <li>지점장에게 이 결과를 보여 주고 «나에게 맞는 업체 규모»로 다음 AP 대상 고르기</li>
     <li>3개월 뒤 다시 검사해 바뀐 점 보기</li></ol>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn p" id="send">팀 기록에 저장</button><a class="btn" href="roleplay.html">AP 롤플레이로 가기</a><button class="btn" id="again">다시 하기</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn p" id="send">팀 기록에 저장</button><a class="btn" href="../#tool-rp" target="_top">AP 롤플레이로 가기</a><button class="btn" id="again">다시 하기</button></div>
     <p class="hint" id="sendMsg">저장하면 지점장이 팀 결과를 볼 수 있습니다(팀 비밀번호 기기만). 저장하지 않으면 이 브라우저에만 남습니다.</p>
   </section>
   <p class="hint">1차안입니다. 문항과 해석은 김세원 지점장 아이디어를 바탕으로 개발팀이 만든 초안이며, 팀 의견과 실제 실적 데이터(3~6개월)로 계속 고칩니다.</p>`;
   $('result').scrollIntoView({ behavior: 'smooth' });
+  try { const pl = planOf(P), old = JSON.parse(localStorage.getItem('hub-mbti') || '{}'), done = old.code === R.code ? (old.done || {}) : {};
+    localStorage.setItem('hub-mbti', JSON.stringify({ code: R.code, nick: (TYPES[R.code] || [nick])[0], plan: pl, done, at: new Date().toISOString().slice(0, 10) }));
+    document.querySelectorAll('[data-pl]').forEach(c => { c.checked = !!done[c.dataset.pl]; c.onchange = () => { const s = JSON.parse(localStorage.getItem('hub-mbti') || '{}'); s.done = s.done || {}; s.done[c.dataset.pl] = c.checked; localStorage.setItem('hub-mbti', JSON.stringify(s)); }; });
+  } catch (e) {}
   $('again').onclick = () => { Object.keys(ans).forEach(k => delete ans[k]); save(); renderQs(); $('result').hidden = true; window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('cardDl').onclick = () => {
     const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');

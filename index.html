@@ -4,28 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<!-- 4&7 NEXT 입구 비밀번호 (build_site.py가 모든 페이지 body 맨 앞에 넣음. config.json = config.json 경로) -->
-<div id="g47" style="position:fixed;inset:0;z-index:2147483000;background:#0a0b0d;display:grid;place-items:center;font-family:Pretendard,'Malgun Gothic',system-ui,sans-serif">
-  <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
-    <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
-    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">팀 비밀번호를 넣어 주세요. 한 번 넣으면 이 기기에서 기억합니다.</div>
-    <input id="g47p" type="password" inputmode="numeric" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
-    <button type="submit" style="margin-top:12px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
-    <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
-  </form>
-</div>
-<script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
-try{v=localStorage.getItem(K)||''}catch(e){}
-function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
-var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
-function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){return !!j.ok}).catch(function(){return null})})}
-if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}
-else setTimeout(function(){var i=document.getElementById('g47p');if(i)i.focus()},50);
-document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var p=document.getElementById('g47p').value.trim();if(!p)return;m.style.color='#5f6b66';m.textContent='확인 중…';
-  check(p,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent='비밀번호가 맞지 않아요.';return}
-    if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
-    try{localStorage.setItem(K,p)}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
-})();</script>
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>4&7 NEXT 허브</title>
 
 <style>
@@ -434,7 +416,93 @@ th{background:var(--panel2)}
  --accent:#2e6b57;--accent-bg:#2e6b57;--tint:#e5f0ea;--panel2:#eef2ee;--good:#2e6b57;
  --side:#e9efe9;--side-card:#d6e4da;--side-line:#d3ddd5;--side-sub:#5c6a64;--blue-l:#2e6b57;--side-ink:#1a2420;--hero:#1f3d33;--hero-em:#9fd3b8}
 
+/* ===== 11/22 개편: 묶음 메뉴 · 접기(아이콘만) · 휴대폰 떠 있는 메뉴 ===== */
+html:not(.admin) .skinbar,html:not(.admin) .adm{display:none!important}
+.toggle{display:none!important}
+.navg{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--side-sub,var(--sub));padding:14px 12px 4px;white-space:nowrap}
+.navl{display:flex;align-items:flex-start;gap:10px}
+.navl .ic{flex:none;width:22px;text-align:center;font-size:17px;line-height:1.3}
+.navl .tx{min-width:0;display:block}
+.navs{margin-left:22px}
+.railbtn{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-top:1px solid var(--side-line,var(--line));background:transparent;color:var(--side-sub,var(--sub));font:inherit;font-size:13px;cursor:pointer;text-align:left}
+.railbtn:hover{color:#fff}
+@media(min-width:861px){
+ .shell.rail{grid-template-columns:76px minmax(0,1fr)}
+ .shell.rail aside{padding-inline:8px}
+ .shell.rail .navl{justify-content:center;padding:10px 0}
+ .shell.rail .navl .tx,.shell.rail .navg,.shell.rail .navs,.shell.rail .brand span,.shell.rail .railbtn .tx{display:none!important}
+ .shell.rail .navl .ic{font-size:20px}
+ .shell.rail .brand b{font-size:13px}
+ .shell.rail .railbtn{justify-content:center}
+}
+.fab,.scrim{display:none}
+@media(max-width:860px){
+ .shell,.shell.collapsed{grid-template-columns:1fr}
+ aside{position:fixed!important;top:0;left:0;bottom:0;width:min(300px,86vw);height:100vh!important;z-index:80;transform:translateX(-102%);transition:transform .22s;border-right:1px solid var(--side-line,var(--line));padding-top:calc(env(safe-area-inset-top,0px) + 18px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px)!important}
+ .shell.collapsed aside{display:flex!important;visibility:visible!important}
+ .shell.open aside{transform:none}
+ .navl .nd{display:block!important}
+ .railbtn{display:none}
+ .fab{display:flex;align-items:center;gap:8px;position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:70;border:0;border-radius:999px;padding:12px 18px;background:var(--accent-bg,var(--accent));color:#fff;font:inherit;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer}
+ .shell.open .scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.35)}
+ main.toolmode .fab{bottom:calc(env(safe-area-inset-bottom,0px) + 70px)}
+}
+/* 첫 화면 */
+.who3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 8px}
+@media(max-width:760px){.who3{grid-template-columns:1fr}}
+.who3 button{all:unset;cursor:pointer;display:block;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.who3 button b{display:block;font-size:17px;margin-bottom:2px}.who3 button span{font-size:13.5px;color:var(--sub)}
+.who3 button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.who3 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.path{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:16px 18px;margin:6px 0 22px}
+.path ol{margin:8px 0 0;padding-left:1.3em}.path li{margin:6px 0}.path li a{font-weight:700}
+.quote{border-left:4px solid var(--accent);background:var(--panel);border-radius:0 12px 12px 0;padding:12px 16px;margin:0 0 22px}
+.quote small{display:block;color:var(--sub);margin-bottom:2px}.quote q{quotes:none;font-weight:600}
+.quote button{all:unset;cursor:pointer;color:var(--accent);font-size:13px;margin-left:8px}
+.prog{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 2px}.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+/* 따라하기 */
+.steps8{counter-reset:s;display:grid;gap:12px;margin:14px 0 24px}
+.steps8 .st{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px 14px 58px}
+.steps8 .st::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--tint);color:var(--accent);font-weight:800;display:grid;place-items:center}
+.steps8 .st.done::before{content:"✓";background:var(--accent);color:#fff}
+.steps8 .st h3{margin:0 0 4px;font-size:16px}.steps8 .st p{margin:4px 0}.steps8 .st .btnrow{margin:8px 0 0}
+.steps8 .st label.ck{font-size:13px;color:var(--sub);cursor:pointer}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}.kv div{background:var(--tint);border-radius:10px;padding:8px 10px;font-size:13.5px}.kv b{display:block;font-size:12px;color:var(--sub);font-weight:600}
+/* 검토받기 */
+.rv3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 18px}
+.rv3 div{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px}.rv3 b{display:block;font-size:15.5px}.rv3 span{font-size:13.5px;color:var(--sub)}
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;margin:26px 0 8px;background:var(--panel)}
+.cta b{font-size:15px}.cta span{color:var(--sub);font-size:13.5px}
+.tool-hint{font-size:13px;color:var(--sub);font-weight:400;margin-left:8px}
+@media(max-width:600px){.tool-hint{display:none}}
+.dev-note{opacity:.85}
+.toolbar{padding-inline:16px!important}
+
 </style>
+<body>
+<!-- 4&7 NEXT 입구 비밀번호 (build_site.py가 모든 페이지 body 맨 앞에 넣음. config.json = config.json 경로) -->
+<div id="g47" style="position:fixed;inset:0;z-index:2147483000;background:#0a0b0d;display:grid;place-items:center;font-family:Pretendard,'Malgun Gothic',system-ui,sans-serif">
+  <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
+    <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
+    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">팀 비밀번호를 넣어 주세요. 한 번 넣으면 이 기기에서 기억합니다.</div>
+    <input id="g47p" type="password" inputmode="numeric" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
+    <button type="submit" style="margin-top:12px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
+    <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
+  </form>
+</div>
+<script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
+try{v=localStorage.getItem(K)||''}catch(e){}
+function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
+var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
+function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){return !!j.ok}).catch(function(){return null})})}
+if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}
+else setTimeout(function(){var i=document.getElementById('g47p');if(i)i.focus()},50);
+document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var p=document.getElementById('g47p').value.trim();if(!p)return;m.style.color='#5f6b66';m.textContent='확인 중…';
+  check(p,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent='비밀번호가 맞지 않아요.';return}
+    if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
+    try{localStorage.setItem(K,p)}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
+})();</script>
+
 <div class="skinbar" id="skinbar" role="group" aria-label="디자인 시안">디자인 골라 보기:
  <button type="button" data-k="">A 지금</button><button type="button" data-k="b">B 네이비·골드</button><button type="button" data-k="c">C 크림·테라코타</button><button type="button" data-k="d">D 화이트·블루</button><button type="button" data-k="e">E 세이지 그린</button>
 </div>
@@ -454,25 +522,15 @@ th{background:var(--panel2)}
 </head>
 <body>
 <div class="shell" id="shell">
-<button class="toggle" id="toggle" type="button" aria-label="메뉴 숨기기/보이기" title="메뉴 숨기기/보이기">메뉴</button>
-<aside>
+<button class="toggle" id="toggle" type="button" aria-label="메뉴" hidden>메뉴</button>
+<aside id="side">
   <div class="brand"><b>4&amp;7 NEXT</b><span>HUB</span></div>
-  <div class="built" id="built">불러오는 중</div>
-  <nav id="nav" aria-label="주 메뉴">
-    <a class="navl" data-r="home" href="#home">홈</a>
-    <a class="navl" data-r="about" href="#about">사이트 안내<span class="nd">이야기 · 쓰는 법 · 만든 구조</span></a>
-    <div class="navs" id="guideSub" hidden></div>
-    <a class="navl" data-r="tool-ap" href="#tool-ap">업체 분석 → 제안 준비<span class="nd">분석 보고서 · AP · PC 준비까지</span></a>
-    <div class="navs" id="apSub" hidden></div>
-    <a class="navl" data-r="uw" href="#uw">재정심사 → 청약<span class="nd">한도 계산 · 청약 점검 · 상품 자료</span></a>
-    <div class="navs" id="uwSub" hidden></div>
-    <a class="navl" data-r="practice" href="#tool-rp">연습하기<span class="nd">AP 롤플레이 · 실전 롤플레이 · 보험 MBTI</span></a>
-    <div class="navs" id="practiceSub" hidden></div>
-    <a class="navl" data-r="learn" href="#learn">공부하기<span class="nd">컨셉·화법·상품 · 자료 받기 · 물어보기</span></a>
-    <div class="navs" id="learnSub" hidden></div>
-    <a class="navl" data-r="together" href="#together">함께 만들기<span class="nd">AI에게 가르치기 · 보완 필요 목록</span></a>
-  </nav>
+  <div class="built adm" id="built">불러오는 중</div>
+  <nav id="nav" aria-label="주 메뉴"></nav>
+  <button class="railbtn" id="railBtn" type="button" title="메뉴 접기·펴기"><span class="ic">◀</span><span class="tx">메뉴 접기</span></button>
 </aside>
+<div class="scrim" id="scrim"></div>
+<button class="fab" id="fab" type="button" aria-label="메뉴 열기">☰ 메뉴</button>
 
 <main id="main"><div class="wrap" id="view"></div></main>
 </div>
@@ -480,81 +538,115 @@ th{background:var(--panel2)}
 <template id="tpl-home">
   <section class="nx-hero">
     <div class="eyebrow" data-a="up">4&amp;7 NEXT 허브</div>
-    <h1 data-a="up" data-d="1">업체 분석부터 <em>청약</em>까지,<br>한 흐름으로 준비합니다.</h1>
-    <p class="lede" data-a="up" data-d="2">사업자번호나 재무제표로 업체를 분석하고, 첫 미팅과 제안을 준비한 뒤, 원수사별 재정심사 한도를 확인하고 청약까지 점검합니다.</p>
-    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#tool-ap">업체 분석 시작</a><a class="btn ghost" href="#demo">3분 시연 보기</a></div>
+    <h1 data-a="up" data-d="1">업체 하나를 골라 <em>미팅 준비</em>부터<br>연습, 재정심사, 청약까지.</h1>
+    <p class="lede" data-a="up" data-d="2">재무제표를 넣으면 컨셉과 첫 미팅 멘트가 나오고, AI 대표님과 미리 연습하고, 원수사별 한도까지 확인합니다. 어디서 시작할지 모르겠다면 아래에서 지금 내 상황을 골라 보세요.</p>
+    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#start">5분 따라하기</a><a class="btn ghost" href="#tool-ap">바로 업체 분석</a></div>
   </section>
 
+  <h2>나는 지금…</h2>
+  <div class="who3" id="who3">
+    <button type="button" data-w="new"><b>🌱 처음이에요</b><span>무엇부터 봐야 할지 모르겠어요</span></button>
+    <button type="button" data-w="low"><b>🎯 계약이 잘 안 나와요</b><span>미팅은 하는데 다음 약속이 안 잡혀요</span></button>
+    <button type="button" data-w="top"><b>🚀 계약이 잘 나와요</b><span>더 큰 계약, 더 많은 소개로 가고 싶어요</span></button>
+  </div>
+  <div class="path" id="whoPath"></div>
+
+  <div class="quote" id="quote"></div>
+
   <div class="nx-route" aria-label="영업 흐름">
-    <a href="#tool-ap"><b>업체 분석</b><span>신호등 8가지</span></a>
-    <a href="#tool-ap"><b>첫 미팅 AP</b><span>15단계 스크립트</span></a>
-    <a href="#tool-ap"><b>제안 PC</b><span>금액 세 안</span></a>
-    <a class="key" href="#tool-uw"><b>재정심사</b><span>원수사별 한도</span></a>
-    <a class="key" href="#tool-check"><b>청약</b><span>점검 · 모니터링</span></a>
+    <a href="#tool-ap"><b>① 업체 분석</b><span>재무제표 넣기</span></a>
+    <a href="#tool-ap"><b>② 첫 미팅 멘트</b><span>15단계 스크립트</span></a>
+    <a href="#tool-rplive"><b>③ 연습</b><span>AI 대표님과 말로</span></a>
+    <a class="key" href="#tool-uw"><b>④ 재정심사</b><span>원수사별 한도</span></a>
+    <a class="key" href="#tool-check"><b>⑤ 청약</b><span>빠짐없이 점검</span></a>
   </div>
 
-  <div class="nx-hgrid">
-    <a class="card main" href="#tool-ap"><span class="k">여기서 시작</span><b>업체 분석 → 제안 준비</b><span>사업자번호(공시)나 재무제표로 업체를 분석하고, 첫 미팅(AP)과 제안(PC) 준비까지 이어집니다.</span></a>
-    <a class="card uwcard" href="#uw"><span class="k">제안 금액이 나오면</span><b>재정심사 → 청약</b><span>메트·KB·신한별로 받을 수 있는 금액을 비교하고, 청약 날 챙길 것과 상품 자료를 확인합니다.</span><span class="cnt" id="homeUw"></span></a>
-  </div>
-  <div class="list nx-hlist">
-    <a class="row" href="#ask"><span class="t"><b>물어보기</b><span>"이 업체엔 어떤 컨셉부터?" AI에게 물어보세요.</span></span><span class="d">궁금할 때</span></a>
-    <a class="row" href="#learn"><span class="t"><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품 Q&amp;A, 경정기 비교 계산기.</span></span><span class="d">틈날 때</span></a>
-    <a class="row" href="#together"><span class="t"><b>함께 만들기</b><span>고칠 점, 자료, 아이디어를 보내 주세요.</span></span><span class="d">같이</span></a>
-  </div>
-
-  <details class="fold"><summary><b>함께 키워요</b> <span>현장 자료가 모일수록 결과물이 좋아집니다 · 필요한 자료와 올리는 법</span></summary>
-    <div class="needlist">
-      <div><b>제안 PPT</b><span>실제로 쓰신 PPT 원본, 반응 좋았던 장표</span></div>
-      <div><b>보고서</b><span>메트 기업분석 리포트, 실제로 드린 보고서</span></div>
-      <div><b>컨셉 진단</b><span>계약·보류 사례 (업종, 숫자 범위, 이유)</span></div>
-      <div><b>상품</b><span>상품설명서, 나이별 설계서, 재정심사 기준표</span></div>
-      <div><b>스크립트</b><span>실제 AP·PC 녹음, 반론 때 한 말</span></div>
-    </div>
-    <div class="howto" style="margin-top:12px">
-      <div><b>함께 만들기 → AI에게 가르치기</b>를 엽니다. <a href="#together">바로 가기</a></div>
-      <div><b>한 줄 쓰고 파일을 붙입니다.</b> 30MB까지, 큰 녹음은 드라이브 링크. <div class="ex"><code>이 PPT로 제안서 디자인 배워 줘</code><code>이 녹음에서 반론 대응 뽑아 줘</code><code>이 사례 컨셉 진단에 반영해 줘</code></div></div>
-      <div><b>보내기를 누르면 끝.</b> 그날 밤 11시에 반영되고 "AI가 최근에 배운 것"에 보여요.</div>
-    </div>
-    <p class="small" style="margin:0">글은 문서 위 <b>"바로 고치기"</b>로 바로 고칠 수 있어요. 쓰는 법과 구조는 <a href="#about">사이트 안내</a>에 있어요.</p>
-  </details>
-  <p class="small"><a href="#about">사이트 안내</a> · <a href="#manual">메뉴별 쓰는 법</a> · <span id="homeStat"></span></p>
+  <div class="cta"><div><b>📤 내 녹음·스크립트·PPT, 검토받아 보세요</b><br><span>올리면 15단계 채점표 기준으로 잘한 점과 고칠 한 문장을 돌려 드려요.</span></div><a class="btn p" href="#review">검토받기</a></div>
+  <p class="small"><a href="#start">처음이라면 따라하기</a> · <a href="#manual">메뉴별 쓰는 법</a> · <a href="#data">무엇을 넣나</a></p>
 </template>
 
 
 
 <template id="tpl-manual">
   <h1>메뉴별 쓰는 법</h1>
-  <p class="lede">메뉴는 일곱 개입니다. 필요한 것만 골라 쓰면 됩니다. 지킬 것은 <a href="#rules">사용 원칙</a>, 순서까지 자세히 보려면 <a href="#da308dcb2">지점원 기본 가이드북</a>을 보세요.</p>
+  <p class="lede">메뉴는 네 묶음입니다. <b>준비하기 → 연습하기 → 공부하기</b>, 그리고 내 자료를 올리는 <b>검토받기</b>. 메뉴 이름 옆 한 줄이 "언제 쓰나"입니다.</p>
   <div class="cards">
-    <div class="card"><b>업체 분석 → 제안 준비</b><span>첫 미팅(AP) 전에 씁니다.</span>
-      <ul><li>업체 정보를 적거나 재무제표 글자를 붙여넣고 "읽어서 채우기". 읽은 값은 꼭 확인합니다.</li>
-      <li>안의 탭: <b>컨셉 진단 · 스크립트 · 스크립트 채점 · 제안 금액·체크리스트 · 보고서 · PPT · 최종 점검</b></li>
-      <li>스크립트의 <code>[ ]</code>는 대표에게 물어서 받을 숫자입니다.</li>
-      <li>회사 서류로 깊게 볼 때: <a href="#tool-ca">업체 분석 보고서</a>에 세무조정계산서·감사보고서를 넣으면 주식가치·잉여금·CEO 리스크·계정 점검·AP 질문까지 나옵니다.</li></ul>
+    <div class="card"><b>🔎 업체 분석 → 제안 준비</b><span>첫 미팅 전날, 30분.</span>
+      <ul><li>재무제표 파일(위하고 PDF·엑셀)을 넣거나 «예시 1»을 누릅니다. 신호 몇 개만 체크하고 <b>분석 시작</b>.</li>
+      <li>결과는 위 탭 네 개만 보면 됩니다: <b>보고서 → 컨셉 진단 → AP 스크립트 → PC 준비</b>. 채점·PPT·금액·최종 점검은 «도구 더 보기»에 있어요.</li>
+      <li>스크립트의 <code>[ ]</code>는 대표님께 물어서 받을 숫자입니다.</li></ul>
       <a class="btn p" style="margin-top:10px;align-self:flex-start" href="#tool-ap">열기</a></div>
-    <div class="card"><b>재정심사 → 청약</b><span>제안 금액이 나온 다음, 청약 전에.</span>
-      <ul><li>재정심사 계산기: 나이·소득·지분율·순이익을 넣으면 메트·KB·신한별 가능 금액과 먼저 걸리는 쪽이 나옵니다.</li>
-      <li>청약 체크리스트: 원수사·상품·계약 형태를 고르면 이번 청약에 해당하는 항목만 남습니다.</li>
-      <li>상품 자료실: 상품마다 요약·주의할 점·준법 유효기간.</li></ul>
+    <div class="card"><b>📑 업체 분석 보고서</b><span>법인을 깊게 볼 때.</span>
+      <ul><li>세무조정계산서·감사보고서·등기부를 넣으면 주식가치, 잉여금, CEO 리스크, 계정 점검, AP 질문까지 한 장으로 나옵니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-ca">열기</a></div>
+    <div class="card"><b>💰 재정심사 → 청약</b><span>제안 금액이 나온 다음.</span>
+      <ul><li>재정심사 계산기: 나이·소득·지분율·순이익 → 메트·KB·신한별 가능 금액.</li><li>청약 체크리스트: 이번 청약에 해당하는 항목만 남습니다.</li><li>상품 자료실·자료 받기.</li></ul>
       <a class="btn" style="margin-top:10px;align-self:flex-start" href="#uw">열기</a></div>
-    <div class="card"><b>연습하기</b><span>AP 롤플레이 · 실전 롤플레이 · 보험 MBTI. 연습하고 싶을 때.</span>
-      <ul><li>AP 롤플레이: AI 대표님과 말로 연습하고 15단계로 채점받습니다.</li>
-      <li>실전 롤플레이(음성): 미팅 자리 화면에서 AI 대표님과 실제처럼 목소리로 TA·AP·PC·클로징을 연습합니다. 노트북 크롬·엣지에서 이어폰을 끼고.</li>
-      <li>보험 MBTI: 52문항, 9분. 내 영업 성향과 맞춤 코칭. «팀 기록에 저장»을 눌러야 지점장이 함께 봅니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-rp">열기</a></div>
-    <div class="card"><b>공부하기</b><span>컨셉 사전, 첫 미팅 화법, 상품별 정리, 신입 가이드, 상품 비교.</span>
-      <ul><li>문서 맨 위 "한눈에"만 읽어도 핵심이 잡힙니다. "꼭 확인할 것"은 눌러서 체크할 수 있습니다.</li>
-      <li><b>경정기 비교 계산기:</b> 나이·성별·금액별 보험료와 환급률. 파란 글씨는 추정값입니다.</li>
-      <li><b>상품 자료 받기:</b> 안내장·교육자료·청약 서식을 원수사·상품별로. 처음 한 번 팀 비밀번호를 넣습니다.</li>
-      <li><b>물어보기:</b> 업체 상황(업종, 매출, 순이익, 대표 나이)을 적고 AI에게 묻습니다. 고객 이름·회사명은 쓰지 않습니다.</li></ul>
-      <span class="btnrow" style="margin:10px 0 0"><a class="btn" href="#learn">열기</a><a class="btn" href="#tool-sim">계산기</a><a class="btn" href="#tool-dl">자료 받기</a><a class="btn" href="#ask">물어보기</a></span></div>
-    <div class="card"><b>함께 만들기</b><span>누구나 보낼 수 있습니다.</span>
-      <ul><li>문서 위 "바로 고치기"로 누구나 바로 고칠 수 있습니다.</li>
-      <li>"AI에게 가르치기"로 자료와 요청을 보내면 매일 밤 AI가 학습해 반영합니다.</li></ul>
-      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#together">열기</a></div>
+    <div class="card"><b>🎙️ 연습하기</b><span>미팅 전날, 이어폰 끼고 10분.</span>
+      <ul><li><b>실전 롤플레이 (음성)</b>: 미팅 자리 화면에서 AI 대표님과 목소리로 TA·AP·PC·클로징.</li><li><b>AP 롤플레이</b>: 글·말로 15단계 연습, 끝나면 채점표.</li><li><b>보험 MBTI</b>: 9분, 내 영업 성향과 맞춤 코칭.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#tool-rplive">열기</a></div>
+    <div class="card"><b>📚 공부하기</b><span>틈날 때.</span>
+      <ul><li>컨셉 사전, 첫 미팅 화법, 상품, 신입 가이드, 계산기 모음, 물어보기(AI).</li><li>문서 맨 위 "한눈에"만 읽어도 핵심이 잡힙니다.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#learn">열기</a></div>
+    <div class="card"><b>📤 검토받기</b><span>미팅 끝나고.</span>
+      <ul><li>AP 녹음·녹취, 내가 쓴 스크립트, 제안 PPT를 올리면 검토해 드립니다.</li><li>잘된 자료는 이름을 빼고 팀 예시로 쓰일 수 있어요.</li></ul>
+      <a class="btn" style="margin-top:10px;align-self:flex-start" href="#review">열기</a></div>
   </div>
+</template>
 
+<template id="tpl-start">
+  <h1>5분 따라하기: 가상 업체 하나로 끝까지</h1>
+  <p class="lede">가상 업체 <b>OO정밀</b>(제조업 개인사업자)로 업체 분석부터 청약 점검까지 한 번 따라가 봅니다. 단계마다 버튼을 누르면 그 화면이 열리고, 해 본 단계는 체크해 두세요.</p>
+  <div class="kv"><div><b>업종 · 형태</b>제조업 · 개인사업자 15년</div><div><b>매출 · 순이익</b>12억 · 1.1억</div><div><b>대표</b>50세 남, 자녀 2명</div><div><b>관계</b>기장거래처 5년, 가결산 미팅 겸</div></div>
+  <div class="prog" aria-hidden="true"><i id="stProg"></i></div><p class="small" id="stCnt"></p>
+  <div class="steps8" id="steps8">
+    <div class="st" data-k="1"><h3>업체 분석: 예시 넣고 분석 시작</h3><p>«업체 분석 → 제안 준비»를 열고 <b>예시 1: 제조업 대표</b>를 누릅니다. 실제 업체라면 위하고 재무제표 PDF·엑셀을 넣습니다 (<a href="#data">무엇을 넣나</a>).</p><p>보고서 탭에 신호등이 나옵니다. 빨강·주황이 오늘 미팅에서 꺼낼 이야기입니다.</p><div class="btnrow"><a class="btn p sm" href="#tool-ap?sample=1">예시로 열기</a><label class="ck"><input type="checkbox" data-ck="1"> 해 봤어요</label></div></div>
+    <div class="st" data-k="2"><h3>컨셉 진단: 무엇을 이야기할까</h3><p><b>컨셉 진단</b> 탭에서 1~3순위 컨셉과 근거 신호를 봅니다. OO정밀은 이익이 커진 개인사업자라 <b>법인전환</b>이 위로 올라옵니다. 처음 보는 컨셉은 이름을 눌러 «컨셉 사전»에서 "한눈에"만 읽어 보세요.</p><div class="btnrow"><a class="btn sm" href="#concepts">컨셉 사전</a><label class="ck"><input type="checkbox" data-ck="2"> 해 봤어요</label></div></div>
+    <div class="st" data-k="3"><h3>첫 미팅(AP) 스크립트</h3><p><b>AP 스크립트</b> 탭에 15단계 멘트가 나옵니다. 가결산 겸인데 컨셉을 안 고르면 <b>B형(니즈 파악)</b>, 컨셉을 고르면 <b>A형(니즈 환기)</b>입니다. 07단계에 "1.1억이라 35% 구간"처럼 이 업체 숫자가 들어가 있어요.</p><p><code>[ ]</code>는 대표님 입에서 받을 숫자입니다. 상품 이름은 AP에서 말하지 않습니다.</p><div class="btnrow"><a class="btn sm" href="#learn-ap">첫 미팅 화법</a><label class="ck"><input type="checkbox" data-ck="3"> 해 봤어요</label></div></div>
+    <div class="st" data-k="4"><h3>미팅 전날 연습</h3><p>«실전 롤플레이 (음성)»에서 이어폰을 끼고 AI 대표님과 10분 말로 연습합니다. 글로 연습하고 채점받으려면 «AP 롤플레이».</p><div class="btnrow"><a class="btn p sm" href="#tool-rplive">실전 롤플레이</a><a class="btn sm" href="#tool-rp">AP 롤플레이</a><label class="ck"><input type="checkbox" data-ck="4"> 해 봤어요</label></div></div>
+    <div class="st" data-k="5"><h3>미팅 다음: AP 후 기록지</h3><p>미팅이 끝나면 업체 분석의 <b>AP 후 기록지</b>에 대표님이 한 말과 받은 정보를 체크합니다. 못 받은 정보는 다음 미팅(PC)에서 꼭 물을 것으로 넘어갑니다.</p><div class="btnrow"><label class="ck"><input type="checkbox" data-ck="5"> 해 봤어요</label></div></div>
+    <div class="st" data-k="6"><h3>제안(PC) 준비와 금액</h3><p><b>PC 준비</b> 탭에서 제안서 순서, 준비 자료, 예상 반론, 클로징 한 문장을 봅니다. 금액 세 안은 «도구 더 보기 → 제안 금액»에 있어요.</p><div class="btnrow"><label class="ck"><input type="checkbox" data-ck="6"> 해 봤어요</label></div></div>
+    <div class="st" data-k="7"><h3>재정심사: 원수사별 한도</h3><p>대표 나이·소득·지분율·법인 순이익을 넣으면 메트·KB·신한별로 받을 수 있는 금액과 먼저 걸리는 쪽이 나옵니다. 같은 회사도 원수사에 따라 크게 다릅니다.</p><div class="btnrow"><a class="btn p sm" href="#tool-uw">재정심사 계산기</a><label class="ck"><input type="checkbox" data-ck="7"> 해 봤어요</label></div></div>
+    <div class="st" data-k="8"><h3>청약 점검과 검토받기</h3><p>청약 체크리스트로 이번 청약에 해당하는 것만 확인합니다. 그리고 미팅 녹음이나 내가 고친 스크립트를 <b>검토받기</b>에 올려 보세요. 다음 미팅이 달라집니다.</p><div class="btnrow"><a class="btn sm" href="#tool-check">청약 체크리스트</a><a class="btn p sm" href="#review">검토받기</a><label class="ck"><input type="checkbox" data-ck="8"> 해 봤어요</label></div></div>
+  </div>
+  <p class="small">실제 업체는 고객 이름 대신 호칭(예: 김 대표님, OO정밀)으로 넣어도 결과가 똑같이 나옵니다. 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확정합니다. 지킬 것은 <a href="#rules">사용 원칙</a>.</p>
+</template>
+
+<template id="tpl-data">
+  <h1>무엇을 넣나: 자료 기준</h1>
+  <p class="lede">자료를 많이 넣을수록 좋은 게 아니라, <b>정해진 것을 정해진 꼴로</b> 넣으면 됩니다. 파일은 그 컴퓨터 안에서만 읽고 어디로도 보내지 않습니다.</p>
+  <div id="dataBody"></div>
+</template>
+
+<template id="tpl-review">
+  <h1>검토받기</h1>
+  <p class="lede">미팅 녹음, 내가 쓴 스크립트, 제안 PPT를 올려 주세요. <b>잘한 점 하나, 고칠 한 문장</b>을 돌려 드립니다. 잘하시는 분은 내 방식이 팀 예시가 될 수 있고, 막히는 분은 어디서 막히는지 바로 보입니다.</p>
+  <div class="rv3">
+    <div><b>🎧 AP·PC 녹음 / 녹취</b><span>15단계 채점표로 단계별 점수, 놓친 F.F, 다음 미팅에서 물을 것</span></div>
+    <div><b>📝 내가 쓴 스크립트</b><span>금지어·상품명 검사, 03·13 명분 회수, 15단계 약속 확정이 됐는지</span></div>
+    <div><b>📊 제안 PPT·보고서</b><span>순서, 계산, 표현(확정·보장 표현)과 준법</span></div>
+    <div><b>✅ 계약·보류 사례</b><span>업종·규모·나이대·결과만. 컨셉 진단과 재정심사 기준이 정확해져요</span></div>
+  </div>
+  <div id="rform"></div>
+  <details class="fold" style="margin-top:14px"><summary><b>노무사 동행 요청 (사근복·고용장려금)</b> <span>업체에서 노무 신호가 보이면 복사해서 단톡방에</span></summary>
+    <p class="small">회사명·대표 이름·연락처·사업자번호는 쓰지 않습니다.</p>
+    <pre id="lbForm" style="white-space:pre-wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit">[4&amp;7 사근복 동행 요청]
+· 업종 / 지역:
+· 법인·개인 / 직원 수:
+· 세전순이익 (최근 1~3년, 대략):
+· 보인 신호: (2장 번호로, 예: 1, 2, 4)
+· Q1 답 (새로 하고 싶은 복지):
+· Q2 답 (직원 수·이직):
+· 대표님 관심도: 높음 / 보통 / 낮음
+· 미팅 일정: ○월 ○일 ○시, 장소
+· 나와 대표님 관계: 기장 ○년 / 소개 / 초면
+· 조심할 점: (예: 보험 경계, 다른 컨설턴트 다녀감)
+※ 회사명·대표 이름·연락처·사업자번호는 단톡방에 쓰지 마세요.</pre>
+    <button class="btn" type="button" onclick="(function(b){var t=document.getElementById('lbForm').textContent;function ok(){b.textContent='복사했어요'}try{navigator.clipboard.writeText(t).then(ok,function(){var r=document.createRange();r.selectNodeContents(document.getElementById('lbForm'));var s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');ok()})}catch(e){}})(this)">노무사 동행 요청 복사</button>
+  </details>
+  <h2>최근 검토</h2>
+  <p class="small">올린 자료는 관리자만 봅니다. 검토가 끝나면 아래에 «검토 완료»와 한마디가 붙어요. 좋은 자료는 이름을 빼고 골라서 팀 예시로 씁니다 (무조건 쓰지는 않아요).</p>
+  <div id="recent" class="list"></div>
 </template>
 
 <template id="tpl-how">
@@ -586,7 +678,7 @@ th{background:var(--panel2)}
     <div class="card"><b>AI</b><span>자료를 찾아 모으고, 기준대로 판단하고, 초안(보고서·스크립트·PPT)을 씁니다. 받은 자료로 매일 배웁니다.</span></div>
     <div class="card"><b>사람</b><span>숫자와 사실을 확인하고, 고객에 맞게 고치고, 세무 판단은 세무사가, 금액은 가입설계서·재정심사로 확정합니다. 그리고 <b>자료를 보태 AI를 가르칩니다.</b></span></div>
   </div>
-  <p class="small">자료를 보태는 방법은 <a href="#home">홈 화면 "자료 올리는 법"</a>에 있어요.</p>
+  <p class="small">내 자료를 올리는 곳은 <a href="#review">검토받기</a>입니다.</p>
 </template>
 
 <template id="tpl-demo">
@@ -602,7 +694,7 @@ th{background:var(--panel2)}
       <div class="pair"><img loading="lazy" src="img/demo/7_ppt_cover.jpg" alt="PPT 표지"><img loading="lazy" src="img/demo/8_ppt_diag.jpg" alt="PPT 진단"><img loading="lazy" src="img/demo/9_ppt_chart.jpg" alt="PPT 재무 그래프"><img loading="lazy" src="img/demo/10_ppt_value.jpg" alt="PPT 회사 가치"></div></figure>
   </div>
   <div class="btnrow"><a class="btn p" href="#tool-ap">직접 해 보기</a><a class="btn" href="img/demo_deck.pptx" download>예시 PPT 내려받기</a><a class="btn" href="#how">구조 설명 보기</a></div>
-  <p class="small">마음에 안 드는 곳이 있으면 "AI에게 가르치기"로 알려 주세요. 그날 밤 반영됩니다.</p>
+  <p class="small">해 보셨으면 <a href="#review">검토받기</a>에 내 결과를 올려 보세요.</p>
 </template>
 
 <template id="tpl-uw">
@@ -644,7 +736,7 @@ th{background:var(--panel2)}
 
 <template id="tpl-rules">
   <h1>사용 원칙</h1>
-  <p class="lede">함께 쓰는 원칙입니다. 이 원칙도 보완할 점이 있으면 알려 주세요.</p>
+  <p class="lede">고객 앞에서 지킬 것입니다. 이것만 지키면 도구가 만든 멘트를 그대로 써도 됩니다.</p>
   <div class="tw"><table>
     <thead><tr><th>원칙</th><th>왜</th></tr></thead>
     <tbody>
@@ -672,7 +764,7 @@ th{background:var(--panel2)}
   <div class="crumb"><a href="#learn">공부하기</a> › 컨셉 사전</div>
   <h1>컨셉 사전</h1>
   <p class="lede">업체 상황에 맞는 컨설팅 컨셉을 분야별로 모았습니다. 같은 컨셉의 카드가 둘이면 둘 다 보여줍니다.</p>
-  <div class="beta"><b>초안 · 보완 필요</b><span>아는 신호, 질문, 화법, 반론 대응이 있으면 각 컨셉에서 "AI에게 가르치기"로 보태 주세요.</span><button class="btn sm" type="button" id="newConcept">새 컨셉 제안</button></div>
+  <div class="beta adm"><b>초안 · 보완 필요</b><span>관리자 보기</span><button class="btn sm" type="button" id="newConcept">새 컨셉 제안</button></div>
   <div id="newConceptBox"></div>
   <div id="clist"></div>
 </template>
@@ -718,24 +810,7 @@ th{background:var(--panel2)}
       <tr><td>청약 승인·거절 사례 (업종, 매출·이익 규모, 나이, 금액, 결과)</td><td>재정심사 사전 예측</td></tr>
       <tr><td>고객이 실제로 물어본 질문</td><td>상품 Q&amp;A, 반론 대응</td></tr>
       <tr><td>나만의 명분 사례 · 예화</td><td>AP 3단계·13단계 개인화</td></tr>
-      <tr><td>현장에서 들은 대표 반론·머뭇거림 (특히 PC·클로징)</td><td><a href="#dcd28a1dc">실전 롤플레이 AI 대표 반응 설계</a> → 실전 롤플레이 AI 대표가 그렇게 반응</td></tr>
     </tbody></table></div>
-    <h2>노무사 동행 요청 (사근복·고용장려금)</h2>
-    <p class="lede">업체에서 사근복·고용장려금 신호가 보이면 아래 양식을 복사해 단톡방에 올려 주세요. 회사명·대표 이름·연락처·사업자번호는 쓰지 않습니다.</p>
-    <pre id="lbForm" style="white-space:pre-wrap;background:var(--card,#fff);border:1px solid #e3e6eb;border-radius:12px;padding:12px;font:inherit">[4&amp;7 사근복 동행 요청]
-· 업종 / 지역:
-· 법인·개인 / 직원 수:
-· 세전순이익 (최근 1~3년, 대략):
-· 보인 신호: (2장 번호로, 예: 1, 2, 4)
-· Q1 답 (새로 하고 싶은 복지):
-· Q2 답 (직원 수·이직):
-· 대표님 관심도: 높음 / 보통 / 낮음
-· 미팅 일정: ○월 ○일 ○시, 장소
-· 나와 대표님 관계: 기장 ○년 / 소개 / 초면
-· 조심할 점: (예: 보험 경계, 다른 컨설턴트 다녀감)
-※ 회사명·대표 이름·연락처·사업자번호는 단톡방에 쓰지 마세요.</pre>
-    <button class="btn" type="button" onclick="(function(b){var t=document.getElementById('lbForm').textContent;function ok(){b.textContent='복사했어요'}try{navigator.clipboard.writeText(t).then(ok,function(){var r=document.createRange();r.selectNodeContents(document.getElementById('lbForm'));var s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');ok()})}catch(e){}})(this)">노무사 동행 요청 복사</button>
-    <p class="lede" style="margin-top:8px"><a href="tools/emp-subsidy.html">고용장려금 찾기</a> · <a href="tools/laborhub/index.html">사근복 적합도 진단·출연 한도 계산기</a></p>
     <h2>AI가 최근에 배운 것</h2>
     <div id="recent" class="list"></div>
   </section>
@@ -753,28 +828,34 @@ th{background:var(--panel2)}
 const $=s=>document.querySelector(s);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const narrow=()=>window.matchMedia('(max-width:860px)').matches;
-function setCollapsed(c){$('#shell').classList.toggle('collapsed',c);store.set('hub-collapsed',c?'1':'0')}
-$('#toggle').addEventListener('click',()=>setCollapsed(!$('#shell').classList.contains('collapsed')));
-if(store.get('hub-collapsed')==='1')$('#shell').classList.add('collapsed');
+function setCollapsed(c){$('#shell').classList.remove('open')}
+function setRail(r){$('#shell').classList.toggle('rail',r);store.set('hub-rail',r?'1':'0');$('#railBtn').innerHTML=r?'<span class="ic">▶</span><span class="tx">메뉴 펴기</span>':'<span class="ic">◀</span><span class="tx">메뉴 접기</span>'}
+$('#railBtn').addEventListener('click',()=>setRail(!$('#shell').classList.contains('rail')));if(store.get('hub-rail')==='1')setRail(true);
+$('#fab').addEventListener('click',()=>$('#shell').classList.toggle('open'));$('#scrim').addEventListener('click',()=>$('#shell').classList.remove('open'));
+$('#nav').addEventListener('click',e=>{if(e.target.closest('a'))$('#shell').classList.remove('open')});
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-ca':['업체 분석 보고서','tools/company-analysis.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
-const GUIDE=[{h:'about',label:'이 사이트는'},{h:'manual',label:'메뉴별 쓰는 법'},{h:'how',label:'만든 구조'},{h:'demo',label:'3분 시연'},{h:'rules',label:'사용 원칙'},{h:'updates',label:'최근 업데이트'}];
+const TOOLS={'tool-rplive':['실전 롤플레이 (음성)','tools/rp-live.html'],'tool-rplive-admin':['실전 롤플레이 기록 (지점장)','tools/rp-live-admin.html'],'tool-jm':['직무발명 보상금 계산기','tools/jm-calc.html'],'tool-emp':['고용장려금 찾기','tools/emp-subsidy.html'],'tool-labor':['사근복 진단·출연 한도 계산기','tools/laborhub/index.html'],'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-ca':['업체 분석 보고서','tools/company-analysis.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
+const GUIDE=[{h:'start',label:'5분 따라하기'},{h:'manual',label:'메뉴별 쓰는 법'},{h:'data',label:'무엇을 넣나'},{h:'demo',label:'3분 시연'},{h:'rules',label:'지킬 것'}];
+const GUIDE_ADM=[{h:'about',label:'사이트 이야기'},{h:'how',label:'만든 구조'},{h:'updates',label:'최근 업데이트'},{h:'todo',label:'보완 필요 목록'}];
+const TOOLHINT={'tool-ap':'예시 또는 재무제표 넣기 → 분석 시작 → 보고서·컨셉·스크립트·PC 순서로','tool-ca':'세무조정계산서·감사보고서를 넣으면 한 장 보고서','tool-rplive':'노트북 크롬·엣지, 이어폰 끼고 «시작»','tool-rp':'AI 대표님과 15단계 연습, 끝나면 채점','tool-mbti':'52문항 9분, 끝나면 «팀 기록에 저장»','tool-uw':'나이·소득·지분율·순이익 → 원수사별 한도','tool-check':'원수사·상품·계약 형태를 고르면 해당 항목만','tool-sim':'나이·금액별 보험료와 환급률','tool-jm':'슬라이드법·실시료법 범위를 먼저 보고 목표 금액부터 정하지 않기','tool-emp':'상황을 고르면 받을 수 있는 장려금','tool-labor':'사근복 적합도와 출연 한도'};
 const UWNAV=[{h:'uw',label:'한눈에 보기'},{h:'tool-uw',label:'재정심사 계산기'},{h:'tool-check',label:'청약 체크리스트'},{h:'tool-lib',label:'상품 자료실'}];
-const ALIAS={improve:'together',contribute:'together',concept:'concepts',practice:'tool-rp',guide:'about'};
+const ALIAS={improve:'review',contribute:'review',together:'review',concept:'concepts',practice:'tool-rplive',guide:'start'};
+const ADM=()=>document.documentElement.classList.contains('admin');
+try{if(localStorage.getItem('hub-admin')==='1')document.documentElement.classList.add('admin')}catch(e){}
 const LEARN=[
   {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},
   {h:'learn-ap',label:'첫 미팅 화법',desc:'AP 15단계, 화법, 반론 대응',gids:['ap']},
   {h:'learn-faq',label:'상품별 정리',desc:'상품마다 요약·FAQ·약관을 한 문서로',gids:['faq']},
   {h:'learn-guide',label:'신입 가이드',desc:'보험용어, 청약서, 영업 흐름',gids:['guide']},
   {h:'learn-prod',label:'상품 비교',desc:'원수사 상품 비교표, 판매 상품 목록',gids:['prod','prodmet']},
-  {h:'tool-sim',label:'경정기 비교 계산기',desc:'나이·금액별 상품 보험료와 환급률 비교',gids:[],tag:'계산기'},
+  {h:'calcs',label:'계산기 모음',desc:'경정기 비교, 직무발명 보상금, 고용장려금, 사근복 한도',gids:[],tag:'계산기 4개'},
   {h:'tool-dl',label:'상품 자료 받기',desc:'안내장·교육자료·청약 서식 내려받기',gids:[],tag:'내려받기'},
   {h:'ask',label:'물어보기',desc:'업체 상황을 적고 AI에게 컨셉·준비할 것 묻기',gids:[],tag:'AI 상담'},
 ];
-const EXTRA={'learn-example':{h:'learn-example',label:'자동작성 예시',desc:'업체 분석 → 제안 준비 결과 예시',gids:['example']}};
+const EXTRA={'learn-example':{h:'learn-example',label:'자동작성 예시',desc:'업체 분석 → 제안 준비 결과 예시',gids:['example']},'learn-dev':{h:'learn-dev',label:'만든 분들의 기획 노트',desc:'각 분야 담당 팀원이 보낸 기획서·학습 노트·아이디어. 도구가 왜 이렇게 생겼는지 궁금할 때',gids:['dev']}};
 const KINDS=['보완 멘트','자료','새 컨셉','오류','아이디어'];
 const catOfDoc=d=>LEARN.find(c=>c.gids.includes(d.gid))||Object.values(EXTRA).find(c=>c.gids.includes(d.gid));
 const catByHash=h=>LEARN.find(c=>c.h===h)||EXTRA[h];
@@ -801,13 +882,13 @@ function contribBox(target,opt={}){
     return box}
   const kind=opt.kind||'학습 요청';
   box.classList.add('teach');
-  box.innerHTML=`<div class="chat" data-chat><div class="bub a">무엇을 가르쳐 줄래요? 자료를 올리거나, 바꾸고 싶은 내용을 그냥 말하듯 적어 주세요.${target?`<br><span class="small">대상: ${esc(target)}</span>`:''}</div></div>
+  box.innerHTML=`<div class="chat" data-chat><div class="bub a">${opt.review?'무엇을 검토받고 싶으세요? 파일을 붙이고 한 줄만 적어 주세요. 예) 어제 AP 녹음이에요, 10단계에서 막혔어요':'무엇을 가르쳐 줄래요? 자료를 올리거나, 바꾸고 싶은 내용을 그냥 말하듯 적어 주세요.'}${target&&!opt.review?`<br><span class="small">대상: ${esc(target)}</span>`:''}</div></div>
    <form class="cform" novalidate>
     <textarea name="content" maxlength="5000" required placeholder="예) 첨부한 PPT로 보고서 양식을 배워 줘&#10;예) 사근복 컨셉에 '직원들이 싫어해요' 반론과 대응을 넣어 줘&#10;예) 이 녹음으로 우리 지점 AP 화법을 배워 줘${opt.hint?'&#10;'+esc(opt.hint):''}"></textarea>
     <div class="btnrow" style="margin-top:8px;align-items:center"><label class="btn sm" style="cursor:pointer">파일 첨부<input type="file" name="file" hidden></label><span class="small" data-fname>PPT·PDF·엑셀·한글·이미지·녹음 (30MB까지, 더 큰 녹음은 드라이브 링크를 붙여 주세요)</span></div>
     <div class="hp" aria-hidden="true"><label>웹사이트<input name="website" tabindex="-1" autocomplete="off"></label></div>
     <p class="hint" style="margin-top:8px">고객 이름·회사명·연락처·주민번호·사업자번호는 지워 주세요. 올린 파일은 관리자만 볼 수 있게 저장됩니다.</p>
-    <div class="btnrow" style="margin-top:8px"><button class="btn p" type="submit">AI에게 보내기</button><span class="msg" data-msg role="status"></span></div>
+    <div class="btnrow" style="margin-top:8px"><button class="btn p" type="submit">${opt.review?'검토 요청 보내기':'AI에게 보내기'}</button><span class="msg" data-msg role="status"></span></div>
    </form>`;
   const f=box.querySelector('form'),ta=f.content,msg=box.querySelector('[data-msg]'),chat=box.querySelector('[data-chat]');
   f.file.addEventListener('change',()=>{const x=f.file.files[0];box.querySelector('[data-fname]').textContent=x?`첨부: ${x.name}`:''});
@@ -833,45 +914,59 @@ function contribBox(target,opt={}){
   });
   return box}
 function readB64(file){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=()=>no(r.error);r.readAsDataURL(file)})}
-function statusPill(s){s=s||'접수';const c={'반영 완료':'good','검토 중':'warn','보류':''}[s];const t={'접수':'배우는 중','검토 중':'확인 중','반영 완료':'배웠어요','보류':'보류'}[s]||s;return `<span class="pill ${c==null?'':c}">${esc(t)}</span>`}
+function statusPill(s){s=s||'접수';const c={'반영 완료':'good','검토 중':'warn','보류':''}[s];const t={'접수':'검토 대기','검토 중':'검토 중','반영 완료':'검토 완료','보류':'보류'}[s]||s;return `<span class="pill ${c==null?'':c}">${esc(t)}</span>`}
 async function loadContribs(el,target,empty){
   if(!el)return;
   if(!CFG.endpoint){el.innerHTML='<div class="row"><span class="t small">바로 보내기 기능이 연결되면 들어온 내용이 여기에 보입니다.</span></div>';return}
   el.innerHTML='<div class="row"><span class="t small">불러오는 중</span></div>';
   try{const r=await apiGet('action=list'+(target?'&target='+encodeURIComponent(target):''));
     const it=(r&&r.items)||[];
-    el.innerHTML=it.length?it.map(i=>`<div class="citem"><div class="top">${statusPill(i.status)}<span class="pill">${esc(i.kind)}</span>${target?'':`<span>${esc(i.target)}</span>`}<span>${esc(i.time)}</span>${i.hasFile?'<span>파일 첨부</span>':''}</div><div class="c">${esc(i.content.length>400?i.content.slice(0,400)+'…':i.content)}</div>${i.note?`<div class="note"><b>AI가 배운 것</b> ${esc(i.note)}</div>`:''}</div>`).join('')
+    el.innerHTML=it.length?it.map(i=>`<div class="citem"><div class="top">${statusPill(i.status)}<span class="pill">${esc(i.kind)}</span>${target?'':`<span>${esc(i.target)}</span>`}<span>${esc(i.time)}</span>${i.hasFile?'<span>파일 첨부</span>':''}</div><div class="c">${esc(i.content.length>400?i.content.slice(0,400)+'…':i.content)}</div>${i.note?`<div class="note"><b>검토 한마디</b> ${esc(i.note)}</div>`:''}</div>`).join('')
       :`<div class="row"><span class="t small">${esc(empty||'아직 없습니다. 첫 보완을 남겨 주세요.')}</span></div>`}
   catch(e){el.innerHTML='<div class="row"><span class="t small">목록을 불러오지 못했습니다. 잠시 후 다시 열어 보세요.</span></div>'}}
 
 /* ---------- 메뉴 ---------- */
+const NAVDEF=[
+ {g:'시작'},
+ {h:'home',ic:'🏠',t:'홈',d:'나에게 맞는 순서'},
+ {h:'start',ic:'🧭',t:'처음이라면',d:'5분 따라하기 · 쓰는 법 · 무엇을 넣나',sub:'guide'},
+ {g:'준비하기 · 미팅 전'},
+ {h:'tool-ap',ic:'🔎',t:'업체 분석 → 제안 준비',d:'재무제표 넣고 컨셉·AP·PC까지'},
+ {h:'tool-ca',ic:'📑',t:'업체 분석 보고서',d:'법인 서류로 깊게 한 장'},
+ {h:'uw',ic:'💰',t:'재정심사 → 청약',d:'원수사별 한도 · 청약 점검',sub:'uw'},
+ {g:'연습하기'},
+ {h:'tool-rplive',ic:'🎙️',t:'실전 롤플레이',d:'AI 대표님과 목소리로',sub:'rp'},
+ {h:'tool-rp',ic:'🗣️',t:'AP 롤플레이',d:'15단계 연습하고 채점'},
+ {h:'tool-mbti',ic:'🧩',t:'보험 MBTI',d:'내 영업 성향과 코칭'},
+ {g:'공부하기'},
+ {h:'learn',ic:'📚',t:'공부하기',d:'컨셉 · 화법 · 상품 · 계산기',sub:'learn'},
+ {h:'ask',ic:'🙋',t:'물어보기',d:'AI에게 컨셉·준비할 것'},
+ {g:'내 자료'},
+ {h:'review',ic:'📤',t:'검토받기',d:'녹음·스크립트·PPT 올리기'},
+];
 function familyOf(h){
   if(UWNAV.some(x=>x.h===h))return 'uw';
-  if(h==='home'||h==='tool-ap')return h;
-  if(h==='tool-ca')return 'tool-ap';
-  if(GUIDE.some(x=>x.h===h))return 'about';
-  if(h==='tool-rp'||h==='tool-mbti')return 'practice';
-  if(h==='together'||h==='todo')return 'together';
+  if(GUIDE.some(x=>x.h===h)||GUIDE_ADM.some(x=>x.h===h))return 'start';
+  if(h==='tool-rplive-admin')return 'tool-rplive';
+  if(h==='calcs'||h==='tool-sim'||h==='tool-jm'||h==='tool-emp'||h==='tool-labor')return 'learn';
+  if(NAVDEF.some(x=>x.h===h))return h;
   if(h==='learn'||catByHash(h))return 'learn';
   const d=M.docs.find(x=>x.id===h);if(d)return 'learn';
   return ''}
+function subHtml(k,h){const L=(arr)=>arr.map(c=>`<a class="navl ${c.h===h?'on':''}" href="#${c.h}"><span class="tx">${esc(c.label)}</span></a>`).join('');
+  const d=M.docs.find(x=>x.id===h),cur=d?(catOfDoc(d)||{}).h:h;
+  if(k==='guide')return L(GUIDE)+(ADM()?L(GUIDE_ADM):'');
+  if(k==='uw')return L(UWNAV);
+  if(k==='rp')return L([{h:'tool-rplive',label:'연습하기'},{h:'tool-rplive-admin',label:'연습 기록 (지점장)'}]);
+  if(k==='learn')return LEARN.map(c=>`<a class="navl ${c.h===cur||(c.h==='calcs'&&/^tool-(sim|jm|emp|labor)$/.test(h))?'on':''}" href="#${c.h}"><span class="tx">${esc(c.label)}</span></a>`).join('');
+  return ''}
 function renderNav(h){
-  const fam=familyOf(h),d=M.docs.find(x=>x.id===h),cur=d?(catOfDoc(d)||{}).h:h;
-  document.querySelectorAll('#nav > .navl').forEach(a=>a.classList.toggle('on',a.dataset.r===fam));
-  const sub=$('#learnSub');sub.hidden=fam!=='learn';
-  sub.innerHTML=LEARN.map(c=>`<a class="navl ${c.h===cur?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
-  const ms=$('#practiceSub'),mgrOn=/view=mgr/.test(location.hash);ms.hidden=fam!=='practice';
-  ms.innerHTML=`<a class="navl ${h==='tool-rp'?'on':''}" href="#tool-rp">AP 롤플레이</a><a class="navl" href="tools/rp-live.html">실전 롤플레이 (음성)</a><a class="navl" href="tools/rp-live-admin.html">실전 롤플레이 기록 (지점장)</a><a class="navl ${h==='tool-mbti'&&!mgrOn?'on':''}" href="#tool-mbti">보험 MBTI</a><a class="navl ${mgrOn?'on':''}" href="#tool-mbti?view=mgr">MBTI 지점장 보기</a>`;
-  const as=$('#apSub');as.hidden=fam!=='tool-ap';
-  as.innerHTML=`<a class="navl ${h==='tool-ap'?'on':''}" href="#tool-ap">제안 준비 (AP·PC)</a><a class="navl ${h==='tool-ca'?'on':''}" href="#tool-ca">업체 분석 보고서 (회사 서류)</a>`;
-  const gs=$('#guideSub');gs.hidden=fam!=='about';
-  gs.innerHTML=GUIDE.map(c=>`<a class="navl ${c.h===h?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
-  const us=$('#uwSub');us.hidden=fam!=='uw';
-  us.innerHTML=UWNAV.map(c=>`<a class="navl ${c.h===h?'on':''}" href="#${c.h}">${esc(c.label)}</a>`).join('');
+  const fam=familyOf(h);
+  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic" aria-hidden="true">${x.ic}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">관리자</div><a class="navl" href="#todo"><span class="ic">🛠️</span><span class="tx">보완 필요 목록</span></a><a class="navl" href="#admin-off"><span class="ic">🚪</span><span class="tx">관리자 보기 끄기</span></a>`:'');
 }
 
 function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}
-function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span><span class="d">${d.updated}</span></a>`).join('')}
+function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span>${ADM()?`<span class="d">${d.updated}</span>`:''}</a>`).join('')}
 
 /* ---------- 화면 ---------- */
 async function show(){
@@ -881,11 +976,15 @@ async function show(){
   if(narrow())setCollapsed(true);
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
-    main.innerHTML=`<div class="toolbar"><b>${t} <span class="pill">초안 · 보완 필요</span></b><span class="btnrow" style="margin:0"><a class="btn" href="${src}" target="_blank" rel="noopener">새 창으로</a><button class="btn p" type="button" id="tpBtn">AI에게 가르치기</button></span></div><div class="toolpanel" id="tp" hidden></div><iframe class="frame" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
-    const name=t;
-    $('#tp').appendChild(contribBox(name,{kind:'오류',hint:'어느 탭에서 무엇이 이상했는지, 어떻게 바뀌면 좋을지 적어 주세요.'}));
-    $('#tpBtn').onclick=()=>{$('#tp').hidden=!$('#tp').hidden;$('#tpBtn').textContent=$('#tp').hidden?'AI에게 가르치기':'닫기'};return}
-  if(h==='home'){tpl('tpl-home');homeUw();$('#homeStat').innerHTML=`업데이트 ${esc(M.built||'')} · 문서 ${M.docs.length}개 · <a href="#manual">사용법 보기</a>`;return}
+    main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
+    document.title=t+' · 4&7 NEXT 허브';return}
+  if(h==='admin'){try{localStorage.setItem('hub-admin','1')}catch(e){}document.documentElement.classList.add('admin');location.replace('#home');return}
+  if(h==='admin-off'){try{localStorage.removeItem('hub-admin')}catch(e){}document.documentElement.classList.remove('admin');location.replace('#home');return}
+  if(h==='home'){tpl('tpl-home');homeInit();return}
+  if(h==='start'){tpl('tpl-start');startInit();return}
+  if(h==='data'){tpl('tpl-data');$('#dataBody').innerHTML=DATA_HTML;return}
+  if(h==='review'){tpl('tpl-review');const rec=$('#recent');$('#rform').appendChild(contribBox('검토 요청',{kind:'검토 요청',review:true,onSent:()=>loadContribs(rec,'검토 요청')}));loadContribs(rec,'검토 요청','아직 올라온 검토가 없습니다. 첫 번째로 올려 보세요.');return}
+  if(h==='calcs'){tpl('tpl-rules');$('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › 계산기 모음</div><h1>계산기 모음</h1><p class="lede">숫자를 넣어 바로 확인하는 도구들입니다. 결과는 참고 범위이고, 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확정합니다.</p><div class="cards">${[['tool-sim','경정기 비교 계산기','나이·성별·금액별 보험료와 환급률. 파란 글씨는 추정값'],['tool-uw','재정심사 계산기','원수사별 가능 금액과 먼저 걸리는 쪽'],['tool-jm','직무발명 보상금 계산기','슬라이드법·실시료법, 받는 사람별 효과, 역산'],['tool-emp','고용장려금 찾기','우선지원대상기업 판별, 상황별 장려금, 육아휴직 계산'],['tool-labor','사근복 진단·출연 한도','적합도 진단과 출연·사용 한도']].map(([k,t,s])=>`<a class="card" href="#${k}"><b>${t}</b><span>${s}</span></a>`).join('')}</div>`;return}
   if(h==='uw'){tpl('tpl-uw');renderUw();return}
   if(h==='manual'){tpl('tpl-manual');return}
   if(h==='how'){tpl('tpl-how');return}
@@ -895,7 +994,7 @@ async function show(){
   if(h==='learn')return showLearn();
   if(h==='concepts')return showConcepts();
   if(h==='ask')return showAsk();
-  if(h==='together'||h==='todo')return showTogether(h);
+  if(h==='todo')return showTogether(h);
   if(h==='updates'){tpl('tpl-rules');const ds=[...M.docs].sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,30);$('#view').innerHTML=`<h1>최근 업데이트</h1><p class="lede">수정일 기준 최근 30개 문서입니다. 사이트 빌드: ${esc(M.built)}</p><div class="list">${ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)} <span class="pill">${esc((catOfDoc(d)||{label:d.group}).label)}</span></span><span class="d">${d.updated}</span></a>`).join('')}</div>`;return}
   const cat=catByHash(h);
   if(cat){tpl('tpl-rules');const ds=M.docs.filter(d=>cat.gids.includes(d.gid));
@@ -906,7 +1005,8 @@ async function show(){
   return showDoc(d)}
 
 function showLearn(){tpl('tpl-learn');
-  $('#lcards').innerHTML=LEARN.map(c=>{const n=c.gids.length?M.docs.filter(d=>c.gids.includes(d.gid)).length:0;return `<a class="card" href="#${c.h}"><b>${esc(c.label)}</b><span>${esc(c.desc)}</span>${n?`<span class="cnt">문서 ${n}개</span>`:`<span class="cnt">${esc(c.tag||'')}</span>`}</a>`}).join('');
+  const nd=M.docs.filter(d=>d.gid==='dev').length;
+  $('#lcards').innerHTML=LEARN.map(c=>{const n=c.gids.length?M.docs.filter(d=>c.gids.includes(d.gid)).length:0;return `<a class="card" href="#${c.h}"><b>${esc(c.label)}</b><span>${esc(c.desc)}</span>${n?`<span class="cnt">문서 ${n}개</span>`:`<span class="cnt">${esc(c.tag||'')}</span>`}</a>`}).join('')+(nd?`<a class="card dev-note" href="#learn-dev"><b>만든 분들의 기획 노트</b><span>각 분야 담당 팀원이 보낸 기획서·학습 노트·아이디어. 도구가 왜 이렇게 생겼는지 궁금할 때</span><span class="cnt">문서 ${nd}개</span></a>`:'');
   const q=$('#q'),res=$('#qres');
   q.addEventListener('input',()=>{const f=q.value.trim().toLowerCase();if(!f){res.innerHTML='';return}
     const ds=M.docs.filter(d=>d.title.toLowerCase().includes(f)).slice(0,20);
@@ -974,7 +1074,7 @@ function toast(t){let el=$('#toast');if(!el){el=document.createElement('div');el
 const md=t=>marked.parse(t.replace(/~/g,'\\~'));
 const easyPart=t=>t.split('<details class="orig">')[0];
 async function showAbout(){tpl('tpl-rules');const a=M.about;
-  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span>${a?`<span>수정 ${esc(a.updated)}</span>`:''}<span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#tool-ap">업체 분석 → 제안 준비 바로 열기</a></div>`;
+  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span><span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#start">5분 따라하기</a></div>`;
   if(!a){$('#doc').textContent='준비 중입니다.';return}
   try{const r=await fetch(a.file,{cache:'no-store'});const t=await r.text();if(location.hash.slice(1)!=='about')return;
     $('#doc').innerHTML=md(t);enhanceDoc($('#doc'),{id:'about',readable:true});document.title='사이트 안내 · 4&7 NEXT 허브'}
@@ -982,14 +1082,15 @@ async function showAbout(){tpl('tpl-rules');const a=M.about;
 async function showDoc(d){tpl('tpl-rules');const cat=catOfDoc(d)||{h:'learn',label:d.group};
   const isC=d.gid==='concept';
   $('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › <a href="#${cat.h}">${esc(cat.label)}</a></div>
-    <div class="meta"><span class="pill">초안 · 보완 필요</span><span>수정 ${d.updated}</span><span id="rtime"></span><span id="edInfo"></span>${d.todo&&d.todo.length?`<span>확인 필요 ${d.todo.length}건</span>`:''}</div>
-    <div class="btnrow" style="margin:0 0 6px"><button class="btn" type="button" id="eBtn">바로 고치기</button><span class="small">누구나 고칠 수 있어요. 저장하면 바로 모두에게 반영돼요.</span></div>
+    <div class="meta"><span id="rtime"></span><span class="adm">수정 ${d.updated}</span><span id="edInfo"></span>${d.todo&&d.todo.length?`<span class="adm">확인 필요 ${d.todo.length}건</span>`:''}</div>
+    <div class="btnrow adm" style="margin:0 0 6px"><button class="btn" type="button" id="eBtn">바로 고치기</button><span class="small">관리자 보기</span></div>
     <div id="eWrap"></div>
     <div class="toc" id="toc"></div>
     <div class="doc" id="doc">불러오는 중</div>
-    <div class="btnrow"><button class="btn p" type="button" id="cBtn">AI에게 가르치기</button><span class="small">틀린 곳, 더 좋은 화법, 실제 사례를 알려 주세요.</span></div>
+    <div class="cta"><div><b>${isC?'이 컨셉으로 미팅해 보셨나요?':'현장에서 써 보셨나요?'}</b><br><span>내 녹음·스크립트·사례를 올리면 검토해 드려요. 잘된 말은 이름을 빼고 이 문서에 보태집니다.</span></div><a class="btn p" href="#review">검토받기</a></div>
+    <div class="btnrow adm"><button class="btn" type="button" id="cBtn">AI에게 가르치기</button></div>
     <div id="cWrap"></div>
-    ${isC?`<h3>이 컨셉에 들어온 보완</h3><div class="list" id="cList"></div>`:''}`;
+    ${isC?`<div class="adm"><h3>이 컨셉에 들어온 보완</h3><div class="list" id="cList"></div></div>`:''}`;
   const hint=isC?'이 컨셉으로 실제 계약이 나온 후킹 포인트(대표의 마음이 움직인 한마디), 더할 신호, 첫 미팅 질문, 화법, 반론과 대응, 주의사항, 익명 사례(업종·규모·나이대·결과만)를 적어 주세요.':'';
   const onSent=()=>loadContribs($('#cList'),d.title);
   $('#cBtn').onclick=()=>{const w=$('#cWrap');if(w.firstChild){w.innerHTML='';$('#cBtn').textContent='AI에게 가르치기';return}w.appendChild(contribBox(d.title,{kind:'학습 요청',hint,onSent}));$('#cBtn').textContent='닫기'};
@@ -1133,13 +1234,32 @@ function renderUw(){const {R,C,L}=UWD();
   document.title='재정심사 → 청약 · 4&7 NEXT 허브'}
 
 window.addEventListener('hashchange',show);
-/* 새 기능 알림: 당분간 홈 화면에 들어올 때마다 표시 (닫으면 이번 방문에서만 숨김) */
-let ANN_CLOSED=false;
-function announce(){const home=['','home'].includes(location.hash.replace('#',''));let el=document.querySelector('.ann');
-  if(!home||ANN_CLOSED){if(el)el.remove();return}if(el)return;el=document.createElement('div');el.className='ann';el.setAttribute('role','dialog');
-  el.innerHTML=`<b>새로 생겼어요</b><ul><li><b>보험 MBTI</b>: 28문항으로 내 영업 성향을 알고, 맞는 업체 규모·컨셉·연습할 AP 단계를 추천받아요.</li><li><b>AP 롤플레이</b>: AI 대표님을 상대로 첫 미팅을 말로 연습하고, 끝나면 15단계 채점표로 점수와 고칠 점을 받아요.</li><li><b>재정심사 → 청약</b>: 원수사별 한도 계산기, 청약 체크리스트, 상품 자료실이 한 챕터로 들어왔어요.</li><li><b>바로 고치기</b>: 모든 문서 위 버튼으로 누구나 고치면 바로 반영돼요.</li><li><b>AI에게 가르치기</b>: 자료나 요청을 보내면 매일 밤 AI가 학습해서 사이트를 고쳐요.</li></ul><div class="btnrow"><a class="btn p sm" href="#together">가르치러 가기</a><button class="btn sm" type="button">닫기</button></div>`;
-  const close=()=>{ANN_CLOSED=true;el.remove()};el.querySelector('button').onclick=close;el.querySelector('a').addEventListener('click',close);document.body.appendChild(el)}
-window.addEventListener('hashchange',()=>{ANN_CLOSED=false;announce()});setTimeout(announce,800);
+
+/* ---------- 첫 화면: 나는 지금… ---------- */
+const WHO={
+ new:{t:'처음이라면 이 순서로',s:[['#start','5분 따라하기','가상 업체 하나로 분석부터 청약 점검까지 한 번'],['#learn-guide','신입 가이드','보험 용어, 청약서, 영업 흐름'],['#tool-mbti','보험 MBTI','내 영업 성향을 알고 맞는 업체 규모·컨셉 추천받기'],['#tool-rp','AP 롤플레이','AI 대표님과 첫 미팅을 연습하고 채점받기']]},
+ low:{t:'다음 약속이 잡히게',s:[['#review','최근 미팅 녹음·스크립트 검토받기','어느 단계에서 막혔는지 바로 보입니다'],['#tool-ap','다음 업체로 업체 분석','B형(니즈 파악) 스크립트로 질문 위주로'],['#tool-rplive','실전 롤플레이','10단계 선거절, 15단계 약속 확정을 말로 반복'],['#learn-ap','첫 미팅 화법','반론 대응 모음']]},
+ top:{t:'더 크게, 더 많이',s:[['#tool-uw','재정심사 계산기','원수사별 한도 차이로 금액 키우기'],['#tool-ca','업체 분석 보고서','법인 서류로 주식가치·잉여금·CEO 리스크까지'],['#concepts','컨셉 사전','승계·노무·특허 같은 2차 컨셉'],['#review','내 방식 공유하기','잘된 녹음·PPT를 올리면 이름 빼고 팀 예시로']]}};
+const QUOTES=[['10 선거절처리','"다들 그렇지 않냐 하실 수 있습니다. 맞습니다. 그런데 이익이 안 나는 회사는 이런 고민 자체를 안 합니다."'],
+ ['15 다음 약속','"자료는 제가 만들어 오겠습니다. 목요일 오후 2시로 하겠습니다. 한 시간 잡아 주셔야 합니다."'],
+ ['저항 "보험 얘기 아니에요?"','"보험을 활용하는 방법으로 쓸 수도 있습니다. 그런데 오늘 그걸 제안드리는 건 아닙니다."'],
+ ['저항 "나중에 하죠"','"대표님, 가만히 계시는 게 가장 비싼 선택입니다. 그 판단은 빠를수록 선택지가 많습니다."'],
+ ['06 일반적 사례','"종합소득세 최고 49.5%, 건강보험료까지 더하면 거의 절반을 국가가 가져갑니다."'],
+ ['08 니즈환기','"대표님은 이 사업을 열심히 하시는 원동력이 어떤 거세요?"'],
+ ['☆ 소개요청','"대표님처럼 같은 고민을 하시는 분 딱 두 분만 소개해 주시면 좋겠습니다."'],
+ ['05 시간확보','"20분 정도 괜찮으실까요? 진짜 필요한 게 뭔지 알아야 해서 질문을 좀 드릴 겁니다."']];
+function homeInit(){
+  const pick=w=>{store.set('hub-who',w);document.querySelectorAll('#who3 button').forEach(b=>b.classList.toggle('on',b.dataset.w===w));const P=WHO[w];
+    $('#whoPath').innerHTML=`<b>${P.t}</b><ol>${P.s.map(([href,t,s])=>`<li><a href="${href}">${t}</a> <span class="small">${s}</span></li>`).join('')}</ol>`;$('#whoPath').hidden=false};
+  document.querySelectorAll('#who3 button').forEach(b=>b.onclick=()=>pick(b.dataset.w));
+  const w=store.get('hub-who');if(w&&WHO[w])pick(w);else $('#whoPath').hidden=true;
+  let qi=Math.floor(Math.random()*QUOTES.length);const q=()=>{const[a,b]=QUOTES[qi%QUOTES.length];$('#quote').innerHTML=`<small>오늘의 한마디 · ${a}</small><q>${esc(b)}</q><button type="button" id="qn">다른 말 보기</button>`;$('#qn').onclick=()=>{qi++;q()}};q()}
+function startInit(){
+  let done={};try{done=JSON.parse(store.get('hub-start')||'{}')}catch(e){}
+  const upd=()=>{const n=Object.values(done).filter(Boolean).length;$('#stProg').style.width=(n/8*100)+'%';$('#stCnt').textContent=`따라하기 ${n}/8 단계 해 봤어요${n===8?' · 다 하셨어요! 이제 실제 업체로 해 보세요.':''}`;
+    document.querySelectorAll('#steps8 .st').forEach(s=>s.classList.toggle('done',!!done[s.dataset.k]))};
+  document.querySelectorAll('[data-ck]').forEach(c=>{c.checked=!!done[c.dataset.ck];c.onchange=()=>{done[c.dataset.ck]=c.checked;store.set('hub-start',JSON.stringify(done));upd()}});upd()}
+const DATA_HTML=`<h2>1. 업체 분석 → 제안 준비</h2><div class="tw"><table><thead><tr><th>넣는 것</th><th>어떻게</th><th>결과</th></tr></thead><tbody><tr><td><b>재무상태표 · 손익계산서</b> (PDF 또는 엑셀)</td><td>위하고·홈택스에서 저장한 파일을 «재무제표 파일 넣기»에 그대로. 여러 해 파일을 한꺼번에 넣으면 3년이 채워집니다</td><td>됨</td></tr><tr><td>재무제표 글자 복사</td><td>PDF·화면의 글자를 긁어 «재무자료 붙여넣기» → «읽어서 채우기». 단위(원·천원·백만원) 표기가 함께 있어야 합니다</td><td>됨</td></tr><tr><td>전자공시(DART)</td><td>상장사·외부감사 법인만. 상호명으로 찾기</td><td>됨</td></tr><tr><td>사진·스캔 PDF</td><td>글자가 없는 그림이라 못 읽습니다. 숫자 몇 개만 «연도별 숫자 직접 넣기»에</td><td>안 됨</td></tr></tbody></table></div><h2>2. 업체 분석 보고서 (법인)</h2><div class="tw"><table><thead><tr><th>넣는 것</th><th>무엇이 채워지나</th></tr></thead><tbody><tr><td><b>세무조정계산서 PDF</b> (법인세 신고서 묶음)</td><td>회사 정보, 3년 재무, 주주명부(주식등변동상황명세서), 계정 점검</td></tr><tr><td>감사보고서 (DART)</td><td>외부감사 법인의 재무와 주석</td></tr><tr><td>법인 등기부등본</td><td>임원, 설립일, 목적 (스캔본도 글자 인식)</td></tr><tr><td>엑셀 재무제표</td><td>3년 재무</td></tr></tbody></table></div><h2>3. 재정심사 계산기</h2><p>대표 나이·성별, 대표 소득(원천징수영수증이나 종합소득세 신고서의 숫자), 지분율(주주명부), 법인 순이익. 파일은 넣지 않고 숫자만 넣습니다.</p><h2>4. 검토받기</h2><div class="tw"><table><thead><tr><th>올리는 것</th><th>꼴</th></tr></thead><tbody><tr><td>AP·PC 녹음</td><td>휴대폰 녹음 파일 (m4a·mp3), 30MB까지. 더 크면 구글 드라이브 공유 링크</td></tr><tr><td>녹취 글 · 내 스크립트</td><td>한글·워드·텍스트, 또는 그냥 붙여넣기</td></tr><tr><td>제안 PPT · 보고서</td><td>PPT·PDF</td></tr><tr><td>계약·보류 사례</td><td>업종, 매출·이익 범위, 대표 나이대, 금액, 결과 한 줄씩</td></tr></tbody></table></div><div class="notice"><b>올리기 전에 지울 것:</b> 고객 이름, 회사명, 연락처, 주민번호, 사업자번호. 업체 분석 도구에는 호칭(김 대표님, OO정밀)으로 넣어도 결과가 똑같이 나옵니다.</div>`;
 Promise.all([
   fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>null),
   fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))

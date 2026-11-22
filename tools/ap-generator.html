@@ -1360,64 +1360,153 @@ $('#ppDown').onclick=async()=>{const S=slideData($('#ppMode').value);if(!S.lengt
   try{await pp.writeFile({fileName:`${(last.c.co||'검토자료').replace(/[\\/:*?"<>|]/g,'')}_제안자료.pptx`});$('#ppMsg').textContent='내려받았습니다 (글꼴: Noto Serif KR·Pretendard, 없으면 기본 글꼴로 보입니다)'}catch(e){$('#ppMsg').textContent='내려받기 실패: '+e.message}};
 
 
-/* ---------- HTML 제안자료: PPT 대신 파일 하나 (브라우저만 있으면 열림, 밖으로 보내는 것 없음) ---------- */
-function deckChart(ch){const W=560,H=300,pl=40,pb=34,pt=22,se=ch.series,lb=ch.labels,vs=se.flatMap(s=>s.values);const mx=Math.max(1,...vs),mn=Math.min(0,...vs);
-  const y=v=>pt+(H-pt-pb)*(mx-v)/((mx-mn)||1),gw=(W-pl-10)/lb.length,bw=Math.min(40,gw*.7/se.length),cols=['#C9A96A','#CFD4DE','#8A6F3E'];
-  let g=`<line x1="${pl}" x2="${W-6}" y1="${y(0)}" y2="${y(0)}" stroke="#8D97AB"/>`;
-  lb.forEach((l,i)=>{const cx=pl+gw*i+gw/2;se.forEach((s,j)=>{const v=+s.values[i]||0,x=cx-bw*se.length/2+bw*j,y0=y(Math.max(v,0)),hh=Math.max(Math.abs(y(v)-y(0)),1);
-    g+=`<rect x="${x.toFixed(1)}" y="${y0.toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${hh.toFixed(1)}" rx="3" fill="${cols[j%3]}"/><text class="cv" x="${(x+(bw-4)/2).toFixed(1)}" y="${(v>=0?y0-6:y0+hh+14).toFixed(1)}">${v}</text>`});
-    g+=`<text class="cl" x="${cx.toFixed(1)}" y="${H-10}">${esc(l)}</text>`});
-  return `<figure class="chart"><figcaption>${esc(ch.title)}</figcaption><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(ch.title)}">${g}</svg>${se.length>1?`<div class="lg">${se.map((s,j)=>`<span><i style="background:${cols[j%3]}"></i>${esc(s.name)}</span>`).join('')}</div>`:''}</figure>`}
-function deckSlide(s,i,notes){const say=notes&&s.say?`<aside class="say">${esc(s.say)}</aside>`:'';
-  if(s.cover)return `<section class="s cover"><div class="fr"></div><p class="brand"><b>4&amp;7 NEXT</b> · 초안</p><p class="kick">PROPOSAL</p><h1>${esc(s.t)}</h1><hr><p class="sub">${esc(s.sub||'')}</p><p class="lead">대표님 회사 진단과 해결 방향</p>${say}</section>`;
-  const li=(s.b||[]).map(x=>{if(typeof x==='string')return `<li>${esc(x)}</li>`;const m=x.t.match(/^(.+?) · ([^:]+): (.*)$/),col='#'+(PPT_SIG[(x.color||'').toLowerCase()]||'F5EFE3');
-    return `<li class="sig"><i style="background:${col}"></i><span>${m?`<b>${esc(m[2])}</b> ${esc(m[3])}`:esc(x.t)}</span></li>`}).join('');
-  return `<section class="s"><div class="fr"></div><p class="brand"><b>4&amp;7 NEXT</b> · 초안</p><p class="no">${String(i).padStart(2,'0')}</p><h2>${esc(s.t)}</h2><hr><div class="body${s.chart?' two':''}"><ul>${li}</ul>${s.chart?deckChart(s.chart):''}</div><p class="foot">세무 처리는 세무사 검토 사항 · 상품 조건과 금액은 가입설계서·재정심사로 확정</p>${say}</section>`}
-function deckHtml(S,title,notes){
-  const css=`:root{--ink:#070D1A;--navy:#0B1630;--navy2:#13254A;--gold:#C9A96A;--goldhi:#ECD9AE;--ivory:#F5EFE3;--mute:#8D97AB;--soft:#CFD4DE}
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--ink);color:var(--ivory);font-family:Pretendard,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
-#deck{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
-.s{position:absolute;width:1280px;height:720px;background:var(--navy);padding:64px 76px 56px;display:none;flex-direction:column;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.s.on{display:flex}.s .fr{position:absolute;inset:24px;border:1px solid rgba(201,169,106,.5);pointer-events:none}
-.brand{position:absolute;top:34px;left:48px;margin:0;font-size:13px;letter-spacing:.18em;color:var(--mute)}.brand b{color:var(--gold)}
-.no{position:absolute;top:30px;right:52px;margin:0;font:600 18px 'Cormorant Garamond',serif;color:var(--goldhi)}
-h1,h2{font-family:'Noto Serif KR',serif;margin:0;color:var(--ivory);text-wrap:balance}h2{font-size:40px;line-height:1.25;margin-top:24px}
-hr{width:84px;border:0;border-top:2px solid var(--gold);margin:22px 0 26px}
-.body{flex:1;min-height:0;display:grid;gap:36px}.body.two{grid-template-columns:1fr 1fr;align-items:start}
-ul{margin:0;padding:0;list-style:none;display:grid;gap:14px;font-size:24px;line-height:1.45;align-content:start}
-.two ul{font-size:21px}ul li{padding-left:26px;position:relative}ul li:before{content:'';position:absolute;left:0;top:.62em;width:9px;height:9px;background:var(--gold);transform:rotate(45deg)}
-li.sig{padding-left:0;display:flex;gap:14px;font-size:20px;color:var(--soft)}li.sig:before{display:none}li.sig i{flex:none;width:16px;height:16px;border-radius:50%;margin-top:.35em}li.sig b{color:var(--ivory)}
-.foot{margin:0;font-size:12px;color:var(--mute)}
-.cover{background:radial-gradient(ellipse at 50% 45%,var(--navy2),var(--ink) 70%);align-items:center;justify-content:center;text-align:center}
-.cover .kick{margin:0 0 14px;font:600 20px 'Cormorant Garamond',serif;letter-spacing:.5em;color:var(--goldhi)}.cover h1{font-size:54px;line-height:1.25;max-width:1000px}
-.cover hr{margin:30px auto}.cover .sub{margin:0;color:var(--gold);letter-spacing:.2em;font-size:18px}.cover .lead{margin:14px 0 0;font-family:'Noto Serif KR',serif;color:var(--soft);font-size:20px}
-.chart{margin:0}.chart figcaption{font-size:16px;color:var(--soft);margin-bottom:8px}.chart svg{width:100%;height:auto}.cv{fill:var(--ivory);font-size:14px;text-anchor:middle}.cl{fill:var(--soft);font-size:14px;text-anchor:middle}
-.lg{display:flex;gap:18px;font-size:14px;color:var(--soft);margin-top:6px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px}
+/* ---------- HTML 제안자료 v2 (11/22): 검정·파랑 강의덱 결(11/21 법인 대표 미팅 덱 V04)을 따름. 파일 하나, 밖으로 보내는 것 없음 ---------- */
+const DK_ST={r:['#ef4444','빨강'],o:['#f59e0b','주황'],g:['#22c55e','초록'],x:['#64748b','자료 필요']};
+const dkE=s=>esc(String(s==null?'':s));
+const dkN=v=>(Math.round(v*10)/10).toString().replace(/\.0$/,'');
+function deckData(mode){const{c,dx,top,kv}=reportData();if(!top)return null;const int=mode==='int';
+  const a=last.amount||proposeAmount(c,top),IS=issues(c),v=valuation(c),m=PCMOD[top.id]||null,H=histRows(),notes=notesList();
+  const co=(c.co||'우리 회사').replace(/\s*\(실제 숫자 예시\)/,''),who=(c.name||'대표님').replace(/\s+/g,' ');
+  const red=IS.filter(i=>i.lv==='r'),org=IS.filter(i=>i.lv==='o'),focus=[...red,...org].slice(0,3);
+  const S=[];const today=new Date().toISOString().slice(0,10);
+  const secs=['진단','숫자','회사 가치','해결 구조','다음 일정'].filter(x=>x!=='회사 가치'||v);
+  S.push({type:'cover',label:'표지',kick:'대표님 회사 진단 · 제안',h:[`${co} 대표님,`,`지금 준비할 ${Math.max(1,focus.length)}가지`],
+    sub:`재무제표로 본 회사의 지금과 10년 뒤, 그리고 준비하는 방법을 한자리에 정리했습니다.`,agenda:secs,src:`${today} · 검토용 초안 · 세무 처리는 세무사 검토 사항 · 상품 조건과 금액은 가입설계서·재정심사로 확정`,
+    say:`${who}, 지난번에 말씀해 주신 내용을 바탕으로 회사 상황을 정리하고 해결 방법을 준비해 왔습니다. ${c.dur&&/분/.test(c.dur)?c.dur:'한 시간'} 정도 걸립니다.`});
+  if(notes.length)S.push({type:'quotes',label:'지난번 말씀',kick:'YOUR WORDS · 지난번 말씀하신 것',h:['먼저, 대표님이','<em>직접 하신 말씀</em>부터'],items:notes.slice(0,3),say:`지난번에 하신 말씀을 그대로 적어 왔습니다. 제가 맞게 이해했는지 확인하고 시작하겠습니다.`});
+  S.push({type:'grid',label:'한눈에 보는 진단',kick:'DIAGNOSIS · 한눈에 보는 진단',h:[red.length?`빨간불 <em>${red.length}개</em>,`:'급한 빨간불은 없고,',red.length?`${red[0].name}부터 봅니다`:`<em>${org.length?org[0].name:'지금 구조'}</em>부터 봅니다`],
+    sub:'회사 상황을 여덟 가지로 나눠 봤습니다. 색이 진할수록 먼저 준비할 것입니다.',items:IS.map(i=>({lv:i.lv,name:i.name,line:i.line})),
+    say:`회사 상황을 여덟 가지로 나눠 봤습니다. 빨간색이 ${red.length}개, 주황색이 ${org.length}개입니다. ${red.length?'오늘은 빨간색부터 보겠습니다.':'급한 것은 없고 주황색부터 보겠습니다.'}`});
+  const kv1=kv.filter(x=>x[1]!=='–'&&!/\[ \]/.test(x[1]));
+  const gridChart=()=>{const ys=[0,1,2].map(i=>+(($('#fy'+i)||{}).value||0)),g=k=>[0,1,2].map(i=>{const e=$(`#f3_${k}_${i}`);return e&&e.value!==''?+e.value:null});const sa=g('sales'),ni=g('ni');
+    const ix=[0,1,2].filter(i=>ys[i]&&(sa[i]!=null||ni[i]!=null));return ix.length?{labels:ix.map(i=>ys[i]+'년'),series:[{name:'매출',values:ix.map(i=>sa[i]||0)},{name:'순이익',values:ix.map(i=>ni[i]||0)}]}:null};
+  const chart=gridChart()||(H&&H.rows.some(([k])=>k==='매출')?{labels:H.years.map(y=>y+'년'),series:H.rows.filter(([k])=>k==='매출'||k==='순이익').map(([k,arr])=>({name:k,values:arr.map(x=>x==null?0:Math.round(x*10)/10)}))}:null);
+  S.push({type:'numbers',label:'회사의 현재 모습',kick:'NUMBERS · 회사의 현재 모습',h:[`매출 <em>${dkE(eok(c.sales))}</em>`,`순이익 <em>${dkE(eok(c.profit))}</em>`],sub:'주신 재무제표 기준의 대략값입니다.',kpi:kv1.slice(0,6),chart,src:'제공받은 재무제표 기준 · 억원 · 대략값',
+    say:`숫자로 보면 ${kv1.slice(0,3).map(x=>x[0]+'이 '+x[1]).join(', ')}입니다.`});
+  if(v){const p10=v.proj.find(([k])=>k===10)||v.proj[v.proj.length-1];
+    S.push({type:'vs',label:'회사 가치와 앞으로',kick:'VALUE · 대표님 지분 가치',big:[eok1(v.now),eok1(p10[1])],bigLab:['지금','10년 뒤'],
+      sub:`지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(p10[1])}입니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`,
+      bars:[['지금',v.now],...v.proj.map(([k,x])=>[k+'년 뒤',x])].map(([l,x])=>[l,Math.round(x*10)/10]),src:'최근 순이익 가중평균 기준 · 매년 3% 증가 가정 · 약식 추정이며 정식 평가가 아닙니다',
+      say:`회사가 지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(p10[1])}이 됩니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`})}
+  focus.forEach((i,n)=>{const k=dx.find(d=>i.con.includes(d.id)),X=ISSUE_X[i.n]||['',''];
+    S.push({type:'issue',label:i.name,kick:`ISSUE 0${n+1} · ${i.name}`,lv:i.lv,h:[i.line],left:X[0],right:k?k.alt:'방법은 같이 숫자를 맞춰 보며 정합니다.',need:X[1],pc:int&&k?k.pc:'',
+      say:`${i.line} 가만히 두면 ${X[0].replace(/\.$/,'')}. ${k?k.alt:''}`})});
+  S.push({type:'steps',label:'해결 구조',kick:'THE SOLUTION · 해결 구조',h:['규정 → 재원 → 관리,','<em>세 단계로 준비합니다</em>'],
+    steps:[['규정 정비','정관 · 규정 · 의사록'],['재원 마련','회사 이익의 일부를 목적에 맞게'],['사후 관리','매년 점검 · 세무사 검토']],prods:int&&m?m.products:null,
+    say:'해결은 세 단계입니다. 먼저 규정을 정비하고, 그다음 재원을 나눠서 만들고, 매년 함께 점검합니다.'});
+  if(int&&a&&!a.none)S.push({type:'amount',label:'세 가지 안 (내부)',kick:'INTERNAL · 내부 검토판',h:[`기준안 <em>월 ${man(a.mid)}</em>`],sub:'재정심사를 먼저 확인한 뒤 금액을 정합니다.',tiles:[['A안 · 부담 완화',man(a.low)],['기준안',man(a.mid)],['B안 · 여유',man(a.high)]],src:'내부용 장 · 고객에게 보여 주지 않음',
+    say:'(내부용) 세 가지 안을 준비했습니다. "어느 안이 대표님 현금 흐름에 맞으세요?" 재정심사 전에는 금액을 확정하지 않습니다.'});
+  if(m&&m.objections&&m.objections.length)S.push({type:'faq',label:'자주 묻는 질문',kick:'Q&A · 자주 묻는 질문',h:['다른 대표님들이','<em>이 단계에서 물으신 것</em>'],items:m.objections.slice(0,4),say:'다른 대표님들이 이 단계에서 많이 물어보시는 것을 미리 정리했습니다.'});
+  S.push({type:'next',label:'다음 일정',kick:'NEXT STEP · 다음 일정',h:[`${dkE(c.day||'다음 주')} ${dkE(c.time||'')}`,'<em>다음 만남에서 정할 것</em>'],items:(m?m.bring.slice(0,4):[top.bring]).filter(Boolean),
+    say:m?m.close:'오늘 정할 것은 다음 일정 하나입니다.'});
+  S.push({type:'close',label:'마무리',kick:'THANK YOU',h:['감사합니다'],sub:`주변에 비슷한 고민을 하시는 대표님이 계시면 ${dkE(c.introN||'두')} 분만 소개해 주세요. 같은 방식으로 정리해 드리겠습니다.`,src:'이 자료는 검토용 초안입니다 · 세무 처리는 세무사 검토 사항 · 상품 조건과 금액은 가입설계서·재정심사로 확정',
+    say:`마지막으로, 주변에 비슷한 고민을 하시는 대표님이 계시면 ${c.introN||'두'} 분만 소개해 주세요.`});
+  return{co,S}}
+function dkHead(s){return `<div class="kick" data-a="up"><i></i>${dkE(s.kick)}</div>`+(s.h?`<h2 data-a="up" style="--d:.08s">${s.h.join('<br>')}</h2>`:'')+(s.sub?`<p class="sub" data-a="up" style="--d:.16s">${dkE(s.sub)}</p>`:'')}
+function dkBars(labels,series,opt){opt=opt||{};const vs=series.flatMap(x=>x.values),mx=Math.max(1e-9,...vs.map(Math.abs));
+  return `<div class="bars" data-a="up" style="--d:.24s">${series.length>1?`<div class="lg">${series.map((x,j)=>`<span><i class="c${j}"></i>${dkE(x.name)}</span>`).join('')}</div>`:''}<div class="bx">${labels.map((l,i)=>`<div class="grp"><div class="cols">${series.map((x,j)=>{const val=+x.values[i]||0,hp=Math.max(2,Math.abs(val)/mx*100);const hl=opt.last&&i===labels.length-1;
+    return `<div class="col"><b>${dkN(val)}${opt.u||''}</b><i class="c${series.length>1?j:(hl?1:0)}${val<0?' neg':''}" style="--h:${hp}%;--d:${.3+i*.08+j*.04}s"></i></div>`}).join('')}</div><span>${dkE(l)}</span></div>`).join('')}</div></div>`}
+function dkSlide(s,i,n,notes){const say=notes&&s.say?`<aside class="say">${dkE(s.say)}</aside>`:'';const src=s.src?`<p class="src">${dkE(s.src)}</p>`:'';let b='';
+  if(s.type==='cover')return `<section class="s cover" data-label="${dkE(s.label)}"><div class="kick" data-a="up"><i></i>${dkE(s.kick)}</div><h1 data-a="up" style="--d:.1s">${dkE(s.h[0])}<br><em>${dkE(s.h[1])}</em></h1><p class="sub" data-a="up" style="--d:.2s">${dkE(s.sub)}</p><button class="startb" data-a="up" style="--d:.3s" data-go="1">발표 시작하기 <span>↗</span></button><div class="agenda" data-a="up" style="--d:.4s">${s.agenda.map((x,k)=>`<div><b>0${k+1}</b>${dkE(x)}</div>`).join('<i></i>')}</div>${src}${say}</section>`;
+  if(s.type==='close')return `<section class="s cover close" data-label="${dkE(s.label)}"><div class="kick" data-a="up"><i></i>${dkE(s.kick)}</div><h1 data-a="up" style="--d:.1s"><em>${dkE(s.h[0])}</em></h1><p class="sub" data-a="up" style="--d:.2s">${s.sub}</p>${src}${say}</section>`;
+  if(s.type==='quotes')b=`<div class="quotes">${s.items.map((q,k)=>`<blockquote data-a="up" style="--d:${.2+k*.1}s">«${dkE(q)}»</blockquote>`).join('')}</div>`;
+  if(s.type==='grid')b=`<div class="grid4">${s.items.map((x,k)=>`<div class="card st-${x.lv}" data-a="up" style="--d:${.18+k*.05}s"><div class="ct"><i style="background:${DK_ST[x.lv][0]}"></i><b>${dkE(x.name)}</b><em style="color:${DK_ST[x.lv][0]}">${DK_ST[x.lv][1]}</em></div><p>${dkE(x.line)}</p></div>`).join('')}</div>`;
+  if(s.type==='numbers')b=`<div class="two${s.chart?'':' one'}"><div class="kpis">${s.kpi.map((x,k)=>`<div class="kpi" data-a="up" style="--d:${.2+k*.06}s"><span>${dkE(x[0])}</span><b>${dkE(x[1])}</b></div>`).join('')}</div>${s.chart?dkBars(s.chart.labels,s.chart.series,{u:'억'}):''}</div>`;
+  if(s.type==='vs'){const h=`<div class="vs2" data-a="up" style="--d:.08s"><div><b>${dkE(s.big[0])}</b><span>${dkE(s.bigLab[0])}</span></div><i>→</i><div><b>${dkE(s.big[1])}</b><span>${dkE(s.bigLab[1])}</span></div></div>`;
+    return `<section class="s" data-label="${dkE(s.label)}"><div class="kick" data-a="up"><i></i>${dkE(s.kick)}</div>${h}<p class="sub" data-a="up" style="--d:.16s">${dkE(s.sub)}</p><div class="body">${dkBars(s.bars.map(x=>x[0]),[{name:'지분 가치',values:s.bars.map(x=>x[1])}],{last:true,u:'억'})}</div>${src}${say}</section>`}
+  if(s.type==='issue')b=`<div class="two eq"><div class="card warnc" data-a="up" style="--d:.22s"><span class="lab">그대로 두면</span><p>${dkE(s.left)}</p></div><div class="card bluec glow" data-a="up" style="--d:.34s"><span class="lab">준비하면</span><p>${dkE(s.right)}</p></div></div><div class="need" data-a="up" style="--d:.44s"><span>필요한 자료</span>${dkE(s.need)}</div>${s.pc?`<div class="need int" data-a="up" style="--d:.5s"><span>PC 방향 (내부)</span>${dkE(s.pc)}</div>`:''}`;
+  if(s.type==='steps')b=`<div class="steps">${s.steps.map((x,k)=>`<div class="card stp" data-a="up" style="--d:${.22+k*.12}s"><i>${k+1}</i><div><b>${dkE(x[0])}</b><p>${dkE(x[1])}</p></div></div>`).join('<span class="arr" data-a="up" style="--d:.3s">→</span>')}</div>${s.prods?`<div class="need int" data-a="up" style="--d:.6s"><span>상품 후보 (내부)</span>${dkE(s.prods.join(' · '))}</div>`:''}`;
+  if(s.type==='amount')b=`<div class="tiles">${s.tiles.map((x,k)=>`<div class="card tile${k===1?' bluec glow':''}" data-a="up" style="--d:${.2+k*.1}s"><span>${dkE(x[0])}</span><b>월 ${dkE(x[1])}</b></div>`).join('')}</div>`;
+  if(s.type==='faq')b=`<div class="faq">${s.items.map(([q,r],k)=>`<div class="card" data-a="up" style="--d:${.2+k*.08}s"><b>Q. ${dkE(q)}</b><p>${dkE(r)}</p></div>`).join('')}</div>`;
+  if(s.type==='next')b=`<ul class="chk">${s.items.map((x,k)=>`<li data-a="up" style="--d:${.2+k*.08}s"><i>✓</i>${dkE(x)}</li>`).join('')}</ul>`;
+  const lvCls=s.type==='issue'?` lv-${s.lv}`:'';
+  return `<section class="s${lvCls}" data-label="${dkE(s.label)}">${dkHead(s)}<div class="body">${b}</div>${src}${say}</section>`}
+function deckHtml(D,title,notes){const S=D.S,n=S.length;
+  const css=`:root{--bg:#0b0d12;--bg2:#06070a;--fg:#f2f4f8;--sub:#8b93a7;--mut:#5b6478;--acc:#3b82f6;--acc2:#93c5fd;--line:#232a3b;--card:#141824;--warn:#ef4444}
+*{box-sizing:border-box;margin:0}html,body{height:100%;background:var(--bg2);color:var(--fg);font-family:Pretendard,'Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow:hidden}
+#stage{position:fixed;left:50%;top:50%;width:1600px;height:900px;background:var(--bg);transform-origin:center;overflow:hidden}
+.top{position:absolute;left:0;right:0;top:0;height:72px;display:flex;align-items:center;gap:18px;padding:0 48px;border-bottom:1px solid #1b2130;z-index:3}
+.top .brand{font-weight:800;font-size:22px;letter-spacing:-.02em}.top .brand em{font-style:normal;color:var(--acc)}.top .tag{font-size:13px;letter-spacing:.3em;color:var(--sub)}
+.top .ttl{flex:1;text-align:center;color:var(--sub);font-size:16px}.top button,.bot button{background:transparent;color:var(--fg);border:1px solid #2b3344;border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px;font-family:inherit;cursor:pointer}
+.top button:hover,.bot button:hover{border-color:var(--acc)}
+.bot{position:absolute;left:0;right:0;bottom:0;height:72px;display:flex;align-items:center;gap:16px;padding:0 48px;border-top:1px solid #1b2130;z-index:3}
+.bot .pg{font-size:18px;color:var(--sub)}.bot .pg b{color:var(--acc)}.bot .lbl{font-weight:700;font-size:16px}.bot .hint{flex:1;text-align:right;color:var(--mut);font-size:13px}
+.bot .nv{width:46px;height:46px;border-radius:50%;font-size:20px;padding:0}.prog{position:absolute;left:0;bottom:0;height:3px;background:var(--acc);transition:width .4s;z-index:4}
+.s{position:absolute;left:0;right:0;top:72px;bottom:72px;padding:48px 120px 40px;display:none;flex-direction:column;align-items:center;text-align:center}
+.s.on{display:flex}
+.kick{display:flex;align-items:center;gap:12px;font-size:15px;letter-spacing:.28em;color:var(--sub);font-weight:600}.kick i{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+h1,h2{font-weight:800;letter-spacing:-.035em;line-height:1.14;margin-top:22px;text-wrap:balance}h1{font-size:96px}h2{font-size:60px}h1 em,h2 em{font-style:normal;color:var(--acc)}
+.sub{margin-top:20px;font-size:24px;line-height:1.55;color:#b6bdcc;max-width:1180px}
+.body{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;justify-content:center;gap:18px;margin-top:20px}
+.src{width:100%;border-top:1px solid var(--line);padding-top:14px;font-size:14px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:26px 28px;text-align:left}
+.card p{font-size:20px;line-height:1.55;color:#c4cad6;margin-top:8px}
+.cover{justify-content:center}.cover .sub{font-size:26px}
+.startb{margin-top:38px;background:var(--acc);color:#fff;border:0;padding:20px 34px;font-weight:700;font-size:22px;font-family:inherit;cursor:pointer;box-shadow:0 0 40px rgba(59,130,246,.35)}.startb span{margin-left:18px}
+.agenda{margin-top:64px;width:100%;display:flex;align-items:center;gap:18px;font-size:20px;font-weight:700}.agenda div{display:flex;gap:12px;white-space:nowrap}.agenda b{color:var(--acc)}.agenda>i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.6}
+.cover .src{margin-top:40px;border:0;text-align:center}
+.close h1{font-size:120px}
+.quotes{display:grid;gap:18px;max-width:1100px;margin:0 auto;width:100%}blockquote{border-left:4px solid var(--acc);background:var(--card);padding:24px 30px;font-size:28px;text-align:left;line-height:1.5}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}.grid4 .card{padding:18px 20px}.grid4 .ct{display:flex;align-items:center;gap:10px}.grid4 .ct i{width:12px;height:12px;border-radius:50%;flex:none}.grid4 .ct b{font-size:20px}.grid4 .ct em{margin-left:auto;font-style:normal;font-size:13px;font-weight:700}
+.grid4 .card p{font-size:16px;line-height:1.5;margin-top:10px}.grid4 .st-r{border-color:rgba(239,68,68,.5);box-shadow:inset 0 3px 0 #ef4444}.grid4 .st-o{box-shadow:inset 0 3px 0 #f59e0b}.grid4 .st-x{opacity:.7}
+.two{display:grid;grid-template-columns:5fr 7fr;gap:40px;align-items:center;width:100%}.two.eq{grid-template-columns:1fr 1fr;align-items:stretch}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi{background:var(--card);border:1px solid var(--line);padding:18px 20px;text-align:left}.kpi span{font-size:15px;color:var(--sub)}.kpi b{display:block;font-size:36px;font-weight:800;letter-spacing:-.02em;margin-top:4px}
+.bars{width:100%;position:relative;margin-bottom:40px}.bars .lg{display:flex;gap:18px;justify-content:flex-end;font-size:16px;font-weight:700;margin-bottom:10px}.bars .lg i{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-1px}
+.bx{display:flex;align-items:flex-end;gap:24px;height:290px;border-bottom:1px solid #2b3344;background:repeating-linear-gradient(0deg,transparent 0 54px,#1a2030 54px 55px)}
+.grp{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;position:relative}.grp>span{position:absolute;bottom:-34px;font-size:18px;font-weight:600}
+.cols{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:14px}.col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;width:72px}
+.col b{font-size:17px;margin-bottom:8px;font-weight:700}.col i{display:block;width:100%;height:var(--h);border-radius:6px 6px 0 0;transform-origin:bottom;transform:scaleY(0)}
+.c0{background:#8a93a6}.c1{background:var(--acc);box-shadow:0 0 22px rgba(59,130,246,.45)}.c2{background:var(--acc2)}.col i.neg{background:var(--warn)}
+.s.on .col i{animation:grow .8s cubic-bezier(.2,.8,.2,1) var(--d,.3s) forwards}@keyframes grow{to{transform:scaleY(1)}}
+.vs2{display:flex;align-items:center;gap:40px;margin-top:18px}.vs2 div{display:grid;gap:6px}.vs2 b{font-size:100px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--acc)}.vs2 span{color:var(--sub);font-size:18px}.vs2 i{font-style:normal;font-size:54px;color:var(--sub)}
+.two.one{grid-template-columns:1fr}.two.one .kpis{grid-template-columns:repeat(3,1fr)}
+.lab{display:inline-block;font-size:15px;font-weight:700;letter-spacing:.06em;padding:5px 12px;border-radius:999px;background:#1f2636}
+.warnc{border-top:3px solid var(--warn)}.warnc .lab{color:#fca5a5}.bluec{background:linear-gradient(180deg,rgba(59,130,246,.16),rgba(59,130,246,.06));border-color:rgba(59,130,246,.55)}.bluec .lab{background:var(--acc);color:#fff}
+.two.eq .card p{font-size:24px;margin-top:16px}.glow{box-shadow:0 0 50px rgba(59,130,246,.22)}
+.need{align-self:center;font-size:19px;color:#c4cad6;display:flex;gap:14px;align-items:center}.need span{font-size:14px;font-weight:700;color:var(--acc2);border:1px solid #2b3a57;padding:5px 12px;border-radius:999px}.need.int span{color:#fcd34d;border-color:#5b4a1d}
+.steps{display:flex;align-items:stretch;gap:18px;width:100%}.steps .stp{flex:1;display:flex;gap:18px;align-items:center}.stp>i{flex:none;width:52px;height:52px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:22px}
+.stp b{font-size:26px}.stp p{font-size:18px;margin-top:6px}.arr{align-self:center;color:var(--acc);font-size:30px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}.tile{text-align:center;padding:34px}.tile span{color:var(--sub);font-size:18px}.tile b{display:block;font-size:44px;font-weight:800;margin-top:10px}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.faq b{font-size:21px}.faq p{font-size:18px}
+.chk{list-style:none;padding:0;display:grid;gap:14px;max-width:1000px;margin:0 auto;width:100%}.chk li{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);padding:18px 24px;font-size:24px;text-align:left}.chk i{flex:none;width:34px;height:34px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-style:normal;font-weight:800}
+.lv-r h2{color:var(--fg)}.lv-r .kick i{background:var(--warn);box-shadow:0 0 12px var(--warn)}
+[data-a]{opacity:0}.s.on [data-a]{animation:up .6s cubic-bezier(.2,.8,.2,1) var(--d,0s) both}@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .say{display:none!important}
-#notesBox{position:fixed;left:0;right:0;bottom:0;max-height:30vh;overflow:auto;background:rgba(7,13,26,.94);border-top:1px solid var(--gold);padding:14px max(16px,env(safe-area-inset-left)) calc(14px + env(safe-area-inset-bottom));font-size:17px;line-height:1.6;color:var(--ivory);display:none}
-body.notes #notesBox{display:block}
-#bar{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));display:flex;gap:6px;align-items:center;font-size:13px;opacity:.25;transition:opacity .2s;z-index:5}#bar:hover,#bar:focus-within{opacity:1}
-#bar button{background:rgba(19,37,74,.9);color:var(--ivory);border:1px solid rgba(201,169,106,.5);border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}#pg{color:var(--soft);min-width:52px;text-align:center}
-body.grid #deck{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:60px max(16px,env(safe-area-inset-left)) 24px;overflow:visible}
-body.grid .s{display:flex;position:relative;transform:none!important;width:1280px;height:720px;zoom:.23;cursor:pointer}body.grid .s .say{display:none!important}
-@media print{@page{size:1280px 720px;margin:0}html,body{background:var(--navy)}#bar,#notesBox{display:none!important}#deck{position:static;display:block}.s{display:flex!important;position:relative;transform:none!important;box-shadow:none;break-after:page}.say{display:none!important}}`;
-  const js=`(function(){var S=[].slice.call(document.querySelectorAll('.s')),i=0,b=document.body,nb=document.getElementById('notesBox');
-function fit(){var k=Math.min(innerWidth/1280,(innerHeight-(b.classList.contains('notes')?nb.offsetHeight:0))/720);S.forEach(function(s){s.style.transform=b.classList.contains('grid')?'':'scale('+k+')'})}
-function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach(function(s,j){s.classList.toggle('on',j===i)});document.getElementById('pg').textContent=(i+1)+' / '+S.length;var a=S[i].querySelector('.say');nb.textContent=a?a.textContent:'(이 장은 발표 메모가 없습니다)';try{history.replaceState(null,'','#'+(i+1))}catch(e){}fit()}
+#notesBox{position:fixed;left:0;right:0;bottom:0;max-height:28vh;overflow:auto;background:rgba(6,7,10,.95);border-top:2px solid var(--acc);padding:14px max(16px,env(safe-area-inset-left)) calc(14px + env(safe-area-inset-bottom));font-size:18px;line-height:1.6;display:none;z-index:9}body.notes #notesBox{display:block}
+body.grid{overflow:auto}body.grid #stage{position:static;transform:none!important;width:auto;height:auto;background:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding:20px}
+body.grid .top,body.grid .bot,body.grid .prog{display:none}body.grid .s{display:flex;position:relative;inset:auto;width:1600px;height:756px;zoom:.2;border:1px solid var(--line);cursor:pointer;background:var(--bg)}body.grid [data-a]{opacity:1;animation:none}body.grid .col i{transform:none}
+body.list{overflow:auto}body.list #stage{position:static;transform:none!important;width:100%;height:auto;background:none}body.list .top,body.list .bot,body.list .prog{display:none}
+body.list .s{display:flex;position:relative;inset:auto;width:1600px;height:780px;background:var(--bg);border-bottom:1px solid var(--line)}body.list [data-a]{opacity:1;animation:none}body.list .col i{transform:none}
+body.list .lhd{display:block}.lhd{display:none;position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 16px;font-size:15px;border-bottom:1px solid var(--line)}.lhd b{color:var(--acc)}
+@media print{@page{size:1600px 900px;margin:0}html,body{overflow:visible;background:var(--bg)}#stage{position:static;transform:none!important}.top,.bot,.prog,#notesBox{display:none!important}.s{display:flex!important;position:relative;inset:auto;height:900px;break-after:page}[data-a]{opacity:1!important;animation:none!important}.col i{transform:none!important}}`;
+  const js=`(function(){var S=[].slice.call(document.querySelectorAll('.s')),i=0,b=document.body,st=document.getElementById('stage'),nb=document.getElementById('notesBox');
+var phone=function(){return innerWidth<760&&innerHeight>innerWidth};
+function fit(){if(phone()){b.classList.add('list');var k=innerWidth/1600;S.forEach(function(s){s.style.zoom=k});return}b.classList.remove('list');S.forEach(function(s){s.style.zoom=''});
+ if(b.classList.contains('grid'))return;var k=Math.min(innerWidth/1600,(innerHeight-(b.classList.contains('notes')?nb.offsetHeight:0))/900);st.style.transform='translate(-50%,-50%) scale('+k+')'}
+function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach(function(s,j){s.classList.toggle('on',j===i)});document.getElementById('pgn').textContent=String(i+1).padStart(2,'0');document.getElementById('lbl').textContent=S[i].getAttribute('data-label')||'';
+ document.getElementById('prog').style.width=((i+1)/S.length*100)+'%';var a=S[i].querySelector('.say');nb.textContent=a?a.textContent:'(이 장은 발표 메모가 없습니다)';try{history.replaceState(null,'','#'+(i+1))}catch(e){}fit()}
 function tog(c){b.classList.toggle(c);fit()}
 document.getElementById('prev').onclick=function(){go(i-1)};document.getElementById('next').onclick=function(){go(i+1)};
-var nt=document.getElementById('nt');if(nt)nt.onclick=function(){tog('notes')};document.getElementById('ov').onclick=function(){tog('grid')};document.getElementById('fs').onclick=function(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
-addEventListener('keydown',function(e){var k=e.key;if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();go(i+1)}else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();go(i-1)}else if(k==='Home')go(0);else if(k==='End')go(S.length-1);else if((k==='n'||k==='N')&&nt)tog('notes');else if(k==='o'||k==='O'||k==='Escape'&&b.classList.contains('grid'))tog('grid');else if(k==='f'||k==='F')document.getElementById('fs').click()});
-document.getElementById('deck').addEventListener('click',function(e){if(b.classList.contains('grid')){var s=e.target.closest('.s');if(s){b.classList.remove('grid');go(S.indexOf(s))}return}if(e.target.closest('a,button'))return;go(e.clientX>innerWidth/2?i+1:i-1)});
-var x0=null;addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});addEventListener('touchend',function(e){if(x0==null)return;var d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>40)go(d<0?i+1:i-1);x0=null},{passive:true});
+var nt=document.getElementById('nt');if(nt)nt.onclick=function(){tog('notes')};document.getElementById('ov').onclick=function(){tog('grid')};
+document.getElementById('fs').onclick=function(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+addEventListener('keydown',function(e){var k=e.key;if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();go(i+1)}else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();go(i-1)}
+ else if(k==='Home')go(0);else if(k==='End')go(S.length-1);else if((k==='n'||k==='N')&&nt)tog('notes');else if(k==='o'||k==='O'||(k==='Escape'&&b.classList.contains('grid')))tog('grid');else if(k==='f'||k==='F')document.getElementById('fs').click()});
+st.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g){go(+g.getAttribute('data-go'));return}if(b.classList.contains('grid')){var s=e.target.closest('.s');if(s){b.classList.remove('grid');go(S.indexOf(s))}return}
+ if(b.classList.contains('list')||e.target.closest('button,a,.top,.bot'))return;var r=st.getBoundingClientRect();go(e.clientX<r.left+r.width/4?i-1:i+1)});
+var x0=null;addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});addEventListener('touchend',function(e){if(x0==null||b.classList.contains('list'))return;var d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>40)go(d<0?i+1:i-1);x0=null},{passive:true});
 addEventListener('resize',fit);go((parseInt(location.hash.slice(1),10)||1)-1)})();`;
-  return `<!doctype html><ht${''}ml lang="ko"><he${''}ad><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Cormorant+Garamond:wght@600&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<st${''}yle>${css}<\/style><\/head><bo${''}dy><div id="bar"><button id="prev" aria-label="이전">‹</button><span id="pg"></span><button id="next" aria-label="다음">›</button>${notes?'<button id="nt">메모 N</button>':''}<button id="ov">전체 O</button><button id="fs">크게 F</button></div>
-<main id="deck">${S.map((s,i)=>deckSlide(s,i,notes)).join('')}</main><div id="notesBox"></div><scr${''}ipt>${js}<\/script><\/body><\/html>`}
-function deckFile(){const S=slideData($('#ppMode').value);if(!S.length){$('#ppMsg').textContent='먼저 «분석 시작»을 눌러 주세요.';return null}
-  const co=(last.c.co||'검토자료').replace(/[\\/:*?"<>|]/g,''),notes=$('#ppNotes').checked;
-  return {name:`${co}_제안자료${$('#ppMode').value==='int'?'_내부':''}.html`,blob:new Blob([deckHtml(S,`${co} 제안 자료`,notes)],{type:'text/html'})}}
+  const today=new Date().toISOString().slice(0,10);
+  return `<!doctype html><ht${''}ml lang="ko"><he${''}ad><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${dkE(title)}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><st${''}yle>${css}<\/style><\/head><bo${''}dy>
+<div class="lhd"><b>${dkE(D.co)}</b> 제안 자료 · 휴대폰은 위아래로 넘겨 보세요. 가로로 돌리면 한 장씩 봅니다.</div>
+<div id="stage"><div class="top"><span class="brand">4<em>&amp;</em>7 NEXT</span><span class="tag">PROPOSAL · ${today.replace(/-/g,'.')}</span><span class="ttl">${dkE(title)}</span>${notes?'<button id="nt">메모 N</button>':''}<button id="ov">목록 O</button><button id="fs">⛶</button></div>
+${S.map((s,k)=>dkSlide(s,k,n,notes)).join('\n')}
+<div class="bot"><span class="pg"><b id="pgn">01</b> / ${String(n).padStart(2,'0')}</span><span class="lbl" id="lbl"></span><span class="hint">←→ 이동 · 스페이스·엔터 다음</span><button class="nv" id="prev" aria-label="이전">←</button><button class="nv" id="next" aria-label="다음">→</button></div><div class="prog" id="prog"></div></div>
+<div id="notesBox"></div><scr${''}ipt>${js}<\/script><\/body><\/html>`}
+
+function deckFile(){const D=deckData($('#ppMode').value);if(!D){$('#ppMsg').textContent='먼저 «분석 시작»을 눌러 주세요.';return null}
+  const co=D.co.replace(/[\/:*?"<>|]/g,''),notes=$('#ppNotes').checked;
+  return {name:`${co}_제안자료${$('#ppMode').value==='int'?'_내부':''}.html`,blob:new Blob([deckHtml(D,`${D.co} 대표님 제안 자료`,notes)],{type:'text/html'})}}
 $('#ppHtml').onclick=()=>{const f=deckFile();if(!f)return;const u=URL.createObjectURL(f.blob),a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);
   $('#ppMsg').textContent=`내려받았습니다: ${f.name} (더블클릭하면 브라우저로 열립니다. ${$('#ppNotes').checked?'고객에게 보낼 때는 «발표 메모 넣기»를 끄고 다시 받으세요':'발표 메모 없는 고객 전달용'})`};
 $('#ppHtmlOpen').onclick=()=>{const f=deckFile();if(!f)return;const u=URL.createObjectURL(f.blob),w=window.open(u,'_blank');if(!w)$('#ppMsg').textContent='팝업이 막혔어요. «HTML 제안자료 내려받기»로 받아 여세요.';setTimeout(()=>URL.revokeObjectURL(u),60000)};

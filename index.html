@@ -1104,7 +1104,7 @@ function toast(t){let el=$('#toast');if(!el){el=document.createElement('div');el
 const md=t=>marked.parse(t.replace(/~/g,'\\~'));
 const easyPart=t=>t.split('<details class="orig">')[0];
 async function showAbout(){tpl('tpl-rules');const a=M.about;
-  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span><span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#start">5분 따라하기</a></div>`;
+  $('#view').innerHTML=`<div class="meta"><span>4&amp;7 NEXT 허브</span><span id="rtime"></span></div><div class="toc" id="toc"></div><div class="doc" id="doc">불러오는 중</div><div class="btnrow"><a class="btn p" href="#home">허브 둘러보기</a><a class="btn" href="#manual">메뉴 쓰는 법</a></div>`;
   if(!a){$('#doc').textContent='준비 중입니다.';return}
   try{const r=await fetch(a.file,{cache:'no-store'});const t=await r.text();if(location.hash.slice(1)!=='about')return;
     $('#doc').innerHTML=md(t);enhanceDoc($('#doc'),{id:'about',readable:true});document.title='사이트 안내 · 4&7 NEXT 허브'}

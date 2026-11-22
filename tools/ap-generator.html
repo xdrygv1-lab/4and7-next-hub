@@ -816,6 +816,9 @@ async function ocrPdf(buf,onp){const lib=await needPdf();const doc=await lib.get
 function ocrClean(rows){return rows.map(r=>{const t0=String(r[0]);if(t0.startsWith(PAGE))return r;
   let t=t0.replace(/[|\[\]{}®¢!"'`_~ㅣ]/g,' ').replace(/(20\d\d)\s+(\d{1,2})\s*월/g,'$1년 $2월');
   t=t.split(/\s+/).map(w=>/^[(△▲\-]?\d{1,3}([.,]\d{3})+\)?$/.test(w)&&/\./.test(w)&&((w.match(/[.,]/g)||[]).length>=2||/,/.test(w))?w.replace(/\./g,','):w).join(' ');
+  t=t.replace(/^([^\d]*?)(?=\s[(△▲\-]?\d|$)/,lab=>{if(!/[가-힣]/.test(lab))return lab;const h=lab.replace(/[A-Za-z®©^=_&*#@~:;`\\/]/g,' ');
+    if(/^[\s.,]*출\s*액\s*$/.test(h))return '매출액';if(/^[\s.,]*(당\s*)?기\s*순\s*이\s*[익의믹]\s*$/.test(h)||/^[\s.,]*당\s*기\s*이\s*[익의믹]\s*$/.test(h))return '당기순이익';if(/^[\s.,]*(당\s*)?기\s*순\s*손\s*실\s*$/.test(h))return '당기순손실';
+    if(/^[\s.,]*이\s*익\s*잉\s*여\s*(금)?\s*$/.test(h))return '이익잉여금';if(/^[\s.,]*자\s*본\s*총\s*\S?\s*$/.test(h))return '자본총계';return lab});
   return [t.replace(/\s+/g,' ').trim()]}).filter(r=>r[0])}
 /* 세무조정계산서처럼 여러 서식이 섞인 PDF: 제목이 «재무상태표·손익계산서»인 쪽만 읽음 (업체 분석 보고서와 같은 방식).
    그런 쪽이 없고 홈택스 «표준재무상태표·표준손익계산서»만 있으면 그 쪽만 골라 «과목·코드·금액» 묶음으로 풀어 당기 1년만 읽음 */
@@ -858,15 +861,15 @@ function fsYears(txt){const b=[...txt.matchAll(/(20\d\d)\s*[\/.\-]\s*12\s*[\/.\-
   const ys=[...new Set(b)].sort((x,y)=>y-x);return ys.length?ys:null}
 /* 결산보고서처럼 금액 줄 바로 아래에 과목 이름이 따로 찍힌 표: «7,015,639,985원 2,864,940,038원» + «자본총계» → 한 줄로 */
 function mergeLabelRows(rows){const out=[];for(let i=0;i<rows.length;i++){const t=rows[i].map(String).join(' ').trim(),nx=rows[i+1]?rows[i+1].map(String).join(' ').trim():'';
-    if(!t.startsWith(PAGE)&&!/[가-힣]/.test(t.replace(/원/g,''))&&/\d{1,3},\d{3}/.test(t)&&/^[가-힣()·\s]{2,20}$/.test(nx)){out.push([nx+' '+t]);i++}else out.push(rows[i])}return out}
+    if(!t.startsWith(PAGE)&&!/[가-힣]/.test(t.replace(/원/g,''))&&/\d{1,3},\d{3}/.test(t)&&/^[가-힣][가-힣()·\s]{1,19}$/.test(nx)){out.push([nx+' '+t]);i++}else out.push(rows[i])}return out}
 function parseRows(rows){rows=mergeLabelRows(rows);const cur={},prev={},unit=unitFrom(rows.map(r=>r.join(' ')));
   /* 쉼표 없이 소수점이 있는 값(비율 100.00·63.7)과 쉼표 없는 3자리 이하(코드)는 금액으로 안 봄 */
   const n=t=>{t=String(t).trim().replace(/원$/,'');if(!/\d/.test(t))return null;if(/,/.test(t)&&!/^[(△▲\-]?\d{1,3}(,\d{3})+(\.\d+)?\)?$/.test(t))return null;if(!/,/.test(t)&&/\./.test(t))return null;const neg=/^\(|^-|^△|^▲/.test(t);const d=t.replace(/[^\d.]/g,'');if(!d||(!/,/.test(t)&&d.length<4&&+d!==0))return null;const v=parseFloat(d);return isNaN(v)?null:(neg?-v:v)};
   let prevL='';
   rows.forEach(r=>{let cells=r.map(String);let name=cells[0];
     /* 위하고 재무상태표 맨 아래 «( 당 기 순 이 익 )» 다음 줄 «당기 : 121,912,525 원» → 손익계산서가 없거나 못 읽어도 순이익으로 씀 */
-    {const jl=cells.join(' ').replace(/\s+/g,' ').trim(),pl=prevL;prevL=jl;const mb=jl.match(/^당\s*기\s*:?\s*(-?[\d,]{4,})\s*원?$/);
-     if(mb&&/\(?\s*당\s*기\s*순\s*(이\s*익|손\s*실)\s*\)?$/.test(pl)){const v=+mb[1].replace(/,/g,'');if(cur.niBS==null)cur.niBS=/손\s*실/.test(pl)&&v>0?-v:v;return}}
+    {const jl=cells.join(' ').replace(/\s+/g,' ').trim(),pl=prevL;prevL=jl;const mb=jl.match(/^당\s*기\s*[:：]?\s*(-?[\d,]{4,})\s*원?$/);
+     if(mb&&/기\s*순\s*(이\s*[익의믹]|손\s*실)\s*\)?$/.test(pl)){const v=+mb[1].replace(/,/g,'');if(cur.niBS==null)cur.niBS=/손\s*실/.test(pl)&&v>0?-v:v;return}}
     /* PDF 는 한 줄이 한 덩어리로 올 때가 있어 숫자 앞을 과목으로 */
     if(cells.length===1||!/[가-힣]/.test(name)){const j=cells.join(' ').replace(/^\s*(?:\(\d+\)|\d+\.|[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.|[IVX]+\.)\s*/,'');const m=j.match(/^([^\d(△▲-]+)(.*)$/);if(!m)return;name=m[1];cells=[name,...(m[2].match(/[(△▲-]?[\d,]+(?:\.\d+)?\)?/g)||[])]}
     const key=name.replace(/^[.,·:;\s]+/,'').replace(/^[\sⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|^[IVXLivxl]{1,4}\.|\(\d+\)|^\d+\.|^[가나다라마바사아자차카타파하]\.|\s/g,'').replace(/^[가나다라마바사아자차카타파하]\./,'');if(!key)return;

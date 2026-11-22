@@ -381,7 +381,7 @@ function result(){
     const TP = (() => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } })();
     if (!TP) { $('sendMsg').textContent = '팀 비밀번호를 넣은 기기에서만 저장할 수 있어요.'; return; }
     $('send').disabled = true; $('sendMsg').textContent = '저장하는 중…';
-    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), mgmt: R.ax.map(x => x.a.name + '(' + x.pole[1] + '): ' + MGMT[x.pole[0]][VER === 'pro' ? 1 : 0]).join(' / '), ver: VER === 'pro' ? '지점원' : '신입' }) })).then(r => r.json())
+    fetch('../config.json', { cache: 'no-store' }).then(r => r.json()).then(c => fetch(c.endpoint, { method: 'POST', body: JSON.stringify({ action: 'mbti', pass: TP, who: $('who').value, branch: (() => { try { return JSON.parse(localStorage.getItem('hub-me') || '{}').branch || ''; } catch (e) { return ''; } })(), cert: $('cert').value, career: $('career').value, code: R.code, nick: (TYPES[R.code] || [nick])[0], pct: R.ax.map(x => x.pct), gap: R.gap, ans: Q.map((q, i) => ans[i]), mgmt: R.ax.map(x => x.a.name + '(' + x.pole[1] + '): ' + MGMT[x.pole[0]][VER === 'pro' ? 1 : 0]).join(' / '), ver: VER === 'pro' ? '지점원' : '신입' }) })).then(r => r.json())
       .then(r => { $('sendMsg').textContent = r.ok ? '팀 기록에 저장했어요.' : (r.error || '저장하지 못했어요.'); if (r.ok) $('send').textContent = '저장 완료'; else $('send').disabled = false; }).catch(() => { $('sendMsg').textContent = '서버에 연결하지 못했어요.'; $('send').disabled = false; });
   };
 }
@@ -390,6 +390,8 @@ $('verbox').addEventListener('click', e => { const b = e.target.closest('button[
   const c = $('career'); if (VER === 'new' && +c.value > 1) c.value = '0'; if (VER === 'pro' && +c.value < 1) c.value = '2';
   save(); renderQs(); $('result').hidden = true; });
 $('done').onclick = result;
+/* 11/23 업체 분석에서 넣은 이름·지점(hub-me)이 있으면 이름 칸을 채움. 지점은 팀 기록에 함께 남아 지점장 보기에서 지점별로 봄 */
+try { const me = JSON.parse(localStorage.getItem('hub-me') || 'null'); if (me && me.name && !$('who').value) $('who').value = me.name; } catch (e) {}
 ['who','cert','career'].forEach(k => $(k).addEventListener('change', save));
 /* ── 지점장 보기 (?view=mgr). 지점장 비밀번호(서버 MGR_PASS) 또는 관리자 키로 연다.
    나중에 사람마다 이름·비밀번호를 주고 지점과 연결하면, 서버 mbtilist 가 그 지점 기록만 돌려주게 바꾼다. */

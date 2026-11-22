@@ -160,7 +160,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <aside>
   <details open class="imp">
     <summary>0. 자료 불러오기 (자동 입력)</summary>
-    <p class="hint">위하고 엑셀·PDF, 세무조정계산서·결산보고서·홈택스 신고서 PDF, 표준재무제표증명, DART 재무제표 엑셀, 홈택스 주주명부 엑셀을 넣으면 재무 칸과 회사 정보를 채웁니다. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어 꼭 원본과 맞춰 보세요. 여러 개를 한꺼번에 넣으면 연도별로 합칩니다. 파일은 이 기기 안에서만 읽고 어디로도 보내지 않습니다.</p>
+    <p class="hint">위하고 엑셀·PDF, 세무조정계산서·결산보고서·홈택스 신고서 PDF, 표준재무제표증명, DART 재무제표 엑셀, 홈택스 주주명부 엑셀을 넣으면 재무 칸과 회사 정보를 채웁니다. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어 꼭 원본과 맞춰 보세요. 여러 개를 한꺼번에 넣으면 연도별로 합칩니다. 파일 자체는 이 기기에서만 읽어요. 분석 결과(회사명·대표·숫자·컨셉)는 이름·지점을 넣으면 우리 지점장만 보는 팀 기록에 남아요.</p>
     <input type="file" id="impFile" accept=".pdf,.xlsx,.xls,.csv,.txt" multiple>
     <div class="f">
       <label>자료 단위<select id="impUnit"><option value="auto">자동 (파일에 적힌 단위)</option><option value="1">원</option><option value="1000">천원</option><option value="1000000">백만원</option></select></label>
@@ -1111,7 +1111,7 @@ fill(saved||SAMPLE);
   const box=document.createElement('section');box.className='qs';
   const isSample=()=>AP?($1('#co')||{}).value==='OO정밀':/^B사/.test(($1('#co')||{}).value||'');
   box.innerHTML=`<h3>처음이면 이 ${AP?'세':'두'} 가지만 <small style="font-weight:400;opacity:.75">${AP?'결과: 보고서 · 컨셉 · 스크립트 · PC · 제안자료':'결과: 회사 가치 · 잉여금 · CEO 리스크 · AP 질문'}</small></h3>
-   <div class="row"><span class="n">1</span><div class="drop" tabindex="0" role="button"><b>세무조정계산서 PDF를 여기로 끌어 놓거나 눌러서 고르기</b><small>결산보고서·홈택스 신고서·위하고 PDF·엑셀도 됩니다. 여러 개 한꺼번에. 파일은 이 컴퓨터 안에서만 읽어요.</small></div></div>
+   <div class="row"><span class="n">1</span><div class="drop" tabindex="0" role="button"><b>세무조정계산서 PDF를 여기로 끌어 놓거나 눌러서 고르기</b><small>결산보고서·홈택스 신고서·위하고 PDF·엑셀도 됩니다. 여러 개 한꺼번에. 파일 자체는 이 기기에서만 읽어요. 분석 결과(회사명·대표·숫자·컨셉)는 이름·지점을 넣으면 우리 지점장만 보는 팀 기록에 남아요.</small></div></div>
    ${AP?`<div class="row"><span class="n">2</span><div class="three"><label>대표 나이<input type="number" id="qsAge" min="20" max="90" placeholder="예: 52"></label><label>성별<select id="qsSex"><option>남</option><option>여</option></select></label><label>대표 연소득 (억, 급여+배당)<input type="number" id="qsInc" step="0.1" placeholder="모르면 비움"></label></div></div>
    <div class="row"><span class="n">3</span><button type="button" class="go" id="qsGo">분석 시작</button></div>`
    :`<div class="row"><span class="n">2</span><button type="button" class="go" id="qsGo">결과 보기</button></div>`}
@@ -1162,6 +1162,44 @@ fill(saved||SAMPLE);
     const m=$1('#impMsg');if(m)m.textContent=`${L}사 예시를 채웠어요 (실제 업체 숫자, 이름만 가림).`;const out=$1('#out');if(out&&innerWidth<900)out.scrollIntoView({behavior:'smooth'})}
   box.addEventListener('click',e=>{const b=e.target.closest('[data-ex]');if(!b)return;(AP?loadAP:loadCA)(b.dataset.ex)});
   const qs=$1('.qs');if(qs)qs.after(box);else{const h=AP?$1('#form'):$1('aside');if(h)h.prepend(box)}})();
+</script>
+<style>
+.me{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px;padding:8px 10px;border-radius:10px;background:var(--card,var(--panel,#fff));border:1px solid var(--line,#ccd)}
+.me input,.me select{padding:6px 8px;border:1px solid var(--line,#ccd);border-radius:8px;font:inherit;background:var(--card,#fff);color:inherit;min-width:0}
+.me input{width:9em}.me button{padding:6px 10px;border-radius:8px;border:0;background:var(--acc,#2f5bd3);color:#fff;font:inherit;cursor:pointer}
+.me .who{font-weight:700}.me a{cursor:pointer;text-decoration:underline}.me .lg{flex-basis:100%;opacity:.8;font-size:12px}
+</style>
+<script>
+/* 11/23 상권 «누군가 실험하면 목록으로 쌓고, 지점장은 자기 지점원 것만»: 이름·지점을 한 번 넣으면 분석할 때마다 팀 기록(업체분석기록)에 남김 */
+(function(){const $1=s=>document.querySelector(s);const AP=!!$1('#fsFile');const qs=$1('.qs');if(!qs)return;
+  const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+  const TP=()=>ls.get('team_pass')||'';let EP=null;const ep=()=>EP?Promise.resolve(EP):fetch('../config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>EP=String(j.endpoint||''));
+  const me=()=>{try{return JSON.parse(ls.get('hub-me')||'null')}catch(e){return null}};
+  const box=document.createElement('div');box.className='me';qs.insertBefore(box,qs.children[1]||null);
+  const h=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let names=[];
+  function draw(edit){const m=me();
+    if(m&&m.name&&m.branch&&!edit){box.innerHTML=`<span>지점장 기록:</span> <span class="who">${h(m.name)} · ${h(m.branch)}</span> <a id="meEdit">바꾸기</a><span class="lg" id="meLog">분석할 때마다 회사명·대표·숫자·컨셉이 우리 지점장만 보는 팀 기록에 남아요.</span>`;$1('#meEdit').onclick=()=>draw(true);return}
+    box.innerHTML=`<span>지점장에게 남길 이름</span><input id="meName" placeholder="예: 홍길동" value="${h(m&&m.name||'')}"><select id="meBr"><option value="">지점 고르기</option>${names.map(n=>`<option${m&&m.branch===n?' selected':''}>${h(n)}</option>`).join('')}</select><button type="button" id="meSave">저장</button><span class="lg" id="meLog">${names.length?'한 번만 넣으면 이 기기에 기억해요. 분석 결과는 우리 지점장만 봅니다.':'지점 목록을 불러오는 중이에요. 목록이 비어 있으면 지점장(관리자)이 아직 지점을 만들지 않은 거예요.'}</span>`;
+    $1('#meSave').onclick=()=>{const n=$1('#meName').value.trim(),b=$1('#meBr').value;if(!n||!b){$1('#meLog').textContent='이름과 지점을 모두 넣어 주세요.';return}ls.set('hub-me',JSON.stringify({name:n,branch:b}));draw(false);if(AP&&last)setTimeout(()=>send('분석'),300)}}
+  const loadNames=()=>ep().then(u=>u?fetch(u+'?action=branches&pass='+encodeURIComponent(TP())):null).then(r=>r&&r.json()).then(j=>{names=(j&&j.names)||[];const m=me();if(!(m&&m.name&&m.branch))draw(true)}).catch(()=>{});
+  draw(false);loadNames();
+  const say=t=>{const e=$1('#meLog');if(e)e.textContent=t};
+  const isSample=co=>!co||co==='OO정밀'||/^B사/.test(co)||/예시/.test(co);
+  function recAP(stage){const c=read(),L=last||{},dx=(L.dx||[]).slice(0,3);let IS=[];try{IS=issues(c)}catch(e){}let am='';try{const a=L.amount||proposeAmount(c,L.top);if(a&&!a.none)am='월 '+man(a.mid)}catch(e){}
+    return{tool:'업체 분석',co:c.co,ceo:window.__ceoFull||c.name,ind:c.ind,form:c.form,years:c.years,sales:c.sales,profit:c.profit,equity:c.equity,share:c.share,age:c.age,ceoInc:c.ceoInc,
+      top1:dx[0]?dx[0].name:'',top23:dx.slice(1).map(d=>d.name).join(', '),red:IS.filter(i=>i.lv==='r').length,issues:IS.filter(i=>i.lv==='r').map(i=>i.name).join(', '),amount:am,stage}}
+  function recCA(stage){const v=id=>{const e=document.getElementById(id);return e?String(e.value||'').replace(/,/g,'').trim():''};const n=id=>{const x=v(id);return x===''||isNaN(+x)?'':Math.round(+x)/100};
+    const ly=+v('lastYear')||0,fd=+v('founded')||0,bi=+v('birth')||0;
+    return{tool:'업체 분석 보고서',co:v('co'),ceo:v('ceoName'),ind:v('ind'),form:'법인',years:ly&&fd?ly-fd:'',sales:n('sales_2'),profit:n('ni_2'),equity:n('eq_2'),share:v('share'),age:bi?new Date().getFullYear()-bi:'',stage}}
+  let tmr=null;function send(stage){const m=me();if(!m||!m.name||!m.branch){say('이름과 지점을 넣으면 지점장 기록에 남아요.');return}
+    let rec;try{rec=AP?recAP(stage):recCA(stage)}catch(e){return}if(isSample(rec.co))return;
+    clearTimeout(tmr);tmr=setTimeout(()=>ep().then(u=>fetch(u,{method:'POST',body:JSON.stringify({action:'aplog',pass:TP(),who:m.name,branch:m.branch,rec})})).then(r=>r.json())
+      .then(j=>say(j.ok?`지점장 기록에 남겼어요 (${rec.co} · ${stage}).`:(j.error||'기록을 남기지 못했어요.'))).catch(()=>say('서버에 연결하지 못해 기록을 남기지 못했어요.')),stage==='분석'?1200:200)}
+  if(AP){const g=$1('#gen');if(g)g.addEventListener('click',()=>setTimeout(()=>send('분석'),400));
+    [['#ppHtml','제안자료(HTML)'],['#ppDown','제안자료(PPT)']].forEach(([id,st])=>{const b=$1(id);if(b)b.addEventListener('click',()=>setTimeout(()=>send(st),300))})}
+  else{const f=$1('#impFile');if(f)f.addEventListener('change',()=>{let k=0;const w=setInterval(()=>{if(f.value===''||++k>300){clearInterval(w);setTimeout(()=>send('보고서'),800)}},1000)})}
+})();
 </script>
 </body>
 </html>

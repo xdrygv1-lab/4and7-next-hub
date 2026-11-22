@@ -479,6 +479,9 @@ html:not(.admin) .skinbar,html:not(.admin) .adm{display:none!important}
 .tool-hint{font-size:13px;color:var(--sub);font-weight:400;margin-left:8px}
 @media(max-width:600px){.tool-hint{display:none}}
 .dev-note{opacity:.85}
+.brlog{display:grid;gap:8px}.brrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}.brrow input,.brrow select{padding:9px 10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--panel);color:var(--ink);min-width:0}
+.brsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}.brsum div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}.brsum b{display:block;font-size:26px}.brsum span{color:var(--sub);font-size:13px}
+.brt{font-size:13px;min-width:900px}.brt td,.brt th{vertical-align:top;text-align:left}
 .mcard ol{margin:8px 0 0;padding-left:1.25em;display:grid;gap:4px}.mcard p.small{margin:8px 0 0}
 .mflow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0 18px;counter-reset:f}
 .mflow>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:var(--panel)}
@@ -616,7 +619,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <details><summary>파일을 넣었는데 숫자가 안 나와요</summary><p>사진으로 찍은 스캔 PDF는 10쪽까지만 글자 인식으로 읽고, 틀릴 수 있어요. 세무사 사무실에 <b>글자 PDF</b>(세무조정계산서 원본 PDF)로 달라고 하세요.</p></details>
     <details><summary>예시 회사 이름이 그대로 있어요</summary><p>파일을 넣으면 예시 값은 저절로 지워져요. 그래도 남아 있으면 «비우기»를 누르고 다시 넣으세요.</p></details>
     <details><summary>재정심사 금액이 안 나와요</summary><p>대표 연소득이 비어 있으면 «연소득 입력 필요»로만 나와요. 급여+배당을 넣으세요(소득금액증명원).</p></details>
-    <details><summary>어제 넣은 업체가 다른 컴퓨터에서 안 보여요</summary><p>넣은 자료는 거래처 정보 보호를 위해 <b>그 컴퓨터의 그 브라우저에만</b> 저장돼요. 다른 사람이나 다른 기기에서는 보이지 않아요. 제안자료는 «HTML 제안자료 내려받기»로 파일로 남기세요.</p></details>
+    <details><summary>어제 넣은 업체가 다른 컴퓨터에서 안 보여요</summary><p>입력 화면은 <b>그 컴퓨터의 그 브라우저에만</b> 남아요. 업체 분석 맨 위에 이름·지점을 넣어 두면 분석 결과(회사명·대표·숫자·컨셉)가 <b>우리 지점장만 보는 기록</b>에 쌓입니다. 제안자료는 «HTML 제안자료 내려받기»로 파일로 남기세요.</p></details>
     <details><summary>휴대폰에서 메뉴가 안 보여요</summary><p>화면 아래 «☰ 메뉴» 단추를 누르세요. 메뉴 안에서 위아래로 밀면 «검토받기»까지 내려가요.</p></details>
   </div>
 </template>
@@ -646,8 +649,18 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div id="dataBody"></div>
 </template>
 
+<template id="tpl-branch">
+  <h1>지점장 보기</h1>
+  <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
+  <div class="card brlog"><div class="brrow"><select id="brSel"><option value="">지점 고르기</option></select><input id="brPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn p" id="brOpen">열기</button></div><p class="small" id="brMsg"></p></div>
+  <div id="brOut"></div>
+  <details class="card adm brlog" style="margin-top:18px"><summary><b>지점 만들기 · 비밀번호 바꾸기 (관리자)</b></summary>
+    <p class="small">지점 이름과 그 지점장 비밀번호(4~30자)를 정합니다. 같은 이름으로 다시 넣으면 비밀번호만 바뀝니다. 관리자 키는 저장하지 않아요.</p>
+    <div class="brrow"><input id="adTok" type="password" placeholder="관리자 키" autocomplete="off"><input id="adName" placeholder="지점 이름 (예: 광주지점)"><input id="adPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn" id="adAdd">만들기·바꾸기</button><button class="btn" id="adDel">이 지점 빼기</button></div><p class="small" id="adMsg"></p></details>
+</template>
 <template id="tpl-review">
   <h1>검토받기</h1>
+  <p class="small" style="margin:-4px 0 10px">지점장이신가요? <a href="#branch">지점장 보기</a>에서 우리 지점원 기록만 봅니다.</p>
   <p class="lede">미팅 녹음, 내가 쓴 스크립트, 제안 PPT를 올려 주세요. <b>잘한 점 하나, 고칠 한 문장</b>을 돌려 드립니다. 잘하시는 분은 내 방식이 팀 예시가 될 수 있고, 막히는 분은 어디서 막히는지 바로 보입니다.</p>
   <div class="rv3">
     <div><b>AP·PC 녹음 / 녹취</b><span>15단계 채점표로 단계별 점수, 놓친 F.F, 다음 미팅에서 물을 것</span></div>
@@ -995,6 +1008,30 @@ function renderNav(h){
   $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">관리자</div><a class="navl" href="#todo"><span class="ic">${svgi('tool')}</span><span class="tx">보완 필요 목록</span></a><a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`:'');
 }
 
+function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>String(j.endpoint||''));const TP=store.get('team_pass')||'';
+  const sel=$('#brSel'),msg=$('#brMsg'),out=$('#brOut');let ss={};try{ss=JSON.parse(sessionStorage.getItem('hub-br')||'{}')}catch(e){}
+  const names=()=>ep().then(u=>fetch(u+'?action=branches&pass='+encodeURIComponent(TP))).then(r=>r.json()).then(j=>{const n=(j&&j.names)||[];sel.innerHTML='<option value="">지점 고르기</option>'+n.map(x=>`<option${ss.b===x?' selected':''}>${esc(x)}</option>`).join('');
+    if(!n.length)msg.textContent='아직 만든 지점이 없어요. 관리자가 아래 «지점 만들기»에서 지점과 비밀번호를 정하면 됩니다.';return n}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.';return[]});
+  const post=b=>ep().then(u=>fetch(u,{method:'POST',body:JSON.stringify(b)})).then(r=>r.json());
+  const open=()=>{const b=sel.value||ss.b,pw=$('#brPass').value.trim()||ss.p;if(!b||!pw){msg.textContent='지점과 비밀번호를 넣어 주세요.';return}msg.textContent='불러오는 중…';
+    Promise.all([post({action:'aplist',branch:b,bpass:pw}),post({action:'mbtibranch',branch:b,bpass:pw})]).then(([a,m])=>{
+      if(!a.ok){msg.textContent=a.error||'비밀번호가 맞지 않습니다.';try{sessionStorage.removeItem('hub-br')}catch(e){}ss={};return}
+      try{sessionStorage.setItem('hub-br',JSON.stringify({b,p:pw}))}catch(e){}ss={b,p:pw};$('#brPass').value='';msg.textContent=`${b} 기록을 불러왔어요.`;render(a,m.ok?m.rows:[])}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})};
+  function render(a,mb){const R=a.rows.map(r=>({t0:r[0],t:r[1],br:r[2],who:r[3],tool:r[4],co:r[5],ceo:r[6],ind:r[7],form:r[8],yrs:r[9],sales:r[10],ni:r[11],eq:r[12],sh:r[13],age:r[14],inc:r[15],top:r[16],top23:r[17],red:r[18],iss:r[19],am:r[20],st:r[21],n:r[22]}));
+    const people=[...new Set(R.map(x=>x.who).concat(mb.map(r=>String(r[1]||'')).filter(Boolean)))].sort();
+    const wk=Date.now()-7*864e5,recent=R.filter(x=>Date.parse(String(x.t).replace(' ','T'))>wk).length;
+    out.innerHTML=`<div class="brsum"><div><b>${people.length}</b><span>지점원</span></div><div><b>${new Set(R.map(x=>x.co)).size}</b><span>분석한 업체</span></div><div><b>${recent}</b><span>최근 7일 분석</span></div><div><b>${mb.length}</b><span>보험 MBTI</span></div></div>
+     <div class="brrow"><select id="fWho"><option value="">모든 지점원</option>${people.map(p=>`<option>${esc(p)}</option>`).join('')}</select><input id="fQ" placeholder="회사·대표·컨셉 찾기"></div>
+     <h2>업체 분석 기록</h2><div class="tw"><table class="brt"><thead><tr><th>마지막</th><th>지점원</th><th>회사</th><th>대표</th><th>업종</th><th>매출</th><th>순이익</th><th>지분</th><th>1순위 컨셉</th><th>빨간불</th><th>기준안</th><th>한 것</th><th>횟수</th></tr></thead><tbody id="brRows"></tbody></table></div>
+     <h2>보험 MBTI</h2><div class="tw"><table class="brt"><thead><tr><th>시각</th><th>이름</th><th>유형</th><th>별명</th><th>지점장 메모</th></tr></thead><tbody>${mb.slice().reverse().map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><b>${esc(r[4])}</b></td><td>${esc(r[5])}</td><td class="small">${esc(String(r[11]||'').slice(0,80))}</td></tr>`).join('')||'<tr><td colspan="5" class="small">아직 없어요.</td></tr>'}</tbody></table></div>`;
+    const eok=v=>v===''||v==null?'':v+'억';
+    const draw=()=>{const w=$('#fWho').value,q=$('#fQ').value.trim();const rows=R.filter(x=>(!w||x.who===w)&&(!q||[x.co,x.ceo,x.top,x.iss].join(' ').includes(q))).sort((x,y)=>String(y.t).localeCompare(String(x.t)));
+      $('#brRows').innerHTML=rows.map(x=>`<tr><td>${esc(String(x.t).slice(5,16))}</td><td>${esc(x.who)}</td><td><b>${esc(x.co)}</b><div class="small">${esc(x.tool)}</div></td><td>${esc(x.ceo)}${x.age?`<div class="small">${esc(x.age)}세</div>`:''}</td><td>${esc(x.ind)}</td><td>${esc(eok(x.sales))}</td><td>${esc(eok(x.ni))}</td><td>${x.sh!==''?esc(x.sh)+'%':''}</td><td>${esc(x.top)}${x.top23?`<div class="small">${esc(x.top23)}</div>`:''}</td><td>${x.red!==''?`<b style="color:var(--bad)">${esc(x.red)}</b>`:''}${x.iss?`<div class="small">${esc(x.iss)}</div>`:''}</td><td>${esc(x.am)}</td><td class="small">${esc(x.st)}</td><td>${esc(x.n)}</td></tr>`).join('')||'<tr><td colspan="13" class="small">아직 기록이 없어요. 지점원이 업체 분석 화면 맨 위에 이름·지점을 넣고 분석하면 쌓입니다.</td></tr>'};
+    $('#fWho').onchange=draw;$('#fQ').oninput=draw;draw()}
+  $('#brOpen').onclick=open;$('#brPass').addEventListener('keydown',e=>{if(e.key==='Enter')open()});
+  const adm=(body,ok)=>{const t=$('#adTok').value.trim();if(!t){$('#adMsg').textContent='관리자 키를 넣어 주세요.';return}post({action:'branchcfg',token:t,...body}).then(j=>{$('#adMsg').textContent=j.ok?`${ok} 지금 지점: ${j.names.join(', ')||'없음'}`:(j.error||'바꾸지 못했어요.');if(j.ok){$('#adPass').value='';names()}}).catch(()=>{$('#adMsg').textContent='서버에 연결하지 못했어요.'})};
+  $('#adAdd').onclick=()=>adm({add:{name:$('#adName').value,pass:$('#adPass').value}},'저장했어요.');$('#adDel').onclick=()=>adm({del:$('#adName').value},'뺐어요.');
+  names().then(()=>{if(ss.b&&ss.p)open()})}
 function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}
 function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span>${ADM()?`<span class="d">${d.updated}</span>`:''}</a>`).join('')}
 
@@ -1013,6 +1050,7 @@ async function show(){
   if(h==='home'){tpl('tpl-home');homeInit();return}
   if(h==='start'){tpl('tpl-start');startInit();return}
   if(h==='data'){tpl('tpl-data');{const el=$('#dataBody');el.innerHTML=md(DATA_MD);el.querySelectorAll('table').forEach(tb=>{const w=document.createElement('div');w.className='tw';tb.parentNode.insertBefore(w,tb);w.appendChild(tb)})}return}
+  if(h==='branch'){tpl('tpl-branch');showBranch();return}
   if(h==='review'){tpl('tpl-review');const rec=$('#recent');$('#rform').appendChild(contribBox('검토 요청',{kind:'검토 요청',review:true,onSent:()=>loadContribs(rec,'검토 요청')}));loadContribs(rec,'검토 요청','아직 올라온 검토가 없습니다. 첫 번째로 올려 보세요.');return}
   if(h==='calcs'){tpl('tpl-rules');$('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › 계산기 모음</div><h1>계산기 모음</h1><p class="lede">숫자를 넣어 바로 확인하는 도구들입니다. 결과는 참고 범위이고, 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확정합니다.</p><div class="cards">${[['tool-sim','경정기 비교 계산기','나이·성별·금액별 보험료와 환급률. 파란 글씨는 추정값'],['tool-uw','재정심사 계산기','원수사별 가능 금액과 먼저 걸리는 쪽'],['tool-jm','직무발명 보상금 계산기','슬라이드법·실시료법, 받는 사람별 효과, 역산'],['tool-emp','고용장려금 찾기','우선지원대상기업 판별, 상황별 장려금, 육아휴직 계산'],['tool-labor','사근복 진단·출연 한도','적합도 진단과 출연·사용 한도']].map(([k,t,s])=>`<a class="card" href="#${k}"><b>${t}</b><span>${s}</span></a>`).join('')}</div>`;return}
   if(h==='uw'){tpl('tpl-uw');renderUw();return}

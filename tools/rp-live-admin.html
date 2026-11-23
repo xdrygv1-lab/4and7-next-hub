@@ -82,7 +82,7 @@ const $ = id => document.getElementById(id), esc = s => String(s == null ? '' : 
 const SN = { TA: 'TA 전화 약속', AP: 'AP 첫 미팅', PC: 'PC 제안', CL: '클로징' };
 let CODE = '', items = [], open = '';
 try { CODE = sessionStorage.getItem('rp_admin') || ''; } catch (e) {}
-const EP = 'https://script.google.com/macros/s/AKfycbyoClKoXiU_KO18R6LLJP-hvpZCureFI2SEC8JJu0YRnHKc1eC9Y0s7A17NWJhkFwr1vQ/exec';
+const EP = 'https://script.google.com/macros/s/AKfycbyIF7r-0sSli3iIURIsnNQRefQU1lBbLo0iGA7lcraRYIlM-atbwNc-skKfC9dgU3nM2Q/exec';
 const api = (sub, o) => fetch(EP, { method: 'POST', body: JSON.stringify(Object.assign({ action: 'rp2', sub, mgr: CODE }, o || {})) }).then(x => x.json()).catch(() => ({}));
 const b64blob = j => { const s = atob(j.b64), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return new Blob([u], { type: j.mime }); };
 const mm = s => s ? Math.floor(s / 60) + '분 ' + String(Math.round(s % 60)).padStart(2, '0') + '초' : '-';

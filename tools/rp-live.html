@@ -233,7 +233,7 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const KEY = 'rp-live-v2';
 const FIELDS = ['preset','dur','cast','rel','level','style','ind','form','sales','profit','age','kids','notes','who','branch','cRate','cWait'];
 const CHECKS = ['cEar','cFill','cRec'];
-let EP = 'https://script.google.com/macros/s/AKfycbyoClKoXiU_KO18R6LLJP-hvpZCureFI2SEC8JJu0YRnHKc1eC9Y0s7A17NWJhkFwr1vQ/exec', stage = 'AP', hist = [];
+let EP = 'https://script.google.com/macros/s/AKfycbyIF7r-0sSli3iIURIsnNQRefQU1lBbLo0iGA7lcraRYIlM-atbwNc-skKfC9dgU3nM2Q/exec', stage = 'AP', hist = [];
 const TP = () => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } };
 
 /* 단계: 서버가 아직 단계를 모르므로 지시문을 '상황' 앞에 붙여 보낸다. 서버에 stage 처리가 생기면 note 는 빼도 된다 */

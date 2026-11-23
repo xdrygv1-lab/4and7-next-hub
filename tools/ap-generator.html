@@ -394,7 +394,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   </div>
   <div class="note">
     · 고객 실명 대신 호칭으로 입력하세요. 입력값은 이 브라우저에만 저장됩니다.<br>
-    · 세율·제도 수치는 자료 기준이며 [확인필요] 표시가 있는 것은 최신 세법으로 확인하세요. 주식가치는 "순자산 × 약 80%" 경험치로 낸 대략값입니다.<br>
+    · 세율·제도 수치는 자료 기준이며 [확인필요] 표시가 있는 것은 최신 세법으로 확인하세요. 주식가치는 상증법 약식(세전이익·순자산 가중, 영업권 포함, 순자산 80% 하한)으로 낸 대략값입니다.<br>
     · 진단 신호와 사례는 내부 교육 자료를 바탕으로 한 초안입니다. 누락 매출·미신고 현금의 "출처 마련", 페이백 같은 사례는 진단 규칙에서 제외했습니다.<br>
     · AP의 산출물은 계약이 아니라 <b>다음 약속과 소개</b>입니다. 상품은 머릿속에만 두고 입 밖으로 꺼내지 않습니다.
   </div>
@@ -472,7 +472,7 @@ const CONCEPTS=[
   pc:'퇴직금 규정·급여 세팅 → 경영인정기(40대 우선, 시뮬레이터로 나이별 환급률 확인)',ff:['퇴직금 규정·임원 보수 규정 유무','퇴직연금(DC/DB) 가입 여부','기존 법인 보험 가입 스토리']},
  {id:'inherit',name:'상속세 재원 (법인 대표, 주식가치)',card:'',
   test:c=>{const s=[];if(c.form!=='법인')return s;const v=stockVal(c);
-    if(v!=null&&v>=10)s.push([3,`대표 지분 가치 약 ${eok(v)} (순자산×80%, 추정)`]);else if(v!=null&&v>=5)s.push([1,`대표 지분 가치 약 ${eok(v)} (추정)`]);
+    if(v!=null&&v>=10)s.push([3,`대표 지분 가치 약 ${eok(v)} (상증법 약식, 추정)`]);else if(v!=null&&v>=5)s.push([1,`대표 지분 가치 약 ${eok(v)} (추정)`]);
     if(nz(c.age)&&c.age>=50)s.push([2,`대표 ${c.age}세`]);if(c.f_realEstate)s.push([2,'재산이 부동산·주식 위주 (현금 부족)']);
     if(c.ind==='부동산임대')s.push([2,'부동산임대업: 가업상속공제 대상 아님']);if(c.f_loan)s.push([1,'업무무관자산 많음: 공제 실효성 낮음']);
     if(nz(c.cash)&&c.cash>=1)s.push([1,`법인 현금 ${eok(c.cash)}: 보험료 재원`]);if(c.f_nominee)s.push([1,'차명주주: 먼저 정리할 과제']);if(c.f_health)s.push([1,'건강 이슈: 시점 리스크']);return s},
@@ -642,7 +642,7 @@ function build(c){
   else if(T==='B'){s6='"상속세 최고세율은 50%입니다. 비상장 회사 주식은 회사 이익과 순자산으로 값이 매겨집니다."';s7=v!=null?`"재무제표로 대략 보면 대표님 지분이 약 ${eok(v)}입니다. 개인 재산까지 합치면 상속세는 거의 절반이라고 보셔야 합니다."`:`"대표님 회사 주식 가치가 얼마인지 혹시 알고 계세요?" (답을 들은 뒤) "개인 재산까지 합치면 상속세는 거의 절반이라고 보셔야 합니다."`}
   else{s6='"상속세는 현금으로 내야 합니다. 부동산은 바로 현금이 되지 않습니다."';s7='"대표님 재산을 보면 부동산 비중이 상당히 높으십니다. 그때 상속세 낼 현금이 어디서 나올지가 문제입니다."'}
   add('전개','06','일반적 사례 (객관 팩트)',s6,'반박 불가능한 객관적 팩트를 썼는가','"제 생각에는" 금지. 그날 아침 기사를 하나 알고 가면 좋습니다');
-  add('전개','07','구체적 사례 (우리 회사 숫자)',s7,'일반론이 아니라 상대 회사의 숫자로 내려왔는가',T==='B'?'주식가치는 순자산×80% 경험치 추정. 정확한 평가는 PC에서':'');
+  add('전개','07','구체적 사례 (우리 회사 숫자)',s7,'일반론이 아니라 상대 회사의 숫자로 내려왔는가',T==='B'?'주식가치는 상증법 약식(세전이익·순자산 가중, 영업권 포함) 추정. 정확한 평가는 PC에서':'');
   // 8 니즈환기
   const q8=['"대표님은 이 사업을 열심히 하시는 원동력이 어떤 거세요?"','"사업은 언제까지 하실 생각이세요?"','"그 이후의 모습을 생각해 보신 적 있으세요?"','"은퇴 이후에 월 생활비는 어느 정도 쓰실 것 같으세요?"','"월 [ ]만원이면 되실까요?" (상대 답에 맞춰 확인)'];
   const extra=top&&top.id==='inherit'?['"만약 오늘 무슨 일이 생기면, 가족분들이 상속세를 어떤 돈으로 내실 수 있을까요?"']:top&&top.id==='succession'?['"회사를 나중에 누가 맡으면 좋겠다고 생각하세요?"']:top&&top.id==='welfare'?['"앞으로 직원분들께 새로 늘려 주고 싶은 복지가 있으세요? 1인당 1년에 얼마 정도 생각하세요?"']:top&&top.id==='invention'?['"올해 연말에 상여금 얼마 정도 계획하고 계세요?"']:top&&top.id==='cashBld'?['"법인 통장에 당장 쓰실 계획 없는 현금이 어느 정도 있으세요? 이자는 얼마나 받으세요?"']:top&&top.id==='usdWhole'?['"10년 뒤에 목돈이 필요한 일이 있으세요? 자녀분 유학 계획은요?"']:top&&top.id==='family'?['"아버님이 이 돈을 직접 쓰실 계획이 있으세요, 아니면 결국 자녀분들께 가는 돈인가요?"']:[];
@@ -726,6 +726,8 @@ const FS_KEYS=[
  ['ins','보험(장기금융·보험예치금)',/^(보험예치금|장기금융상품|보험료자산)/],
  ['labor','급여·인건비',/^(급여|급료와임금|인건비)(?!보조)/],
  ['gasu','가수금(대표가 회사에 넣은 돈)',/^가수금/],
+ /* 11/23 유고 자금(매입채무+차입금−현금)용. 보고서 도구와 같은 산식 */
+ ['apay','매입채무',/^(매입채무|외상매입금)/],['stb','단기차입금',/^단기차입금/],['ltb','장기차입금',/^장기차입금/],
 ];
 /* 첫 숫자를 당기 값으로. 0도 값으로 받음(당기 0을 건너뛰고 전기 값을 집지 않게).
    쉼표 없이 소수점이 있는 값(100.00·63.7)은 비율(%)이라 건너뜀 */
@@ -1030,7 +1032,7 @@ $('#fsFile').onchange=async e=>{const files=[...e.target.files];if(!files.length
   if(yrs.length||Object.keys(INFO).length){if(clearSample())notes.push('예시 회사(OO정밀) 정보는 지웠어요. 대표 나이·연소득 같은 빈칸은 직접 넣어 주세요.');applyDocInfo(INFO,notes)}
   if(!yrs.length){msg.innerHTML=notes.join('<br>');save();return}
   /* 가장 최근 해는 위 "읽어서 채우기"와 같은 방식으로 (자동 체크 포함) */
-  const last=byYear[yrs[yrs.length-1]],NM={sales:'매출액',profit:'당기순이익',pretax:'법인세차감전이익',equity:'자본총계',retained:'이익잉여금',capital:'자본금',assets:'자산총계',debt:'부채총계',cash:'현금및현금성자산',stfin:'단기금융상품',loan:'가지급금',land:'토지',bldg:'건물',ins:'보험예치금',labor:'급여',gasu:'가수금'};
+  const last=byYear[yrs[yrs.length-1]],NM={sales:'매출액',profit:'당기순이익',pretax:'법인세차감전이익',equity:'자본총계',retained:'이익잉여금',capital:'자본금',assets:'자산총계',debt:'부채총계',cash:'현금및현금성자산',stfin:'단기금융상품',loan:'가지급금',land:'토지',bldg:'건물',ins:'보험예치금',labor:'급여',gasu:'가수금',apay:'매입채무',stb:'단기차입금',ltb:'장기차입금'};
   $('#fsText').value='(단위: 원)\n'+(corp?'법인 자본금\n':'')+Object.entries(last).filter(([k])=>NM[k]).map(([k,v])=>`${NM[k]} ${Math.round(v*1e8)}`).join('\n');
   applyFS();
   [0,1,2].forEach(i=>{$('#fy'+i).value='';FS3.forEach(k=>{const el=$(`#f3_${k}_${i}`);if(el)el.value=''})});
@@ -1038,6 +1040,7 @@ $('#fsFile').onchange=async e=>{const files=[...e.target.files];if(!files.length
     const v={sales:o.sales,op:o.op,ni:o.profit!=null?o.profit:o.pretax,equity:o.equity,debt:o.debt,retained:o.retained,loan:o.loan,cash:(o.cash||0)+(o.stfin||0)||null};
     FS3.forEach(k=>{if(v[k]!=null)$(`#f3_${k}_${col}`).value=Math.round(v[k]*100)/100})});
   $('#fs3Apply').onclick();
+  lastFS.ptY=Object.fromEntries(yrs.map(y=>[y,byYear[y].pretax]).filter(x=>x[1]!=null));
   msg.innerHTML=notes.join('<br>')+`<br><b>${yrs.join('·')}년을 채웠어요.</b> 숫자가 장부와 맞는지 한 번 보세요.`;e.target.value=''};
 
 /* ---------- 제안 금액 · 체크리스트 ---------- */
@@ -1110,13 +1113,13 @@ function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,to
 
 /* 상속세 대략 (주식만, 일괄공제 5억, 현행 누진세율) : 제안 명분용 내부 참고 */
 function inhTax(x){const B=[[1e8,.1,0],[5e8,.2,1e7],[10e8,.3,6e7],[30e8,.4,1.6e8],[Infinity,.5,4.6e8]];const b=B.find(r=>x<=r[0]);return Math.max(0,x*b[1]-b[2])}
-function inhBlock(c,a){const sv=stockVal(c);if(!sv)return '';const tax=inhTax(Math.max(0,sv-5)*1e8);
+function inhBlock(c,a){const sv=stockVal(c);if(!sv)return '';const I=inhEst(c,sv),tax=I.lo*1e8,taxHi=I.hi*1e8;
   const fund=a&&!a.none?a.mid*120:null;const ratio=fund&&tax?Math.round(fund/tax*100):null;
   return `<h3 style="margin-top:18px">상속세 대략과 제안 명분 <span class="badge warn">내부 참고 · 세무사 검토</span></h3>
-   <div>대표 지분 주식가치 약 <b>${eok(sv)}</b> (순자산 × 80% × 지분) → 일괄공제 5억 차감 → 상속세 약 <b>${eok(tax/1e8)}</b></div>
-   ${!tax?`<div class="muted">주식만 보면 공제(5억) 안에 들어 상속세가 거의 없습니다. 부동산·예금 같은 개인 재산을 합쳐서 다시 보세요. 이 경우 상속세 명분보다 퇴직금·보장 명분이 먼저입니다.</div>`:''}
+   <div>대표 지분 주식가치 약 <b>${eok(sv)}</b> (상증법 약식: 세전이익·순자산 가중, 영업권 포함, 순자산 80% 하한)${I.est>sv+0.005?` + 가수금 ${eok(I.est-sv)}`:''} → 일괄공제 5억 · 배우자공제 5억~${eok(I.spMax)} · 신고세액공제 3% → 상속세 약 <b>${eok(tax/1e8)}</b> <span class="muted">(배우자공제 5억만 받으면 ${eok(taxHi/1e8)})</span></div>
+   ${!taxHi?`<div class="muted">주식만 보면 공제 안에 들어 상속세가 거의 없습니다. 부동산·예금 같은 개인 재산을 합쳐서 다시 보세요. 이 경우 상속세 명분보다 퇴직금·보장 명분이 먼저입니다.</div>`:''}
    ${fund&&tax?`<div>기준안 월 ${man(a.mid)}를 10년 내면 누적 약 ${eok(fund/1e8)} → 예상 상속세의 <b>${ratio}%</b> 재원</div>`:''}
-   <div class="muted">다른 재산·배우자공제·가업상속공제는 빼고 계산한 대략값입니다. 세율은 현행 기준이며 개정 여부를 확인하세요.</div>
+   <div class="muted">업체 분석 보고서와 같은 계산입니다. 배우자가 있다고 보고 자녀 ${nz(c.kids)?c.kids:0}명 기준 법정상속분으로 배우자공제 최대치를 잡았습니다. 부동산·예금 같은 다른 개인 재산과 가업상속공제는 넣지 않았습니다. 세율은 현행 기준이며 개정 여부를 확인하세요.</div>
    ${tax?`<div class="say" style="margin-top:6px">PC 명분 예시: "대표님 지분만으로도 상속세가 약 ${eok(tax/1e8)} 예상됩니다. 그때 회사 돈을 급하게 꺼내지 않도록, 지금부터 재원을 나눠 만들어 두시는 겁니다."</div>`:''}`}
 
 /* ---------- 보고서 ---------- */
@@ -1180,12 +1183,30 @@ const eok1=v=>{const neg=v<0;v=Math.abs(v);let t;if(v>=10000){const j=Math.floor
    사업 3년 미만·부동산 비중 높음 → 순자산 기준. 앞으로는 이익이 매년 3% 늘고 쌓인다고 가정 */
 function niSeries(c){const h=lastFS&&lastFS.hist&&lastFS.hist.ni;const a=(h||[]).filter(x=>x!=null);return a.length?a.slice(-3):(nz(c.profit)?[c.profit]:[])}
 function wavg(a){if(!a.length)return 0;const w=a.map((_,i)=>i+1);return a.reduce((t,x,i)=>t+x*w[i],0)/w.reduce((t,x)=>t+x,0)}
-function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,sh=(nz(c.share)?c.share:100)/100;
-  const young=nz(c.years)&&c.years<3,re=!!c.f_realEstate,netOnly=re||young;const ns=niSeries(c);const yrs=ns.length;if(!yrs)ns.push(0);
-  const val=(e,arr)=>{const pv=Math.max(0,wavg(arr.slice(-3)))/0.1;const v=netOnly?e:(3*pv+2*e)/5;return Math.max(v,e*0.8)};
-  const base=wavg(ns);
-  const proj=[1,3,5,10].map(k=>{let e=eq,arr=[...ns],p=base;for(let i=0;i<k;i++){p=p*(1+GROW);arr.push(p);e+=Math.max(0,p)}return[k,val(e,arr)*sh]});
-  return{now:val(eq,ns)*sh,proj,re,young,netOnly,base,yrs,whole:val(eq,ns)}}
+/* 주식가치: 업체 분석 보고서와 같은 상증법 약식 (11/23 숫자 맞추기, 회계사 고칠 곳 ①④)
+   순손익은 법인세차감전이익(없는 해는 당기순이익) 최근 3년 1:2:3 가중, 영업권(상증령 59조②) = (가중순손익×50% − 자기자본×10%) × 3.7908,
+   합산 제외(55조③): 사업 3년 미만·부동산 80% 이상·3년 연속 결손. 방식(54조): 3년 미만 순자산, 부동산 80% 이상 2:3과 순자산 중 큰 값, 50% 이상 2:3, 그 밖 3:2. 하한 순자산의 80% [확인필요] */
+function ptSeries(c){const h=lastFS&&lastFS.hist,Y=(lastFS&&lastFS.ptY)||{};
+  if(h&&h.ni){const out=[];h.ni.forEach((n,i)=>{const y=(h.years||[])[i];const p=y&&Y[y]!=null?Y[y]:n;if(p!=null)out.push(p)});if(out.length)return out.slice(-3)}
+  if(lastFS&&lastFS.pretax!=null)return[lastFS.pretax];return nz(c.profit)?[c.profit]:[]}
+function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,sh=(nz(c.share)?c.share:100)/100,f=lastFS||{};
+  const young=nz(c.years)&&c.years<3;
+  const reRatio=f.assets>0&&(f.land!=null||f.bldg!=null)?((f.land||0)+(f.bldg||0))/f.assets:(c.f_realEstate?0.5:0);
+  const ps=ptSeries(c),ns=niSeries(c),yrs=ps.length;if(!yrs)ps.push(0);
+  const re80=reRatio>=.8,loss3=ps.length>=3&&ps.every(x=>x<0);
+  const gwOff=young?'사업 3년 미만':re80?'부동산 80% 이상':loss3?'3년 연속 결손':null;
+  const mode=young?'nav':re80?'re80':reRatio>=.5?'23':'32';
+  const val=(e,arr)=>{const w=wavg(arr.slice(-3));const gw=gwOff?0:Math.max(0,(w*.5-e*.1)*3.7908);const nav=e+gw,pv=Math.max(0,w)/.1,w32=(3*pv+2*nav)/5,w23=(2*pv+3*nav)/5;
+    const v=mode==='nav'?nav:mode==='re80'?Math.max(w23,nav):mode==='23'?w23:w32;return Math.max(v,nav*.8)};
+  const mean=a=>a.length?a.reduce((t,x)=>t+x,0)/a.length:0;
+  const basePT=Math.max(0,mean(ps)),baseNI=Math.max(0,ns.length?mean(ns):basePT*.8);
+  const proj=[1,3,5,10].map(k=>{let e=eq,arr=[...ps];for(let i=1;i<=k;i++){const g=Math.pow(1+GROW,i);arr.push(basePT*g);e+=baseNI*g}return[k,val(e,arr)*sh]});
+  const whole=val(eq,ps);
+  return{now:whole*sh,proj,re:re80||reRatio>=.5,young,netOnly:mode==='nav',base:baseNI,yrs,whole,mode,gwOff}}
+/* 상속세: 보고서와 같은 식 (억 단위). 일괄공제 5억, 배우자공제 5억~법정상속분(최대 30억, 자녀 수 반영), 신고세액공제 3%. 다른 개인 재산은 0, 가수금은 대표 채권이라 더함 */
+function inhTaxE(b){if(b<=0)return 0;const T=[[1,.1,0],[5,.2,.1],[10,.3,.6],[30,.4,1.6],[Infinity,.5,4.6]];const r=T.find(t=>b<=t[0]);return (b*r[1]-r[2])*.97}
+function inhEst(c,stake){const kids=nz(c.kids)?Math.max(0,c.kids):0,est=(stake||0)+Math.max(0,(lastFS&&lastFS.gasu)||0);
+  const spMax=Math.min(30,Math.max(5,est*1.5/(1.5+kids)));return{est,lo:inhTaxE(est-5-spMax),hi:inhTaxE(est-5-5),spMax}}
 const LV={r:['빨강','#c0392b'],o:['주황','#d9822b'],g:['초록','#2e8b57'],x:['자료 필요','#8a949e']};
 function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,con)=>out.push({n,name,lv,line,con});
   // 1 회사 가치
@@ -1208,7 +1229,9 @@ function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,
   else if(c.f_loan)add(5,'가지급금','o','가지급금이 있습니다. 금액과 발생 원인을 확인합니다.',['loanClear']);
   else add(5,'가지급금','x','재무상태표의 가지급금을 확인합니다.',[]);
   // 6 CEO 유고 필요자금 (부채총계 기준 대략)
-  if(f.debt!=null&&nz(c.cash)){const need=f.debt-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (부채총계 기준 대략).`:'현금이 부채보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
+  const owe=['apay','stb','ltb'].filter(k=>f[k]!=null);
+  if(owe.length&&nz(c.cash)){const need=owe.reduce((t,k)=>t+f[k],0)-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (매입채무+차입금−현금).`:'현금이 갚을 돈(매입채무·차입금)보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
+  else if(f.debt!=null&&nz(c.cash)){const need=f.debt-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (부채총계 기준 대략. 매입채무·차입금이 든 재무상태표를 넣으면 더 정확합니다).`:'현금이 부채보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
   else if(c.f_familyLoss)add(6,'CEO 유고 자금','o','대표님 유고 시 가족과 회사가 버틸 자금을 확인해야 합니다.',['protect']);
   else add(6,'CEO 유고 자금','x','부채와 현금성자산이 있으면 필요자금을 계산합니다.',[]);
   // 7 주주 구성
@@ -1217,7 +1240,7 @@ function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,
   else if(c.form==='법인'&&nz(c.share))add(7,'주주 구성','g','주주 구성에 큰 문제는 보이지 않습니다.',[]);
   else add(7,'주주 구성','x','주주명부를 받으면 판단합니다.',[]);
   // 8 상속세 재원 (지분만, 일괄공제 5억, 현행 세율 대략)
-  if(v){const t=inhTax(Math.max(0,v.now-5)*1e8)/1e8;add(8,'상속세 재원',t>=5||(nz(c.age)&&c.age>=60&&t>0)?'r':t>0?'o':'g',t>0?`대표님 지분만으로도 예상 상속세가 약 ${eok1(t)}입니다. 준비된 재원을 확인해야 합니다.`:'지분 기준 상속세 부담은 크지 않습니다.',['inherit','policy','estate'])}
+  if(v){const I=inhEst(c,v.now),t=I.lo;add(8,'상속세 재원',t>=5||(nz(c.age)&&c.age>=60&&t>0)?'r':t>0?'o':'g',t>0?`대표님 지분만으로도 예상 상속세가 약 ${eok1(t)}~${eok1(I.hi)}입니다. 준비된 재원을 확인해야 합니다.`:'지분 기준 상속세 부담은 크지 않습니다.',['inherit','policy','estate'])}
   else if(c.f_realEstate)add(8,'상속세 재원','o','부동산 비중이 높아 상속세 낼 현금이 부족할 수 있습니다.',['estate','policy']);
   else add(8,'상속세 재원','x','재산 구성을 받으면 판단합니다.',[]);
   return out}
@@ -1231,7 +1254,7 @@ function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,notes}=r
    ${int&&LASTMET?metBox():''}<h2>재무 현황</h2>${histTable()}<div class="kv">${kv.map(([k,val])=>`<div><span class="muted">${k}</span><b>${val}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
    ${(()=>{if(!c.bizinfo)return'';const rp=resParse(),base=c.bizinfo.split('[인터넷 조사')[0].trim();
      return`<h2>회사 이야기</h2>${base?`<p>${esc(base).replace(/\n/g,'<br>')}</p>`:''}${rp&&rp.items.length?`<h3>인터넷에서 찾은 회사 정보</h3><ul class="t">${rp.items.map(([k,v])=>`<li><b>${esc(k)}</b>: ${esc(v)}</li>`).join('')}</ul><div class="muted">공개 자료 기준이며 "확인 필요" 항목은 미팅에서 확인합니다.</div>`:''}`})()}
-   ${v?`<h2>회사 가치와 앞으로</h2><table class="mt"><tr><th>시점</th><th>지금</th>${v.proj.map(([k])=>`<th>${k}년 후</th>`).join('')}</tr><tr><td>대표 지분 가치 (추정)</td><td>${eok1(v.now)}</td>${v.proj.map(([,x])=>`<td>${eok1(x)}</td>`).join('')}</tr></table><div class="muted">${v.netOnly?(v.re?'부동산 비중이 높아':'사업 3년 미만이라')+' 순자산 기준으로 봤습니다':`최근 ${v.yrs||1}년 순이익을 ${v.yrs>=3?'1:2:3으로 ':v.yrs===2?'1:2로 ':''}가중평균한 순손익가치(÷10%)와 순자산을 3:2로 가중했고, 순자산의 80%보다 작으면 80%로 봤습니다`} (메트 기업분석과 같은 약식 방식). 이익은 매년 ${GROW*100}% 늘고 모두 쌓인다고 가정했습니다. 상증법 정식 평가가 아닙니다.</div>`:''}
+   ${v?`<h2>회사 가치와 앞으로</h2><table class="mt"><tr><th>시점</th><th>지금</th>${v.proj.map(([k])=>`<th>${k}년 후</th>`).join('')}</tr><tr><td>대표 지분 가치 (추정)</td><td>${eok1(v.now)}</td>${v.proj.map(([,x])=>`<td>${eok1(x)}</td>`).join('')}</tr></table><div class="muted">${v.netOnly?'사업 3년 미만이라 순자산(영업권 없이) 기준으로 봤습니다':`최근 ${v.yrs||1}년 세전이익(없으면 당기순이익)을 ${v.yrs>=3?'1:2:3으로 ':v.yrs===2?'1:2로 ':''}가중평균한 순손익가치(÷10%)와 순자산(+영업권)을 ${v.mode==='32'?'3:2':v.mode==='23'?'2:3 (부동산 50% 이상)':'2:3과 순자산 중 큰 값 (부동산 80% 이상)'}로 가중했고, 순자산의 80%보다 작으면 80%로 봤습니다${v.gwOff?` (${v.gwOff}: 영업권 뺌)`:''}`} (업체 분석 보고서와 같은 상증법 약식). 이익은 매년 ${GROW*100}% 늘고 모두 쌓인다고 가정했습니다. 상증법 정식 평가가 아닙니다.</div>`:''}
    ${pick.length?`<h2>이슈별 한 장</h2>${pick.map(i=>{const k=dx.find(d=>i.con.includes(d.id))||null,X=ISSUE_X[i.n]||['',''];return`<div class="isu"><h3><span class="dot" style="background:${LV[i.lv][1]}"></span>${i.n}. ${esc(i.name)} <span class="muted" style="font-size:13px">${LV[i.lv][0]}</span></h3><dl><dt>지금 상황</dt><dd>${esc(i.line)}</dd>${X[0]?`<dt>그대로 두면</dt><dd>${esc(X[0])}</dd>`:''}${k?`<dt>해결 방향</dt><dd>${esc(int?k.name+': '+k.alt:k.alt)}</dd>`:''}${X[1]?`<dt>필요한 자료</dt><dd>${esc(X[1])}</dd>`:''}</dl>${int&&k?`<div class="muted">PC 방향: ${esc(k.pc)}</div>`:''}</div>`}).join('')}`:''}
    ${notes.length?`<h2>대표님 상황</h2><ul class="t">${notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:''}
    ${top?`<h2>함께 검토할 방향</h2>${dx.slice(0,int?3:2).map((k,i)=>`<h3>${i+1}. ${esc(int?k.name:k.need)}</h3><p>${esc(k.alt)}</p>`).join('')}`:''}

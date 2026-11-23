@@ -532,7 +532,7 @@ function renderRules(){
     <td>${p.newCorp.text}</td>
     <td>${p.options}</td></tr>`).join('');
   $('rulesTable').innerHTML = `<div class="tw"><table><tr><th>상품</th><th>A 법인재정</th><th>B 피보험이익</th><th>신설법인</th><th>계약 옵션</th></tr>${rows}</table></div>
-    <p style="color:var(--sub-d);font-size:13px;margin-top:10px">원본: 재정심사_원수사별기준_초안_유상연_20261104.md · 규칙 파일: rules.js (버전 ${R.meta.version})</p>`;
+    <p style="color:var(--sub-d);font-size:13px;margin-top:10px">원본: 재정심사 원수사별 기준 초안 (2026-11-04) · 규칙 파일: rules.js (버전 ${R.meta.version})</p>`;
   const pend = [];
   R.ceo.forEach(p => (p.warn||[]).forEach(w => pend.push(`${p.insurer} ${p.name}: ${w}`)));
   pend.push('메트 달러종신 3종·신한 종신 재정 공식 (자료 추가 예정)');

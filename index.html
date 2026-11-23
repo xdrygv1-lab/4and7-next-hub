@@ -651,12 +651,13 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 
 <template id="tpl-branch">
   <h1>지점장 보기</h1>
-  <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
+  <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 운영진은 «전체 보기»에 운영진 비밀번호를 넣으면 모든 지점을 봅니다. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
   <div class="card brlog"><div class="brrow"><select id="brSel"><option value="">지점 고르기</option></select><input id="brPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn p" id="brOpen">열기</button></div><p class="small" id="brMsg"></p></div>
   <div id="brOut"></div>
-  <details class="card adm brlog" style="margin-top:18px"><summary><b>지점 만들기 · 비밀번호 바꾸기 (관리자)</b></summary>
-    <p class="small">지점 이름과 그 지점장 비밀번호(4~30자)를 정합니다. 같은 이름으로 다시 넣으면 비밀번호만 바뀝니다. 관리자 키는 저장하지 않아요.</p>
-    <div class="brrow"><input id="adTok" type="password" placeholder="관리자 키" autocomplete="off"><input id="adName" placeholder="지점 이름 (예: 광주지점)"><input id="adPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn" id="adAdd">만들기·바꾸기</button><button class="btn" id="adDel">이 지점 빼기</button></div><p class="small" id="adMsg"></p></details>
+  <details class="card adm brlog" style="margin-top:18px"><summary><b>지점 만들기 · 비밀번호 바꾸기 (운영진)</b></summary>
+    <p class="small">4&amp;7 운영진이 같이 관리합니다. 맨 앞 칸에 <b>운영진 비밀번호</b>(지점장 보기 공통 비밀번호)를 넣고, 지점 이름과 그 지점장 비밀번호(4~30자)를 정하세요. 같은 이름으로 다시 넣으면 비밀번호만 바뀝니다. 넣은 비밀번호는 저장하지 않아요.</p>
+    <div class="brrow"><input id="adTok" type="password" placeholder="운영진 비밀번호 (또는 관리자 키)" autocomplete="off"><input id="adName" placeholder="지점 이름 (예: 광주지점)"><input id="adPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn" id="adAdd">만들기·바꾸기</button><button class="btn" id="adDel">이 지점 빼기</button></div>
+    <div class="brrow"><input id="adMgr" type="password" placeholder="새 운영진 비밀번호 (관리자 키로만)" autocomplete="off"><button class="btn" id="adMgrSet">운영진 비밀번호 정하기</button></div><p class="small" id="adMsg"></p></details>
 </template>
 <template id="tpl-review">
   <h1>검토받기</h1>
@@ -1010,13 +1011,13 @@ function renderNav(h){
 
 function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>String(j.endpoint||''));const TP=store.get('team_pass')||'';
   const sel=$('#brSel'),msg=$('#brMsg'),out=$('#brOut');let ss={};try{ss=JSON.parse(sessionStorage.getItem('hub-br')||'{}')}catch(e){}
-  const names=()=>ep().then(u=>fetch(u+'?action=branches&pass='+encodeURIComponent(TP))).then(r=>r.json()).then(j=>{const n=(j&&j.names)||[];sel.innerHTML='<option value="">지점 고르기</option>'+n.map(x=>`<option${ss.b===x?' selected':''}>${esc(x)}</option>`).join('');
+  const names=()=>ep().then(u=>fetch(u+'?action=branches&pass='+encodeURIComponent(TP))).then(r=>r.json()).then(j=>{const n=(j&&j.names)||[];sel.innerHTML='<option value="">지점 고르기</option>'+n.map(x=>`<option${ss.b===x?' selected':''}>${esc(x)}</option>`).join('')+`<option value="*"${ss.b==='*'?' selected':''}>전체 보기 (운영진)</option>`;if(j&&j.mgr===false)$('#adMsg').textContent='운영진 비밀번호가 아직 없어요. 관리자 키로 아래 «운영진 비밀번호 정하기»를 먼저 해 주세요.';
     if(!n.length)msg.textContent='아직 만든 지점이 없어요. 관리자가 아래 «지점 만들기»에서 지점과 비밀번호를 정하면 됩니다.';return n}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.';return[]});
   const post=b=>ep().then(u=>fetch(u,{method:'POST',body:JSON.stringify(b)})).then(r=>r.json());
   const open=()=>{const b=sel.value||ss.b,pw=$('#brPass').value.trim()||ss.p;if(!b||!pw){msg.textContent='지점과 비밀번호를 넣어 주세요.';return}msg.textContent='불러오는 중…';
-    Promise.all([post({action:'aplist',branch:b,bpass:pw}),post({action:'mbtibranch',branch:b,bpass:pw})]).then(([a,m])=>{
+    const q=b==='*'?{mgr:pw}:{branch:b,bpass:pw};Promise.all([post({action:'aplist',...q}),post({action:'mbtibranch',...q})]).then(([a,m])=>{
       if(!a.ok){msg.textContent=a.error||'비밀번호가 맞지 않습니다.';try{sessionStorage.removeItem('hub-br')}catch(e){}ss={};return}
-      try{sessionStorage.setItem('hub-br',JSON.stringify({b,p:pw}))}catch(e){}ss={b,p:pw};$('#brPass').value='';msg.textContent=`${b} 기록을 불러왔어요.`;render(a,m.ok?m.rows:[])}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})};
+      try{sessionStorage.setItem('hub-br',JSON.stringify({b,p:pw}))}catch(e){}ss={b,p:pw};$('#brPass').value='';msg.textContent=`${b==='*'?'전체 지점':b} 기록을 불러왔어요.`;render(a,m.ok?m.rows:[])}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})};
   function render(a,mb){const R=a.rows.map(r=>({t0:r[0],t:r[1],br:r[2],who:r[3],tool:r[4],co:r[5],ceo:r[6],ind:r[7],form:r[8],yrs:r[9],sales:r[10],ni:r[11],eq:r[12],sh:r[13],age:r[14],inc:r[15],top:r[16],top23:r[17],red:r[18],iss:r[19],am:r[20],st:r[21],n:r[22]}));
     const people=[...new Set(R.map(x=>x.who).concat(mb.map(r=>String(r[1]||'')).filter(Boolean)))].sort();
     const wk=Date.now()-7*864e5,recent=R.filter(x=>Date.parse(String(x.t).replace(' ','T'))>wk).length;
@@ -1026,11 +1027,11 @@ function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(
      <h2>보험 MBTI</h2><div class="tw"><table class="brt"><thead><tr><th>시각</th><th>이름</th><th>유형</th><th>별명</th><th>지점장 메모</th></tr></thead><tbody>${mb.slice().reverse().map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><b>${esc(r[4])}</b></td><td>${esc(r[5])}</td><td class="small">${esc(String(r[11]||'').slice(0,80))}</td></tr>`).join('')||'<tr><td colspan="5" class="small">아직 없어요.</td></tr>'}</tbody></table></div>`;
     const eok=v=>v===''||v==null?'':v+'억';
     const draw=()=>{const w=$('#fWho').value,q=$('#fQ').value.trim();const rows=R.filter(x=>(!w||x.who===w)&&(!q||[x.co,x.ceo,x.top,x.iss].join(' ').includes(q))).sort((x,y)=>String(y.t).localeCompare(String(x.t)));
-      $('#brRows').innerHTML=rows.map(x=>`<tr><td>${esc(String(x.t).slice(5,16))}</td><td>${esc(x.who)}</td><td><b>${esc(x.co)}</b><div class="small">${esc(x.tool)}</div></td><td>${esc(x.ceo)}${x.age?`<div class="small">${esc(x.age)}세</div>`:''}</td><td>${esc(x.ind)}</td><td>${esc(eok(x.sales))}</td><td>${esc(eok(x.ni))}</td><td>${x.sh!==''?esc(x.sh)+'%':''}</td><td>${esc(x.top)}${x.top23?`<div class="small">${esc(x.top23)}</div>`:''}</td><td>${x.red!==''?`<b style="color:var(--bad)">${esc(x.red)}</b>`:''}${x.iss?`<div class="small">${esc(x.iss)}</div>`:''}</td><td>${esc(x.am)}</td><td class="small">${esc(x.st)}</td><td>${esc(x.n)}</td></tr>`).join('')||'<tr><td colspan="13" class="small">아직 기록이 없어요. 지점원이 업체 분석 화면 맨 위에 이름·지점을 넣고 분석하면 쌓입니다.</td></tr>'};
+      $('#brRows').innerHTML=rows.map(x=>`<tr><td>${esc(String(x.t).slice(5,16))}</td><td>${esc(x.who)}${a.branch==='전체'?`<div class="small">${esc(x.br)}</div>`:''}</td><td><b>${esc(x.co)}</b><div class="small">${esc(x.tool)}</div></td><td>${esc(x.ceo)}${x.age?`<div class="small">${esc(x.age)}세</div>`:''}</td><td>${esc(x.ind)}</td><td>${esc(eok(x.sales))}</td><td>${esc(eok(x.ni))}</td><td>${x.sh!==''?esc(x.sh)+'%':''}</td><td>${esc(x.top)}${x.top23?`<div class="small">${esc(x.top23)}</div>`:''}</td><td>${x.red!==''?`<b style="color:var(--bad)">${esc(x.red)}</b>`:''}${x.iss?`<div class="small">${esc(x.iss)}</div>`:''}</td><td>${esc(x.am)}</td><td class="small">${esc(x.st)}</td><td>${esc(x.n)}</td></tr>`).join('')||'<tr><td colspan="13" class="small">아직 기록이 없어요. 지점원이 업체 분석 화면 맨 위에 이름·지점을 넣고 분석하면 쌓입니다.</td></tr>'};
     $('#fWho').onchange=draw;$('#fQ').oninput=draw;draw()}
   $('#brOpen').onclick=open;$('#brPass').addEventListener('keydown',e=>{if(e.key==='Enter')open()});
-  const adm=(body,ok)=>{const t=$('#adTok').value.trim();if(!t){$('#adMsg').textContent='관리자 키를 넣어 주세요.';return}post({action:'branchcfg',token:t,...body}).then(j=>{$('#adMsg').textContent=j.ok?`${ok} 지금 지점: ${j.names.join(', ')||'없음'}`:(j.error||'바꾸지 못했어요.');if(j.ok){$('#adPass').value='';names()}}).catch(()=>{$('#adMsg').textContent='서버에 연결하지 못했어요.'})};
-  $('#adAdd').onclick=()=>adm({add:{name:$('#adName').value,pass:$('#adPass').value}},'저장했어요.');$('#adDel').onclick=()=>adm({del:$('#adName').value},'뺐어요.');
+  const adm=(body,ok)=>{const t=$('#adTok').value.trim();if(!t){$('#adMsg').textContent='관리자 키를 넣어 주세요.';return}post({action:'branchcfg',token:t,mgr:t,...body}).then(j=>{$('#adMsg').textContent=j.ok?`${ok} 지금 지점: ${j.names.join(', ')||'없음'}`:(j.error||'바꾸지 못했어요.');if(j.ok){$('#adPass').value='';names()}}).catch(()=>{$('#adMsg').textContent='서버에 연결하지 못했어요.'})};
+  $('#adAdd').onclick=()=>adm({add:{name:$('#adName').value,pass:$('#adPass').value}},'저장했어요.');$('#adDel').onclick=()=>adm({del:$('#adName').value},'뺐어요.');$('#adMgrSet').onclick=()=>{adm({setMgr:$('#adMgr').value},'운영진 비밀번호를 정했어요.');$('#adMgr').value=''};
   try{if(sessionStorage.getItem('hub-openadm')){sessionStorage.removeItem('hub-openadm');const d=document.querySelector('details.adm');if(d){d.open=true;d.scrollIntoView({block:'start'});$('#adTok').focus()}}}catch(e){}
   names().then(()=>{if(ss.b&&ss.p)open()})}
 function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}

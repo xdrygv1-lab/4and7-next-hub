@@ -501,8 +501,8 @@ html:not(.admin) .skinbar,html:not(.admin) .adm{display:none!important}
 .use4 b{font-size:17px;line-height:1.35}.use4 span{color:var(--sub);font-size:14px}
 .fbnote{border-left:4px solid var(--accent);background:var(--tint);border-radius:10px;padding:12px 14px;margin:6px 0 14px;display:grid;gap:2px}
 details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}details.more>summary{cursor:pointer;font-weight:600;color:var(--sub)}
-.fbbtn{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:65;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:9px 15px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-.fbbtn:hover{border-color:var(--accent);color:var(--accent)}
+.fbbtn{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:65;display:flex;align-items:center;gap:7px;border:0;background:var(--accent-bg,var(--accent));color:#fff;border-radius:999px;padding:11px 17px;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.fbbtn:hover{filter:brightness(1.08)}.fbbtn svg{flex:none}
 .fbp{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 66px);z-index:66;width:min(380px,calc(100vw - 32px));max-height:calc(100dvh - 100px);overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 12px 32px rgba(0,0,0,.22)}
 .fbp h3{margin:0;font-size:16px}.fbp .where{font-size:13px;color:var(--sub);margin:2px 0 8px}
 .fbp textarea{width:100%;min-height:110px;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
@@ -577,7 +577,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 </aside>
 <div class="scrim" id="scrim"></div>
 <button class="fab" id="fab" type="button" aria-label="메뉴 열기">☰ 메뉴</button>
-<button class="fbbtn" id="fbBtn" type="button" aria-haspopup="dialog">의견 남기기</button>
+<button class="fbbtn" id="fbBtn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg>의견 남기기</button>
 <div class="fbp" id="fbP" role="dialog" aria-label="의견 남기기" hidden>
  <button class="x" type="button" id="fbX" aria-label="닫기">×</button><h3>의견 남기기</h3><div class="where" id="fbWhere"></div>
  <form id="fbF" novalidate><div class="fbk"><label><input type="radio" name="fbk" value="불편해요" checked>불편해요</label><label><input type="radio" name="fbk" value="틀렸어요">틀렸어요</label><label><input type="radio" name="fbk" value="이런 게 있으면">이런 게 있으면</label><label><input type="radio" name="fbk" value="좋아요">좋아요</label></div>
@@ -1129,7 +1129,7 @@ async function show(){
   if(narrow())setCollapsed(true);
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
-    main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
+    main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><button class="btn sm p" type="button" data-fb>의견 남기기</button><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     document.title=t+' · 4&7 NEXT 허브';return}
   if(h==='admin'){try{sessionStorage.setItem('hub-openadm','1')}catch(e){}location.replace(location.pathname+'?admin#manage');return}
   if(h==='admin-off'){try{sessionStorage.removeItem('hub-mg')}catch(e){}location.replace(location.pathname+'#home');return}
@@ -1496,7 +1496,7 @@ Promise.all([
   fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
 ]).then(([m,c])=>{if(m)M=m;CFG={endpoint:String((c&&c.endpoint)||'').trim()};
   $('#built').textContent=m?`업데이트 ${m.built}`:'목록을 불러오지 못했습니다';show()});
-fbInit();
+fbInit();document.addEventListener('click',e=>{if(e.target.closest('[data-fb]')&&$('#fbP').hidden)$('#fbBtn').click()});
 </script>
 
 </body>

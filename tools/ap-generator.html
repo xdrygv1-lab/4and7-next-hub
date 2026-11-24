@@ -84,6 +84,23 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;b
 .spk b{display:block;font-size:12px;color:#4a7bd0;margin-bottom:2px}
 .aiout{white-space:pre-wrap;line-height:1.7;border:1px solid rgba(128,128,128,.3);border-radius:8px;padding:12px;margin-top:10px;max-height:640px;overflow:auto}
 @media print{.spk{display:none}}
+.tbar{position:sticky;top:-16px;z-index:5;margin:-4px -4px 10px;padding:8px 4px;background:var(--card,#fff);border-bottom:1px solid var(--line,#e3e6e4);display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.tbar .tc{border:1px solid var(--line,#dfe3e1);background:transparent;color:inherit;border-radius:999px;padding:4px 10px;font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.tbar .tc.on{background:var(--acc);border-color:var(--acc);color:#fff}.tbar .tc i{font-style:normal;opacity:.7;margin-left:4px;font-size:11.5px}
+.tbar .tx{margin-left:auto;font-size:12px;border:0;background:none;color:var(--acc);cursor:pointer;padding:4px}
+fieldset.tp>legend{cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;padding:8px 0;border-top:1px solid var(--line,#e3e6e4);font-size:14px}
+fieldset.tp>legend::before{content:'▾';font-size:11px;transition:transform .15s}fieldset.tp.shut>legend::before{transform:rotate(-90deg)}
+fieldset.tp>legend .cnt{margin-left:auto;font-weight:400;font-size:12px;color:#8a938f}
+fieldset.tp.shut>:not(legend){display:none!important}fieldset.tp.shut{margin-bottom:0}
+.fdrop{margin:6px 0 8px;padding:10px;border:1px dashed var(--acc);border-radius:8px}.fdrop.over{background:rgba(0,82,255,.06)}
+.flist{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.fchip{display:inline-flex;align-items:center;gap:4px;background:rgba(0,82,255,.08);border-radius:999px;padding:3px 4px 3px 10px;font-size:12.5px;max-width:100%;overflow-wrap:anywhere}
+.fchip button{border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:0 5px;color:inherit}
+#genBar{position:sticky;bottom:-16px;background:var(--card,#fff);padding:10px 0 4px;margin-bottom:-4px;border-top:1px solid var(--line,#e3e6e4)}
+@media(max-width:1000px){.tbar{top:0}#genBar{bottom:0}}
+.rshint{margin-top:8px;padding:9px 11px;border-radius:8px;background:rgba(0,82,255,.06);font-size:13px;line-height:1.55}
+.apdiv{margin:14px 0 2px;font-size:12px;font-weight:700;color:#8a938f;letter-spacing:.02em}
+details.more{margin-top:6px}details.more>summary{cursor:pointer;font-size:13px;color:var(--acc);padding:4px 0}
+.qchips{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 6px}.qc{border:1px solid var(--line,#dfe3e1);background:transparent;color:inherit;border-radius:999px;padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer}.qc:hover{border-color:var(--acc);color:var(--acc)}
 </style>
 </head>
 <body>
@@ -128,24 +145,26 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <!-- ===== 입력: 상황카드 ===== -->
 <section class="card form" id="form">
   <div class="btns" style="margin-bottom:12px"><button class="b" id="sample">예시 1: 제조업 대표</button><button class="b" id="sample2">예시 2: 강사 원장</button><button class="b" id="reset">비우기</button></div>
-  <details id="dartBox" open style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">업체자료 불러오기</summary>
+  <details id="dartBox" open style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">업체자료 불러오기 (회사 정보 찾기)</summary>
     <div class="crmbox">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:6px">
         <div><label>상호명 *</label><input type="text" id="crmCo" placeholder="예: OO정밀(주)" autocomplete="off"></div>
         <div><label>대표자명 <span class="muted">(인터넷 검색 정확도용, 선택)</span></label><input type="text" id="crmCeo" placeholder="예: 김OO" autocomplete="off"></div>
       </div>
-      <div class="btns" style="align-items:center"><button class="b p" type="button" id="dartFind">전자공시(DART)에서 찾기</button><button class="b" type="button" id="resBtn">인터넷에서 회사 정보 찾기 (유료)</button><span id="dartMsg" class="muted"></span></div>
+      <div class="btns" style="align-items:center"><button class="b p" type="button" id="resBtn">회사 정보 찾기</button><button class="b" type="button" id="dartFind">전자공시에서 찾기</button><span id="dartMsg" class="muted"></span></div>
       <div id="dartList" class="btns" style="margin:6px 0"></div>
       <div class="muted" id="resMsg" style="margin-top:4px"></div><div id="resSrc" class="muted" style="font-size:12.5px"></div>
-      <div class="muted" style="margin-top:6px">전자공시는 상장사·외부감사 법인만 있어요. 그 밖의 회사는 아래 <b>"재무자료 붙여넣기"</b>에 재무제표를 붙이거나 연도별 숫자를 직접 넣으세요. 고객에게는 <b>"무료로 회사 가치(영업권) 평가를 해 드릴게요"</b>라며 사업자등록증과 최근 3년 재무제표를 받으면 자연스럽습니다.</div>
+      <div class="rshint"><b>회사 정보 찾기</b>: 상호명만 넣고 누르면 인터넷에서 <b>업종·연혁·주력 제품·거래처·최근 기사·대표 이력</b>을 찾아 아래 <b>«회사 공개 정보»</b> 칸에 채워 드려요 (1분쯤).<br><b>전자공시에서 찾기</b>: 상장사·외부감사 법인이면 재무제표·주주까지 불러와요.</div>
+      <details class="muted" style="margin-top:4px;font-size:12.5px"><summary>둘 다 안 나오면?</summary>아래 «재무자료»에 고객에게 받은 재무제표·신고서 파일을 넣으세요. 고객에게는 "무료로 회사 가치(영업권) 평가를 해 드릴게요"라며 사업자등록증과 최근 3년 재무제표를 받으면 자연스럽습니다.</details>
     </div>
   </details>
-  <details id="fsBox" open style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">재무자료 붙여넣기 → 자동 입력</summary>
-    <div class="muted" style="margin:6px 0">재무상태표·손익계산서 텍스트(위하고·홈택스·PDF 복사)를 그대로 붙여넣으세요. 첫 번째 숫자를 당기 값으로 읽습니다. 단위(원·천원·백만원)는 "(단위:" 표기로 판단합니다.</div>
-    <div style="margin:6px 0 8px;padding:10px;border:1px dashed var(--acc);border-radius:8px">
-      <b>재무제표 파일 넣기</b> <span class="muted">(PDF · 위하고 엑셀 · 여러 개 한꺼번에)</span><br>
-      <input type="file" id="fsFile" accept=".pdf,.xlsx,.xls,.csv,.txt" multiple style="margin-top:6px">
-      <div class="muted" style="margin-top:4px">재무상태표·손익계산서를 함께 넣으면 당기·전기 숫자를 읽어 아래 연도별 표까지 채웁니다. 세무조정계산서·결산보고서·홈택스 신고서·표준재무제표증명 PDF도 됩니다. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어요. 2025년 파일과 2024년 파일을 같이 넣으면 3년이 채워져요. <b>파일 자체는 이 기기에서만 읽어요. 분석 결과(회사명·대표·숫자·컨셉)는 이름·지점을 넣으면 우리 지점장만 보는 팀 기록에 남아요.</b> 사진을 찍어 만든 PDF(스캔본)는 글자가 없어 못 읽어요.</div>
+  <details id="fsBox" open style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">재무자료 (파일 · 붙여넣기)</summary>
+    
+    <div id="fsDrop" class="fdrop">
+      <b>파일 넣기</b> <span class="muted">PDF · 엑셀, 여러 개 · 여러 번 넣어도 쌓여요 (끌어다 놓아도 돼요)</span><br>
+      <label class="b p" style="display:inline-block;margin-top:6px;cursor:pointer">파일 고르기<input type="file" id="fsFile" accept=".pdf,.xlsx,.xls,.csv,.txt" multiple hidden></label>
+      <div id="fsList" class="flist"></div>
+      <details class="muted" style="margin-top:4px;font-size:12.5px"><summary>어떤 파일이 되나요?</summary>재무상태표·손익계산서, 세무조정계산서(여러 파일로 나뉘어 있어도 한꺼번에), 결산보고서, 감사보고서, 법인등기부, 홈택스 주주명부, <b>종합소득세 신고서</b>(성명·나이·상호·업종·총수입금액·사업소득금액·종합소득금액), 표준재무제표증명. 해마다 다른 파일을 같이 넣으면 연도별 표까지 채워요. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어요.</details>
       <div id="fsFileMsg" class="muted" style="margin-top:4px"></div>
     </div>
     <textarea id="fsText" rows="6" placeholder="예)&#10;(단위: 원)&#10;매출액 1,200,000,000 ...&#10;당기순이익 110,000,000&#10;이익잉여금 ...&#10;자본총계 ...&#10;주.임.종단기채권 ..."></textarea>
@@ -262,8 +281,9 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div id="styleTip" class="muted" style="margin-top:4px"></div></div>
   </fieldset>
 
-  <fieldset><legend>업체 상황 · 특이사항</legend>
-    <textarea id="notes" rows="4" placeholder="예: 대표가 내년 공장 이전을 고민 중 / 자녀 둘 다 사업 관심 없음 / 최근 세무조사 받은 적 있음 / 부모님 건강이 좋지 않음&#10;(고객 이름·회사명은 쓰지 마세요)"></textarea>
+  <fieldset><legend>업체 이야기 (정성적인 내용)</legend>
+    <div class="qchips" id="qchips"></div>
+    <textarea id="notes" rows="6" placeholder="숫자로 안 보이는 것을 적어 주세요. 위 단추를 누르면 줄머리가 들어가요.&#10;예: 대표가 내년 공장 이전을 고민 중 / 자녀 둘 다 사업 관심 없음 / 최근 세무조사 받은 적 있음 / 부모님 건강이 좋지 않음&#10;(고객 이름·회사명은 쓰지 마세요)"></textarea>
     <div class="muted" style="margin-top:4px">여기 적은 내용은 보고서·PPT·최종 점검에 반영됩니다.</div>
   </fieldset>
 
@@ -350,7 +370,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <label><input type="checkbox" class="rs" value="법인세금">"법인 하면 법인세도 소득세도 내잖아"</label>
     </div>
   </fieldset>
-  <div class="btns"><button class="b p" id="gen">분석 시작</button></div>
+  <div class="btns" id="genBar"><button class="b p" id="gen">분석 시작</button></div>
 </section>
 
 <!-- ===== 출력 ===== -->
@@ -992,6 +1012,20 @@ function parseDocInfo(rows){
     info.officers=live.map(o=>`${o.role} ${o.name}`).join(', ');
     m=S.match(/목\s*적\s+1\s*\.\s*(.+?)\s+1\s*\./);if(m&&!info.ind)info.ind=m[1].slice(0,30);
   }
+  /* 종합소득세 신고서 (11/24 상권): 성명·생년·귀속연도·상호·업종·개업연도·총수입금액·사업소득금액·종합소득금액 */
+  if(/종\s*합\s*소\s*득\s*세/.test(S)&&/(과\s*세\s*표\s*준\s*확\s*정\s*신\s*고|신\s*고\s*서|종\s*합\s*소\s*득\s*금\s*액)/.test(S)&&!/법\s*인\s*세\s*과\s*세\s*표\s*준/.test(S)){
+    info.kind='종합소득세 신고서';info.personal=true;delete info.sh;
+    const won=x=>+String(x).replace(/,/g,'');
+    let m=S.match(/성\s*명\s+([가-힣]{2,5})(?=\s)/);if(m)info.ceoName=m[1];
+    m=S.match(/주\s*민\s*등\s*록\s*번\s*호\s+(\d{6})\s*-?\s*([1-8])/)||S.match(/(?<!\d)(\d{6})\s*-\s*([1-8])[\d*]{6}/);if(m)info.birthY=birthYear(m[1],m[2]);
+    m=S.match(/(20\d\d)\s*년\s*(?:도\s*)?귀\s*속/)||S.match(/귀\s*속\s*(?:연\s*도|년\s*도)\s*:?\s*(20\d\d)/)||S.match(/(20\d\d)\s*년\s*(?:도\s*)?종\s*합\s*소\s*득\s*세/);if(m)info.fy=+m[1];
+    m=S.match(/상\s*호\s*(?:\(\s*법\s*인\s*명\s*\))?\s+(.+?)\s+(?:[①-⑳]|사\s*업\s*자|\d{3}-\d{2}-\d{5}|소\s*재\s*지|업\s*태)/);if(m&&!/^[\d,]+$/.test(m[1]))info.co=m[1].replace(/\s+/g,' ').trim().slice(0,40);
+    m=S.match(/종\s*목\s+(.+?)\s+(?:[①-⑳]|업\s*종\s*코\s*드|\d{6}|주\s*업\s*종|$)/)||S.match(/업\s*태\s+(.+?)\s+(?:종\s*목|[①-⑳]|$)/);if(m)info.ind=m[1].replace(/\s+/g,' ').trim().slice(0,30);
+    m=S.match(/(?:개\s*업|사\s*업\s*개\s*시)\s*(?:연\s*월\s*일|일\s*자|일)?\s*:?\s*((?:19|20)\d\d)/);if(m)info.founded=+m[1];
+    m=S.match(/총\s*수\s*입\s*금\s*액\s*(?:[①-⑳㉑-㉟]|\(\s*\d+\s*\))?\s*([\d,]{5,})/);if(m)info.revenue=won(m[1]);
+    m=S.match(/사\s*업\s*소\s*득\s*(?:금\s*액)?\s*(?:[①-⑳㉑-㉟]|\(\s*\d+\s*\))?\s*([\d,]{5,})/);if(m)info.bizInc=won(m[1]);
+    m=S.match(/종\s*합\s*소\s*득\s*금\s*액\s*(?:[①-⑳㉑-㉟]|\(\s*\d+\s*\))?\s*([\d,]{5,})/);if(m)info.totInc=won(m[1]);
+  }
   return info}
 
 const IND_MAP=[[/제조|가공|생산/,'제조'],[/건설|공사|토목|건축|설비/,'건설'],[/도매|소매|유통|판매|무역/,'도소매'],[/음식|숙박|식당|카페/,'음식숙박'],[/의원|병원|치과|한의/,'병의원'],[/부동산|임대/,'부동산임대'],[/소프트웨어|정보통신|연구개발|프로그래밍|IT/,'IT연구'],[/세무|회계|법무|특허|노무|사무소/,'전문직'],[/서비스|운송|교육|광고|컨설팅|수리|환경|폐기물|청소/,'서비스']];
@@ -1007,6 +1041,12 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   if(info.ind){const m=IND_MAP.find(([r])=>r.test(info.ind));set('ind',m?m[1]:'기타');got.push(`업종(«${esc(info.ind)}» → ${m?m[1]:'기타'})`)}
   const fd=info.founded??info.foundedEst;if(fd){set('years',Math.max(0,new Date().getFullYear()-fd));got.push('업력')}
   if(info.kind&&/세무조정|감사|등기/.test(info.kind))set('form_','법인');
+  if(info.personal){set('form_','개인');got.push('사업 형태(개인)');const eo=v=>Math.round(v/1e6)/100;
+    if(info.birthY){set('age',new Date().getFullYear()-info.birthY);got.push(`대표 나이(${info.birthY}년생, 대략)`)}
+    if(info.totInc){set('ceoInc',eo(info.totInc));got.push(`대표 연소득(종합소득금액 ${eo(info.totInc)}억)`)}
+    if(info.revenue&&!$('#sales').value){set('sales',eo(info.revenue));got.push('매출(총수입금액)')}
+    if(info.bizInc&&!$('#profit').value){set('profit',eo(info.bizInc));got.push('이익(사업소득금액)')}
+    if(info.fy)got.push(`${info.fy}년 귀속`)}
   if(info.sh&&info.sh.length){const tot=info.shares||info.sh.reduce((s,x)=>s+x.n,0)||1,cn=String(info.ceoName||'').split(/\s*[,·]\s*/).filter(Boolean);
     const ceo=info.sh.find(s=>cn.includes(s.name))||info.sh.find(s=>s.code==='00'),top=[...info.sh].sort((a,b)=>b.n-a.n)[0],who=ceo||top;
     set('share',Math.round(who.n/tot*1000)/10);got.push(`대표 지분율(주주 ${info.sh.length}명${ceo?'':', 대표가 명부에 없어 최대주주 기준'})`)}
@@ -1014,7 +1054,14 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   if(got.length)notes.push(`회사 정보도 채웠어요: ${got.join(', ')}.${info.founded==null&&info.foundedEst?` 업력은 «제${info.term}기»로 짐작한 값이라 등기부로 확인하세요.`:''}`);
   return got.length}
 
-$('#fsFile').onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const msg=$('#fsFileMsg');msg.textContent='읽는 중…';
+let FSF=[];
+function fsList(){const el=$('#fsList');if(!el)return;el.innerHTML=FSF.length?FSF.map((f,i)=>`<span class="fchip">${esc(f.name)}<button type="button" data-fx="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" class="b" id="fsClr" style="padding:3px 10px">모두 빼기</button>':'';
+  el.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{FSF.splice(+b.dataset.fx,1);fsList();if(FSF.length)readFs(FSF);else $('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
+  const c=$('#fsClr');if(c)c.onclick=()=>{FSF=[];fsList();$('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}
+function addFs(list){const add=[...list].filter(f=>/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name)&&!FSF.some(g=>g.name===f.name&&g.size===f.size));if(!add.length)return;FSF=FSF.concat(add);fsList();readFs(FSF)}
+$('#fsFile').onchange=e=>{addFs(e.target.files);e.target.value=''};
+{const z=$('#fsDrop');if(z){['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove('over')}));z.addEventListener('drop',e=>addFs(e.dataTransfer.files))}}
+async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');msg.textContent=`${files.length}개 파일 읽는 중…`;
   const byYear={},pri={},notes=[],diffs=[];let corp=false;const INFO={};const DN={sales:'매출',profit:'당기순이익',equity:'자본총계'},r2=x=>Math.round(x*100)/100;
   for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name);let raw=isPdf?await pdfRows(buf.slice(0)):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):(await f.text()).split(/\r?\n/).map(l=>[l]);
       /* 글자 층이 거의 비어 있는 PDF(쪽당 30자 미만)도 스캔본으로 봄 */
@@ -1049,7 +1096,7 @@ $('#fsFile').onchange=async e=>{const files=[...e.target.files];if(!files.length
     FS3.forEach(k=>{if(v[k]!=null)$(`#f3_${k}_${col}`).value=Math.round(v[k]*100)/100})});
   $('#fs3Apply').onclick();
   lastFS.ptY=Object.fromEntries(yrs.map(y=>[y,byYear[y].pretax]).filter(x=>x[1]!=null));
-  msg.innerHTML=notes.join('<br>')+`<br><b>${yrs.join('·')}년을 채웠어요.</b> 숫자가 장부와 맞는지 한 번 보세요.`;e.target.value=''};
+  msg.innerHTML=notes.join('<br>')+`<br><b>${yrs.join('·')}년을 채웠어요.</b> 숫자가 장부와 맞는지 한 번 보세요.`}
 
 /* ---------- 제안 금액 · 체크리스트 ---------- */
 const DIFF={ceo:['쉬움',1],retire:['쉬움',1],protect:['쉬움',1],usdWhole:['쉬움',1],corpConv:['보통',.8],inherit:['보통',.8],estate:['보통',.8],cashBld:['보통',.8],exitRet:['보통',.8],loanClear:['보통',.8],structure:['보통',.8],
@@ -1702,13 +1749,13 @@ function applyImport(d){write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:
 let RES=null,LASTMET=null;
 /* 인터넷 조사: 결과를 "회사 공개 정보"에 붙임 (CRM 자료가 나중에 와도 유지) */
 function mergeResearch(){if(!RES)return;const bi=$('#bizinfo');if(!bi.value.includes('[인터넷 조사'))bi.value=(bi.value?bi.value+'\n':'')+'[인터넷 조사 '+new Date().toISOString().slice(0,10)+']\n'+RES.text}
-async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('#resMsg').textContent='인터넷에서 회사 정보를 찾는 중… (약 1분)';
+async function runResearch(ep,biz,co,ceo){RES=null;$('#resSrc').innerHTML='';$('#resMsg').textContent='회사 정보를 찾는 중… (1분쯤)';
   try{const r=await fetch(ep,{method:'POST',body:JSON.stringify({action:'research',biz,co,ceo,pass:TP()})}).then(x=>x.json());
-    if(!r.ok){$('#resMsg').textContent='인터넷 조사: '+(r.error||'하지 못했습니다');return}
+    if(!r.ok){$('#resMsg').textContent='회사 정보 찾기: '+(r.error||'하지 못했습니다');return}
     RES=r;mergeResearch();if(!$('#co').value)$('#co').value=co;run();
-    $('#resMsg').textContent='인터넷 조사 완료'+(r.cached?' (최근 조사 재사용)':'')+': "회사 공개 정보"에 넣었습니다. 사실과 다르면 고쳐 주세요.';
+    $('#resMsg').textContent='회사 정보를 찾았어요'+(r.cached?' (최근에 찾은 것)':'')+': «회사 공개 정보» 칸에 넣었습니다. 사실과 다르면 고쳐 주세요.';try{const t=[...document.querySelectorAll('#form > fieldset')].find(f=>/공개 정보/.test(f.querySelector('legend').textContent));if(t){t.classList.remove('shut');window.__topicsDraw&&window.__topicsDraw()}}catch(e){}
     $('#resSrc').innerHTML=(r.sources||[]).length?'출처: '+r.sources.map((s,i)=>'<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+(i+1)+'. '+esc(s.title||s.url)+'</a>').join(' · '):''}
-  catch(e){$('#resMsg').textContent='인터넷 조사: 연결하지 못했습니다'}}
+  catch(e){$('#resMsg').textContent='회사 정보 찾기: 연결하지 못했습니다'}}
 function TP(){try{return localStorage.getItem('team_pass')||''}catch(e){return ''}}
 $('#dartFind').onclick=dartFind;
 $('#resBtn').onclick=async()=>{const co=$('#crmCo').value.trim(),ceo=$('#crmCeo').value.trim();if(co.length<2){$('#resMsg').textContent='상호명을 두 글자 이상 적어 주세요.';return}
@@ -1731,6 +1778,64 @@ function importFromHash(){const h=location.hash;if(!h.startsWith('#import='))ret
   catch(e){console.error(e);return false}}
 if(!importFromHash()&&!load())write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});
 toggle();run();
+
+/* ---------- 고를 것 줄이기 (11/24 상권 «선택할 것이 너무 많아») ---------- */
+(function simplify(){
+  const TOP=['f_askedCorp','f_noRetire','f_loan','f_retained','f_ownerAsset','f_realEstate','f_giftHistory','f_health'];
+  const fs=[...document.querySelectorAll('#form > fieldset')].find(f=>/신호/.test(f.querySelector('legend').textContent));
+  if(fs){const boxes=[...fs.querySelectorAll('.checks')],main=boxes[0];
+    const more=document.createElement('details');more.className='more';const mc=document.createElement('div');mc.className='checks';
+    [...fs.querySelectorAll('.checks label')].forEach(l=>{const i=l.querySelector('input');if(!TOP.includes(i.id))mc.appendChild(l)});
+    TOP.forEach(id=>{const i=document.getElementById(id);if(i)main.appendChild(i.closest('label'))});
+    fs.querySelectorAll('.muted').forEach(m=>{if(/PS리스트/.test(m.textContent))m.remove()});boxes.slice(1).forEach(b=>b.remove());
+    const n=mc.children.length;more.innerHTML=`<summary>신호 더 보기 (${n})</summary>`;more.appendChild(mc);main.after(more);
+    const sync=()=>{const k=mc.querySelectorAll('input:checked').length;more.querySelector('summary').textContent=`신호 더 보기 (${n})${k?` · ${k}개 고름`:''}`;if(k)more.open=true};
+    mc.addEventListener('change',sync);sync();window.__sigSync=sync;
+    fs.querySelector('legend').firstChild.textContent='알고 있는 신호 (해당하는 것만) ';}
+  /* 정성적인 내용: 줄머리 단추 */
+  const Q=['대표 고민','회사 강점','가족·승계','직원·조직','거래처·경쟁','최근 변화','돈 흐름·자금','대표 성향'];const qc=$('#qchips');
+  if(qc){qc.innerHTML=Q.map(q=>`<button type="button" class="qc">+ ${q}</button>`).join('');
+    qc.addEventListener('click',e=>{const b=e.target.closest('.qc');if(!b)return;const ta=$('#notes'),k=b.textContent.replace(/^\+\s*/,'');
+      ta.value=(ta.value.trim()?ta.value.replace(/\s*$/,'')+'\n':'')+k+': ';ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);ta.dispatchEvent(new Event('input',{bubbles:true}))})}
+})();
+
+/* ---------- 입력 칸 주제별 접기 (11/24 상권 «제안준비 탭에 플로팅 접기, 주제별로», «선택할 것이 너무 많아»)
+   위 떠 있는 막대에서 주제를 누르면 그 주제만 펼침. 첫 미팅(AP) 쪽 칸들은 «AP 준비» 하나로 묶음 ---------- */
+(function topics(){const form=$('#form');if(!form)return;
+  const SHORT=[[/^업체자료/,'업체자료'],[/^재무자료/,'재무자료'],[/상대 정보/,'회사·대표'],[/신호/,'신호'],[/업체 이야기|특이사항/,'업체 이야기'],[/공개 정보/,'공개 정보'],[/나와의 관계/,'관계'],
+    [/3가지|목표|미션|F\.F|사례 은행|변리사|노무사|④|저항/,'AP 준비']];
+  const nm=t=>{const s=SHORT.find(([r])=>r.test(t));return s?s[1]:'AP 준비'};
+  const T=[...form.querySelectorAll(':scope > details, :scope > fieldset')].map(el=>{const isD=el.tagName==='DETAILS',head=isD?el.querySelector('summary'):el.querySelector('legend');
+    if(!isD){el.classList.add('tp');const c=document.createElement('span');c.className='cnt';head.appendChild(c)}
+    return {el,isD,head,g:nm(head.textContent.trim())}});
+  const G=[...new Set(T.map(t=>t.g))].sort((x,y)=>(x==='AP 준비')-(y==='AP 준비'));
+  /* «AP 준비» 칸들 앞에 작은 제목 */
+  const ap=T.filter(t=>t.g==='AP 준비');if(ap.length){const d=document.createElement('div');d.className='apdiv';d.textContent='AP(첫 미팅) 준비 · 필요할 때만 펼치세요';ap[0].el.before(d)}
+  let st={};try{st=JSON.parse(localStorage.getItem('ap-topics2')||'{}')||{}}catch(e){}
+  const isOpen=t=>t.isD?t.el.open:!t.el.classList.contains('shut');
+  const setOpen=(t,o)=>{if(t.isD)t.el.open=o;else t.el.classList.toggle('shut',!o)};
+  const gOpen=g=>T.some(t=>t.g===g&&isOpen(t));
+  const keep=()=>{try{localStorage.setItem('ap-topics2',JSON.stringify(Object.fromEntries(G.map(g=>[g,gOpen(g)?1:0]))))}catch(e){}};
+  T.forEach(t=>setOpen(t,st[t.g]!=null?!!st[t.g]:['업체자료','재무자료','회사·대표'].includes(t.g)));
+  const bar=document.createElement('div');bar.className='tbar';bar.setAttribute('role','navigation');bar.setAttribute('aria-label','입력 주제');
+  bar.innerHTML=G.map(g=>`<button type="button" class="tc" data-g="${esc(g)}">${esc(g)}<i></i></button>`).join('')+'<button type="button" class="tx" data-all>모두 펴기</button>';
+  form.insertBefore(bar,form.querySelector(':scope > details, :scope > fieldset'));
+  const fill=t=>{const ins=[...t.el.querySelectorAll('input,select,textarea')].filter(x=>x.type!=='file'&&x.type!=='button'&&!x.closest('summary'));
+    return [ins.filter(x=>x.type==='checkbox'||x.type==='radio'?x.checked:String(x.value||'').trim()!=='').length,ins.length]};
+  const draw=()=>{G.forEach(g=>{const b=bar.querySelector(`[data-g="${g}"]`);b.classList.toggle('on',gOpen(g));
+      const ts=T.filter(t=>t.g===g&&!t.isD),n=ts.reduce((s,t)=>s+fill(t)[0],0);b.querySelector('i').textContent=ts.length&&n?n:''});
+    T.forEach(t=>{if(!t.isD){const [n,m]=fill(t);t.head.querySelector('.cnt').textContent=m&&n?`${n}칸`:''}});
+    bar.querySelector('[data-all]').textContent=T.every(isOpen)?'모두 접기':'모두 펴기'};
+  bar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.hasAttribute('data-all')){const o=!T.every(isOpen);T.forEach(t=>setOpen(t,o));keep();draw();return}
+    const g=b.dataset.g;if(gOpen(g)&&T.filter(t=>t.g!==g).every(t=>!isOpen(t))){T.forEach(t=>{if(t.g===g)setOpen(t,false)})}
+    else{T.forEach(t=>setOpen(t,t.g===g));const first=T.find(t=>t.g===g).el,top=(first.previousElementSibling&&first.previousElementSibling.className==='apdiv'?first.previousElementSibling:first).offsetTop-bar.offsetHeight-8;
+      if(getComputedStyle(form).overflowY==='auto'&&form.scrollHeight>form.clientHeight)form.scrollTo({top,behavior:'smooth'});else first.scrollIntoView({behavior:'smooth',block:'start'})}
+    keep();draw()});
+  T.forEach(t=>{if(t.isD)t.el.addEventListener('toggle',()=>{keep();draw()});else t.head.addEventListener('click',()=>{setOpen(t,!isOpen(t));keep();draw()})});
+  form.addEventListener('input',draw);form.addEventListener('change',draw);
+  window.__topicsDraw=draw;draw();
+  ['sample','sample2','reset'].forEach(id=>{const b=document.getElementById(id);if(b)b.addEventListener('click',()=>setTimeout(()=>{window.__sigSync&&window.__sigSync();draw()},50))})})();
 </script>
 <script>(function(){var c=document.getElementById('cert'),r=document.getElementById('rel');if(!c||!r)return;
 function f(){var o=r.querySelector('option[value="기장"]');if(o)o.textContent=c.value==='노무사'?'노무 자문·급여 아웃소싱 거래처':'기장거래처'}

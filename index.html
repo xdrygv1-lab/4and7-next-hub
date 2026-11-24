@@ -516,6 +516,8 @@ details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}d
 .fbi .c{margin:6px 0 4px;white-space:pre-wrap;overflow-wrap:anywhere}.fbi .brrow{margin:4px 0 0}
 .mgsec{margin-top:26px}.mgsec h2{display:flex;align-items:center;gap:8px}
 .mgnote{font-size:13px;color:var(--sub);margin:4px 0 8px}
+.mg3{list-style:none;padding:0;margin:8px 0 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;counter-reset:s}.mg3 li{counter-increment:s;background:var(--tint);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.mg3 li b::before{content:counter(s) ". ";color:var(--accent)}.mg3 li span{font-size:13.5px;color:var(--sub)}.brc{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0;background:var(--panel)}.bch{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bch>b{font-size:17px}.bch code,.mkr code{font-size:14px;background:var(--tint);padding:2px 7px;border-radius:6px}.mkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;margin:10px 0}.mkrow textarea{flex:1;min-width:200px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--panel);color:var(--ink);resize:vertical}.mkout{border-radius:12px;background:var(--tint);padding:10px 12px;margin:8px 0}.mkh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.actbox{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}.actk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.actk .btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mkr{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.mkr .nm{min-width:64px;font-weight:700}.mkr .mgcopy{flex-basis:100%;user-select:all}.btn.done{opacity:.7}
 .mgcopy{white-space:pre-wrap;background:var(--tint);border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
 </style>
 <body>
@@ -525,11 +527,11 @@ details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}d
   <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
     <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
     <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요. 한 번 넣으면 이 기기에서 기억합니다.</div>
-    <input id="g47i" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="아이디" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px;margin-bottom:8px">
+    <input id="g47i" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="아이디 (예: 홍길동)" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px;margin-bottom:8px">
     <input id="g47p" type="password" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
     <button type="submit" style="margin-top:12px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
     <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
-    <div style="color:#8a938f;font-size:12px;margin-top:4px">아이디가 아직 없으면 아이디 칸은 비우고 팀 비밀번호만 넣어도 됩니다.</div>
+    <div style="color:#8a938f;font-size:12px;margin-top:4px">운영진도 받은 아이디와 비밀번호로 들어오면 관리 메뉴가 함께 보여요.</div>
   </form>
 </div>
 <script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
@@ -538,8 +540,9 @@ function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.jso
 var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
 function keep(j){try{if(j&&j.id){localStorage.setItem('team_id',j.id);localStorage.setItem('team_name',j.name||j.id);
   var me=null;try{me=JSON.parse(localStorage.getItem('hub-me')||'null')}catch(e){}
-  if(j.branch&&(!me||!me.name||me.name!==j.name||me.branch!==j.branch))localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch}))}
-  else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}}catch(e){}}
+  if(j.branch&&(!me||!me.name||me.name!==j.name||me.branch!==j.branch||!!me.boss!==!!j.boss))localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch,boss:!!j.boss}))}
+  else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}
+  if(j&&j.staff)localStorage.setItem('team_staff','1');else localStorage.removeItem('team_staff')}catch(e){}}
 function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.ok)keep(j);return j&&j.ok?true:false}).catch(function(){return null})})}
 if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}
 else setTimeout(function(){var i=document.getElementById('g47i');if(i)i.focus()},50);
@@ -704,7 +707,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 
 <template id="tpl-branch">
   <h1>지점장 보기</h1>
-  <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 운영진은 «전체 보기»에 운영진 비밀번호를 넣으면 모든 지점을 봅니다. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
+  <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. <b>지점장 아이디</b>로 들어왔으면 우리 지점 기록이 바로 열려요. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 운영진은 «전체 보기»에 운영진 비밀번호를 넣으면 모든 지점을 봅니다. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
   <div class="card brlog"><div class="brrow"><select id="brSel"><option value="">지점 고르기</option></select><input id="brPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn p" id="brOpen">열기</button></div><p class="small" id="brMsg"></p></div>
   <div id="brOut"></div>
   <details class="card adm brlog" style="margin-top:18px"><summary><b>지점 만들기 · 비밀번호 바꾸기 (운영진)</b></summary>
@@ -900,15 +903,14 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <p class="mgnote">지점원이 화면 구석 «의견 남기기»로 보낸 글입니다. 처리하면 상태를 바꾸고 한마디를 남기세요. 보낸 사람의 «내 의견»에 그대로 보입니다.</p>
       <div class="brrow"><select id="fbFilt"><option value="">모두</option><option value="접수">새 의견만</option><option value="검토 중">보는 중</option><option value="반영 완료">고침</option><option value="보류">보류</option></select></div>
       <div id="fbList"></div></section>
-    <section class="mgsec"><h2>지점원 아이디</h2>
-      <p class="mgnote">지점원마다 아이디를 만들어 나눠 주세요. 비밀번호는 서버에 원문으로 남지 않아서 나중에 다시 볼 수 없어요. 잊으면 여기서 새로 정해 주면 됩니다.</p>
-      <div class="card brlog"><div class="brrow"><input id="acId" placeholder="아이디 (영문·숫자, 예: kim01)" autocomplete="off" autocapitalize="off"><input id="acName" placeholder="이름"><select id="acBr"></select><input id="acPw" placeholder="비밀번호 4자 이상" autocomplete="off"><button class="btn" id="acGen" type="button">자동</button><button class="btn p" id="acSave" type="button">만들기·바꾸기</button></div>
-        <p class="small" id="acMsg"></p><div id="acCopy"></div></div>
-      <div class="tw"><table class="brt" style="min-width:640px"><thead><tr><th>아이디</th><th>이름</th><th>지점</th><th>만든 날</th><th>마지막 접속</th><th>7일 접속</th><th></th></tr></thead><tbody id="acRows"></tbody></table></div>
-      <label class="small" style="display:flex;gap:6px;align-items:center;margin-top:10px"><input type="checkbox" id="tpOn"> 팀 공용 비밀번호로도 들어오게 두기 (아이디를 다 나눠 준 뒤 끄세요. 끄면 공용 비밀번호로 들어온 기기는 다시 로그인해야 해요)</label>
+    <section class="mgsec"><h2>지점과 아이디</h2>
+      <ol class="mg3"><li><b>지점 만들기</b><span>이름만 넣으면 끝</span></li><li><b>이름 붙여 넣기</b><span>지점 칸에 한 줄에 한 명</span></li><li><b>복사해서 개인톡</b><span>아이디·비밀번호가 저절로 나와요</span></li></ol>
+      <div class="card brlog"><div class="brrow"><input id="nbName" placeholder="새 지점 이름 (예: 광주지점)" style="flex:1;min-width:180px"><button class="btn p" id="nbAdd" type="button">지점 만들기</button></div><p class="small" id="acMsg"></p></div>
+      <div id="brCards"></div>
+      <label class="small" style="display:flex;gap:6px;align-items:center;margin-top:12px"><input type="checkbox" id="tpOn"> 팀 공용 비밀번호로도 들어오게 두기 (아이디를 다 나눠 준 뒤 끄세요. 끄면 공용 비밀번호로 들어온 기기는 다시 로그인해야 해요)</label>
     </section>
     <section class="mgsec"><h2>관리 메뉴</h2><div class="cards">
-      <a class="card" href="#branch"><b>지점원 기록 · 지점 만들기</b><span>지점별 업체 분석·MBTI 기록, 지점과 지점장 비밀번호</span></a>
+      <a class="card" href="#branch"><b>지점원 기록 보기</b><span>지점별 업체 분석·보험 MBTI 기록</span></a>
       <a class="card" href="#updates"><b>최근 업데이트</b><span>고친 문서 30개</span></a>
       <a class="card" href="#about"><b>사이트 이야기</b><span>바뀐 기록 전체</span></a>
       <a class="card" href="#todo"><b>보완 필요 목록</b><span>문서 안 «확인 필요» 항목</span></a>
@@ -969,7 +971,7 @@ const TOOLHINT={'tool-ap':'예시 또는 재무제표 넣기 → 분석 시작 �
 const UWNAV=[{h:'uw',label:'한눈에 보기'},{h:'tool-uw',label:'재정심사 계산기'},{h:'tool-check',label:'청약 체크리스트'},{h:'tool-lib',label:'상품 자료실'}];
 const ALIAS={improve:'review',contribute:'review',together:'review',concept:'concepts',practice:'tool-rplive',guide:'manual',start:'manual'};
 const ADM=()=>document.documentElement.classList.contains('admin');
-const ADMQ=/[?&]admin(=|&|$)/.test(location.search);try{localStorage.removeItem('hub-admin')}catch(e){}if(ADMQ)document.documentElement.classList.add('admin');
+const ADMQ=/[?&]admin(=|&|$)/.test(location.search);try{localStorage.removeItem('hub-admin')}catch(e){}const STAFF=(()=>{try{return localStorage.getItem('team_staff')==='1'}catch(e){return false}})();if(ADMQ||STAFF)document.documentElement.classList.add('admin');
 const LEARN=[
   {h:'concepts',label:'컨셉 사전',desc:'업체 상황별 컨설팅 컨셉',gids:['concept']},
   {h:'learn-ap',label:'첫 미팅 화법',desc:'AP 15단계, 화법, 반론 대응',gids:['ap']},
@@ -1089,7 +1091,7 @@ function subHtml(k,h){const L=(arr)=>arr.map(c=>`<a class="navl ${c.h===h?'on':'
   return ''}
 function renderNav(h){
   const fam=familyOf(h);
-  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">관리자</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`:'');
+  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">관리자</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}${STAFF?'':`<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`}`:'');
 }
 
 function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>String(j.endpoint||''));const TP=store.get('team_pass')||'';
@@ -1117,7 +1119,10 @@ function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(
   $('#adAdd').onclick=()=>adm({add:{name:$('#adName').value,pass:$('#adPass').value}},'저장했어요.');$('#adDel').onclick=()=>adm({del:$('#adName').value},'뺐어요.');$('#adMgrSet').onclick=()=>{adm({setMgr:$('#adMgr').value},'운영진 비밀번호를 정했어요.');$('#adMgr').value=''};
   try{const t=sessionStorage.getItem('hub-mg');if(t)$('#adTok').value=t}catch(e){}
   try{if(sessionStorage.getItem('hub-openadm')){sessionStorage.removeItem('hub-openadm');const d=document.querySelector('details.adm');if(d){d.open=true;d.scrollIntoView({block:'start'});$('#adTok').focus()}}}catch(e){}
-  names().then(()=>{if(ss.b&&ss.p)open()})}
+  let me={};try{me=JSON.parse(store.get('hub-me')||'{}')||{}}catch(e){}
+  if(STAFF&&TP.includes(':')){msg.textContent='불러오는 중…';Promise.all([post({action:'aplist',mgr:TP}),post({action:'mbtibranch',mgr:TP})]).then(([a,m])=>{if(a.ok){msg.textContent='운영진 아이디로 전체 지점 기록을 열었어요.';render(a,m.ok?m.rows:[])}else msg.textContent=a.error||''}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})}
+  else if(me.boss&&TP.includes(':')){msg.textContent='불러오는 중…';Promise.all([post({action:'aplist',pass:TP}),post({action:'mbtibranch',pass:TP})]).then(([a,m])=>{if(a.ok){msg.textContent=`지점장 아이디로 ${a.branch} 기록을 바로 열었어요.`;render(a,m.ok?m.rows:[])}else msg.textContent=a.error||''}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})}
+  names().then(()=>{if(!me.boss&&!STAFF&&ss.b&&ss.p)open()})}
 function tpl(id){$('#main').classList.remove('toolmode');$('#main').innerHTML='<div class="wrap" id="view"></div>';$('#view').appendChild($('#'+id).content.cloneNode(true))}
 function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span class="t">${esc(d.title)}</span>${ADM()?`<span class="d">${d.updated}</span>`:''}</a>`).join('')}
 
@@ -1125,7 +1130,7 @@ function docRows(ds){return ds.map(d=>`<a class="row" href="#${d.id}"><span clas
 async function show(){
   const raw=location.hash.slice(1),qi=raw.indexOf('?');let h=decodeURIComponent(qi<0?raw:raw.slice(0,qi))||'home';const QS=qi<0?'':raw.slice(qi+1);
   if(ALIAS[h]){location.replace('#'+ALIAS[h]);return}
-  renderNav(h);window.scrollTo(0,0);document.title='4&7 NEXT 허브';
+  renderNav(h);actLog(h);window.scrollTo(0,0);document.title='4&7 NEXT 허브';
   if(narrow())setCollapsed(true);
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
@@ -1435,12 +1440,56 @@ function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEX
   const drawFb=()=>{const f=$('#fbFilt').value,it=FB.filter(x=>!f||x.status===f);$('#fbCnt').textContent=FB.filter(x=>x.status==='접수').length+' 새';
     $('#fbList').innerHTML=it.length?it.map(x=>`<div class="fbi" data-row="${x.row}"><div class="top">${fbPill(x.status)}<b>${esc(x.who)}</b><span>${esc(x.target)}</span><span>${esc(x.time)}</span>${x.file?`<a href="${esc(x.file)}" target="_blank" rel="noopener">첨부 보기</a>`:''}</div><div class="c">${esc(x.content)}</div>
       <div class="brrow"><select data-st>${Object.keys(FBST).map(s=>`<option value="${s}"${s===x.status?' selected':''}>${FBST[s][0]}</option>`).join('')}</select><input data-note placeholder="보낸 분께 보일 한마디 (선택)" value="${esc(x.note)}" style="flex:1;min-width:180px"><button class="btn sm" type="button" data-save>저장</button></div></div>`).join(''):'<p class="small">아직 없어요.</p>'};
-  const drawAc=r=>{BR=r.branches||[];$('#tpOn').checked=!!r.teamPass;
-    $('#acBr').innerHTML='<option value="">지점 (없음)</option>'+BR.map(b=>`<option>${esc(b)}</option>`).join('');
-    $('#acRows').innerHTML=(r.rows||[]).map(a=>`<tr><td><b>${esc(a.id)}</b></td><td>${esc(a.name)}</td><td>${esc(a.branch)}</td><td>${esc(a.made)}</td><td>${esc(a.last)||'<span class="small">아직</span>'}</td><td>${a.n7}</td><td><button class="btn sm" type="button" data-pw="${esc(a.id)}">비밀번호 새로</button> <button class="btn sm" type="button" data-del="${esc(a.id)}">빼기</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">아직 만든 아이디가 없어요.</td></tr>';
-    $('#acRows').querySelectorAll('[data-pw]').forEach(b=>b.onclick=()=>{const a=r.rows.find(x=>x.id===b.dataset.pw);$('#acId').value=a.id;$('#acName').value=a.name;$('#acBr').value=a.branch;$('#acPw').value='';$('#acGen').click();$('#acMsg').textContent=`${a.id} 의 새 비밀번호를 정하고 «만들기·바꾸기»를 누르세요.`;$('#acId').scrollIntoView({block:'center'})});
-    $('#acRows').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent='정말 빼기';return}
-      call('acctdel',{id:b.dataset.del}).then(j=>{if(j.ok){drawAc(j);$('#acMsg').textContent=`${b.dataset.del} 를 뺐어요. 이제 그 아이디로는 못 들어와요.`}else $('#acMsg').textContent=j.error||'못 뺐어요.'})})};
+  const pin6=()=>{const r=crypto.getRandomValues(new Uint32Array(6));let s='';r.forEach(x=>s+=x%10);return s};
+  const LINK=location.origin+location.pathname;
+  const note=(a,pw,boss)=>`[4&7 NEXT 허브] ${a.name}님 아이디\n링크: ${LINK}\n아이디: ${a.id}\n비밀번호: ${pw}\n처음 화면에서 아이디와 비밀번호를 넣으면 이 기기에서 기억합니다.${boss?`\n지점장 보기: ${LINK}#branch 를 열면 우리 지점 기록이 바로 보여요.`:''}\n불편한 점은 화면 구석 «의견 남기기»로 알려 주세요.`;
+  const cp=(btn,txt)=>navigator.clipboard.writeText(txt).then(()=>{btn.textContent='복사했어요';btn.classList.add('done')}).catch(()=>{btn.textContent='아래 글을 직접 골라 복사';const p=btn.closest('.mkr');if(p){const c=p.querySelector('.mgcopy');if(c)c.hidden=false}});
+  const NEW={};   /* 이번 창에서 만든 비밀번호 (닫으면 사라짐) */
+  let AC=null;
+  const drawAc=r=>{AC=r;BR=r.branches||[];$('#tpOn').checked=!!r.teamPass;const BP=r.branchPass||{},rows=r.rows||[];
+    const groups=BR.slice();if(rows.some(a=>!a.branch||!BR.includes(a.branch)))groups.push('');
+    $('#brCards').innerHTML=groups.map(g=>{const ms=rows.filter(a=>g?a.branch===g:(!a.branch||!BR.includes(a.branch))),on=ms.filter(a=>a.last).length;
+      const made=(NEW[g]||[]);
+      return `<div class="brc" data-g="${esc(g)}"><div class="bch"><b>${g?esc(g):'운영진 · 지점 없음'}</b><span class="pill">${ms.length}명 · 들어온 사람 ${on}</span>${g&&BP[g]?`<span class="small">지점장 보기 비밀번호 <code>${esc(BP[g])}</code></span>`:''}${g&&!ms.length?`<button class="btn sm" type="button" data-bdel>지점 빼기</button>`:''}</div>
+        ${g?`<div class="mkrow"><textarea data-names rows="3" placeholder="이름을 한 줄에 한 명씩 붙여 넣으세요&#10;예) 홍길동&#10;     김영희"></textarea><button class="btn p" type="button" data-make>아이디 만들기</button></div>`:''}
+        ${made.length?`<div class="mkout"><div class="mkh"><b>새로 만든 ${made.length}명</b><span class="small">이 창을 닫으면 비밀번호는 다시 볼 수 없어요. 잊으면 «비밀번호 새로».</span><button class="btn sm" type="button" data-all>모두 복사</button></div>
+          ${made.map((m,i)=>`<div class="mkr" data-i="${i}"><span class="nm">${esc(m.name)}</span><code>${esc(m.id)}</code><code>${esc(m.pass)}</code><button class="btn sm p" type="button" data-one>개인톡 글 복사</button><div class="mgcopy" hidden>${esc(note(m,m.pass,m.boss))}</div></div>`).join('')}</div>`:''}
+        ${ms.length?`<div class="tw"><table class="brt"><thead><tr><th>이름</th><th>아이디</th><th>운영진</th><th>지점장</th><th>마지막 접속</th><th>7일</th><th></th></tr></thead><tbody>${ms.map(a=>`<tr><td><b>${esc(a.name)}</b></td><td>${esc(a.id)}</td><td><input type="checkbox" data-staff="${esc(a.id)}"${a.staff?' checked':''} aria-label="운영진"></td><td><input type="checkbox" data-boss="${esc(a.id)}"${a.boss?' checked':''} aria-label="지점장"></td><td>${esc(a.last)||'<span class="small">아직</span>'}</td><td>${a.n7}</td><td style="white-space:nowrap"><button class="btn sm p" type="button" data-log="${esc(a.id)}">활동</button> <button class="btn sm" type="button" data-pw="${esc(a.id)}">비밀번호 새로</button> <button class="btn sm" type="button" data-del="${esc(a.id)}">빼기</button></td></tr>`).join('')}</tbody></table></div>`:''}</div>`}).join('')||'<p class="small">아직 지점이 없어요. 위에 지점 이름을 넣고 «지점 만들기»를 누르세요.</p>'};
+  const addNew=(g,list)=>{NEW[g]=list.concat((NEW[g]||[]).filter(x=>!list.some(y=>y.id===x.id)))};
+  $('#brCards').addEventListener('click',e=>{const t=e.target,card=t.closest('.brc');if(!card)return;const g=card.dataset.g,msg=$('#acMsg');
+    if(t.matches('[data-make]')){const names=[...new Set(card.querySelector('[data-names]').value.split(/[\n,，、;\t]+/).map(s=>s.replace(/^\s*\d+[.)]\s*/,'').trim()).filter(Boolean))];
+      if(!names.length){msg.textContent='이름을 한 줄에 한 명씩 넣어 주세요.';return}
+      t.disabled=true;t.textContent='만드는 중…';
+      call('acctbulk',{branch:g,rows:names.map(n=>({name:n,id:n,pass:pin6()}))}).then(j=>{t.disabled=false;t.textContent='아이디 만들기';
+        if(!j.ok){msg.textContent=j.error||'만들지 못했어요.';return}addNew(g,j.made||[]);drawAc(j);
+        msg.textContent=`${g}: ${(j.made||[]).length}명 만들었어요.`+((j.skipped||[]).length?` 건너뜀: ${j.skipped.join(', ')}`:'')+' 아래 «개인톡 글 복사»로 한 사람씩 보내세요.'}).catch(()=>{t.disabled=false;t.textContent='아이디 만들기';msg.textContent='서버에 연결하지 못했어요.'});return}
+    if(t.matches('[data-one]')){const m=(NEW[g]||[])[+t.closest('.mkr').dataset.i];cp(t,note(m,m.pass,m.boss));return}
+    if(t.matches('[data-all]')){cp(t,(NEW[g]||[]).map(m=>note(m,m.pass,m.boss)).join('\n\n────────\n\n'));return}
+    if(t.matches('[data-log]')){const id=t.dataset.log;let box=card.querySelector('.actbox');if(box&&box.dataset.id===id){box.remove();return}if(box)box.remove();
+      box=document.createElement('div');box.className='actbox';box.dataset.id=id;box.innerHTML='<p class="small">불러오는 중…</p>';card.appendChild(box);box.scrollIntoView({block:'nearest'});
+      call('acctlog',{id}).then(j=>{if(!j.ok){box.innerHTML=`<p class="small">${esc(j.error||'불러오지 못했어요.')}</p>`;return}
+        const K=['접속','화면','업체 분석','실전 롤플레이','보험 MBTI','의견','검토받기·자료'];let f='';
+        const draw=()=>{const it=j.items.filter(e=>!f||e.k===f);box.querySelector('.acttl').innerHTML=it.map(e=>`<tr><td style="white-space:nowrap">${esc(String(e.t).slice(2,16))}</td><td><span class="pill">${esc(e.k)}</span></td><td>${esc(e.d)}</td></tr>`).join('')||'<tr><td colspan="3" class="small">아직 없어요.</td></tr>'};
+        box.innerHTML=`<div class="mkh"><b>${esc(j.name)} (${esc(j.id)}) 활동</b><button class="btn sm" type="button" data-x>닫기</button></div>
+          <div class="actk"><button class="btn sm on" type="button" data-k="">전체 ${j.items.length}</button>${K.filter(k=>j.count[k]).map(k=>`<button class="btn sm" type="button" data-k="${k}">${k} ${j.count[k]}</button>`).join('')}</div>
+          <div class="tw" style="max-height:420px;overflow:auto"><table class="brt"><thead><tr><th>시각</th><th>종류</th><th>내용</th></tr></thead><tbody class="acttl"></tbody></table></div>`;
+        box.querySelector('[data-x]').onclick=()=>box.remove();
+        box.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{f=b.dataset.k;box.querySelectorAll('[data-k]').forEach(x=>x.classList.toggle('on',x===b));draw()});draw()})
+        .catch(()=>{box.innerHTML='<p class="small">서버에 연결하지 못했어요.</p>'});return}
+    if(t.matches('[data-pw]')){const id=t.dataset.pw,a=AC.rows.find(x=>x.id===id),pw=pin6();t.disabled=true;
+      call('acctset',{id,pass:pw}).then(j=>{t.disabled=false;if(!j.ok){msg.textContent=j.error||'바꾸지 못했어요.';return}addNew(g,[{id,name:a.name,pass:pw,boss:a.boss}]);drawAc(j);msg.textContent=`${a.name}(${id}) 비밀번호를 새로 정했어요. 아래에서 복사해 보내세요.`})}
+    if(t.matches('[data-del]')){if(t.dataset.sure!=='1'){t.dataset.sure='1';t.textContent='정말 빼기';return}
+      call('acctdel',{id:t.dataset.del}).then(j=>{if(j.ok){if(NEW[g])NEW[g]=NEW[g].filter(x=>x.id!==t.dataset.del);drawAc(j);msg.textContent=`${t.dataset.del} 를 뺐어요. 이제 그 아이디로는 못 들어와요.`}else msg.textContent=j.error||'못 뺐어요.'})}
+    if(t.matches('[data-bdel]')){if(t.dataset.sure!=='1'){t.dataset.sure='1';t.textContent='정말 빼기';return}
+      call('brdel',{name:g}).then(j=>{if(j.ok){drawAc(j);msg.textContent=`${g} 를 뺐어요.`}else msg.textContent=j.error||'못 뺐어요.'})}});
+  $('#brCards').addEventListener('change',e=>{const t=e.target;if(t.matches('[data-staff]')){call('acctrole',{id:t.dataset.staff,staff:t.checked}).then(j=>{if(!j.ok){$('#acMsg').textContent=j.error||'바꾸지 못했어요.';t.checked=!t.checked;return}drawAc(j);$('#acMsg').textContent=t.checked?'운영진으로 표시했어요. 다음에 들어오면 관리 메뉴가 보여요.':'운영진 표시를 뺐어요.'});return}
+    if(!t.matches('[data-boss]'))return;
+    call('acctrole',{id:t.dataset.boss,boss:t.checked}).then(j=>{if(!j.ok){$('#acMsg').textContent=j.error||'바꾸지 못했어요.';t.checked=!t.checked;return}
+      Object.values(NEW).forEach(l=>l.forEach(x=>{if(x.id===t.dataset.boss)x.boss=t.checked}));drawAc(j);$('#acMsg').textContent=t.checked?'지점장으로 표시했어요. 그분이 «지점원 기록»을 열면 자기 지점 기록이 바로 보여요.':'지점장 표시를 뺐어요.'})});
+  $('#nbAdd').onclick=()=>{const n=$('#nbName').value.trim();if(!n){$('#acMsg').textContent='지점 이름을 넣어 주세요.';return}
+    call('brset',{name:n}).then(j=>{if(!j.ok){$('#acMsg').textContent=j.error||'만들지 못했어요.';return}$('#nbName').value='';drawAc(j);$('#acMsg').textContent=`${n} 를 만들었어요. 아래 ${n} 칸에 이름을 붙여 넣으세요.`;
+      const c=[...document.querySelectorAll('.brc')].find(x=>x.dataset.g===n);if(c){c.scrollIntoView({block:'center'});const ta=c.querySelector('textarea');if(ta)ta.focus()}})};
+  $('#nbName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#nbAdd').click()});
   const load=()=>{const m=$('#mgMsg');m.textContent='불러오는 중…';
     call('summary').then(s=>{if(!s.ok){m.textContent=s.error||'비밀번호가 맞지 않아요.';ss.set('hub-mg','');$('#mgOut').hidden=true;return}
       m.textContent='열렸어요. 이 창을 닫으면 다시 넣어야 해요.';$('#mgOut').hidden=false;sum(s);
@@ -1450,18 +1499,14 @@ function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEX
   $('#fbFilt').onchange=drawFb;
   $('#fbList').addEventListener('click',e=>{const b=e.target.closest('[data-save]');if(!b)return;const box=b.closest('[data-row]');b.disabled=true;
     call('fbmark',{row:Number(box.dataset.row),status:box.querySelector('[data-st]').value,note:box.querySelector('[data-note]').value.trim()}).then(j=>{b.disabled=false;if(j.ok){FB=j.items;drawFb();call('summary').then(s=>s.ok&&sum(s))}else b.textContent=j.error||'저장 실패'})});
-  $('#acGen').onclick=()=>{const A='abcdefghjkmnpqrstuvwxyz23456789';let s='';const r=crypto.getRandomValues(new Uint32Array(8));r.forEach(x=>s+=A[x%A.length]);$('#acPw').value=s};
-  $('#acSave').onclick=()=>{const id=$('#acId').value.trim().toLowerCase(),pw=$('#acPw').value.trim(),name=$('#acName').value.trim(),br=$('#acBr').value;$('#acCopy').innerHTML='';
-    call('acctset',{id,name,branch:br,pass:pw}).then(j=>{if(!j.ok){$('#acMsg').textContent=j.error||'저장하지 못했어요.';return}drawAc(j);
-      $('#acMsg').textContent=j.isNew?`${id} 를 만들었어요.`:`${id} 를 바꿨어요.`;
-      if(pw){const msg=`[4&7 NEXT 허브]\n링크: ${location.origin+location.pathname}\n아이디: ${id}\n비밀번호: ${pw}\n처음 화면에서 아이디와 비밀번호를 넣으면 이 기기에서 기억합니다.\n쓰다가 불편한 점은 화면 구석 «의견 남기기»로 알려 주세요.`;
-        $('#acCopy').innerHTML=`<div class="mgcopy">${esc(msg)}</div><button class="btn sm" type="button" id="acCp">나눠 줄 글 복사</button>`;$('#acCp').onclick=e=>navigator.clipboard.writeText(msg).then(()=>e.target.textContent='복사했어요').catch(()=>e.target.textContent='직접 골라 복사해 주세요')}
-      ['acId','acName','acPw'].forEach(k=>$('#'+k).value='')})};
   $('#tpOn').onchange=e=>call('teampass',{on:e.target.checked}).then(j=>{$('#acMsg').textContent=j.ok?(j.teamPass?'팀 공용 비밀번호로도 들어올 수 있어요.':'이제 개인 아이디로만 들어올 수 있어요.'):(j.error||'바꾸지 못했어요.')});
+  if(!ss.get('hub-mg')&&store.get('team_staff')&&store.get('team_pass'))ss.set('hub-mg',store.get('team_pass'));
   if(ss.get('hub-mg'))load();
   try{if(sessionStorage.getItem('hub-openadm')){sessionStorage.removeItem('hub-openadm');if(!ss.get('hub-mg'))$('#mgTok').focus()}}catch(e){}}
 
 window.addEventListener('hashchange',show);
+/* 아이디로 들어온 사람이 연 화면을 기록 (관리자 홈 «활동»에서 봄) */
+let lastAct='',actT=0;function actLog(h){if(!store.get('team_id')||h===lastAct)return;lastAct=h;clearTimeout(actT);actT=setTimeout(()=>{api({action:'act',pass:store.get('team_pass')||'',pg:(h+' '+pageName()).slice(0,40),dv:store.get('g47dv')||''}).catch(()=>{})},1500)}
 
 /* ---------- 첫 화면: 나는 지금… ---------- */
 const WHO={

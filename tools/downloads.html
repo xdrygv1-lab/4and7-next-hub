@@ -105,8 +105,11 @@ function keep(j){try{if(j&&j.id){localStorage.setItem('team_id',j.id);localStora
   else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}
   if(j&&j.staff)localStorage.setItem('team_staff','1');else localStorage.removeItem('team_staff')}catch(e){}}
 function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.ok)keep(j);return j&&j.ok?true:false}).catch(function(){return null})})}
-if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}
-else setTimeout(function(){var i=document.getElementById('g47i');if(i)i.focus()},50);
+function openTry(){var no=false;try{no=sessionStorage.getItem('g47out')==='1'}catch(e){}if(no)return Promise.resolve(false);
+  return ep().then(function(e){if(!e)return false;return fetch(e+'?action=passcheck&pass=&k=open&pg='+encodeURIComponent((location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20))+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){
+    if(j&&j.ok&&j.open&&j.key){try{localStorage.setItem(K,j.key);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}catch(e){}return true}return false}).catch(function(){return false})})}
+if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}openTry().then(function(o){if(o){location.reload()}else{g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}})}
+else{g.style.visibility='hidden';openTry().then(function(o){if(o){g.style.display='none';location.reload()}else{g.style.visibility='visible';var i=document.getElementById('g47i');if(i)i.focus()}})}
 document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var id=document.getElementById('g47i').value.trim().toLowerCase(),p=document.getElementById('g47p').value.trim();if(!p)return;var t=id?id+':'+p:p;m.style.color='#5f6b66';m.textContent='확인 중…';
   check(t,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent=id?'아이디 또는 비밀번호가 맞지 않아요.':'비밀번호가 맞지 않아요.';return}
     if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}

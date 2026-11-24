@@ -642,6 +642,32 @@ function productHint(c,top){const a=c.age,m=c.sex!=='여';const out=[];
   if(nz(a)&&(c.form==='법인'||top&&['ceo','inherit','corpConv','exitRet'].includes(top.id))){const q=`simulator.html?age=${a}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}`;out.push(`<a href="${q}" target="_blank">경정기 시뮬레이터에서 ${a}세 ${c.sex||'남'} 바로 보기</a> `)}
   out.push('상품 조건은 수시로 바뀝니다. 현행 상품설명서·가입설계서로 확인');return out}
 
+/* 01 릴렉스: 업체 상황에 맞춘 첫마디 거리 (11/24 상권 «릴렉스에서도 그 업체 상황에 맞게 아이디어를») */
+function relaxIdeas(c){const R=[],add=s=>{if(s&&!R.includes(s))R.push(s)};
+  if(c.obs)add(c.obs);
+  try{const n=resNews();if(n)add(`요즘 회사 소식 봤습니다. ${n} 많이 바쁘시겠어요.`)}catch(e){}
+  /* 업체 이야기 칸의 «최근 변화·회사 강점·대표 고민» 줄 */
+  String(c.notes||'').split(/\n/).forEach(l=>{const m=l.match(/^\s*(최근 변화|회사 강점|거래처·경쟁|직원·조직)\s*:\s*(.{2,40})/);if(!m)return;
+    if(m[1]==='최근 변화')add(`${m[2].replace(/[.。]$/,'')} 소식 들었습니다. 요즘 많이 바쁘시죠?`);
+    else if(m[1]==='회사 강점')add(`${m[2].replace(/[.。]$/,'')}, 그거 쉽지 않은 건데 어떻게 하셨어요?`);
+    else if(m[1]==='직원·조직')add(`직원분들 분위기가 좋아 보이던데요. ${m[2].replace(/[.。]$/,'')}`);
+    else add(`요즘 ${m[2].replace(/[.。]$/,'')} 쪽은 어떠세요?`)});
+  /* 숫자에서: 매출이 늘었으면 */
+  try{const v=k=>{const e=document.getElementById(k);return e&&e.value!==''?+e.value:null};const s1=v('f3_sales_1'),s2=v('f3_sales_2');
+    if(s1&&s2&&s2>s1*1.15)add(`작년보다 일이 많이 느셨던데요. 요즘 사람 손이 모자라시죠?`);
+    else if(s1&&s2&&s2<s1*0.9)add(`요즘 업계 분위기가 쉽지 않다던데, 현장은 어떠세요?`)}catch(e){}
+  const IND={제조:'오면서 보니 공장 라인이 쉬지 않고 돌아가네요. 요즘 물량이 많으신가 봐요.',건설:'요즘 현장이 몇 군데나 돌아가세요? 들어오면서 장비가 많이 나가 있던데요.',
+    도소매:'창고에 물건 회전이 빠르던데요. 요즘 어떤 품목이 제일 잘 나가세요?',음식숙박:'점심때 손님이 줄 서 있던데요. 요즘 평일에도 그렇게 바쁘세요?',
+    병의원:'대기실에 환자분들이 많던데요. 요즘 예약이 얼마나 밀려 있어요?',전문직:'사무실 분위기가 바빠 보이던데요. 요즘 시즌이시죠?',
+    부동산임대:'건물 관리가 정말 잘 돼 있네요. 직접 챙기세요?',IT연구:'개발하시는 분들이 늘었던데요. 요즘 어떤 프로젝트가 제일 바쁘세요?',
+    서비스:'예약 판이 꽉 차 있던데요. 요즘 손님이 많이 느셨어요?'};
+  if(IND[c.ind])add(IND[c.ind]);
+  if(nz(c.emp)&&c.emp>=10)add(`직원분이 ${c.emp}명이나 되시는데, 처음 시작하실 때는 몇 분이셨어요?`);
+  if(nz(c.years)&&c.years>=10)add(`벌써 ${c.years}년째시죠. 처음 시작하실 때랑 지금이랑 제일 달라진 게 뭐예요?`);
+  else if(nz(c.years)&&c.years<=3)add(`시작하신 지 얼마 안 되셨는데 자리를 빨리 잡으셨네요. 처음에 제일 힘드셨던 게 뭐였어요?`);
+  if(c.f_newBiz)add('새 점포(사업) 준비하신다고 들었습니다. 어디쯤 생각하세요?');
+  if(c.f_patent)add('연구소 간판 봤습니다. 요즘 어떤 걸 개발하고 계세요?');
+  return R.slice(0,4)}
 /* ---------- 스크립트 생성 ---------- */
 function build(c){
   const dx=diagnose(c),top=dx[0],sec=dx[1];const T=incomeType(c);
@@ -649,7 +675,7 @@ function build(c){
   const v=stockVal(c),br=itBracket(c.profit);
   const S=[];const add=(blk,no,tt,say,pt,warn)=>S.push({blk,no,tt,say,pt,warn});
   // 1 릴렉스
-  add('진입','01','릴렉스',c.obs?`"${c.obs}"`:resNews()?`(최근 회사 소식으로 시작) "요즘 회사 소식 봤습니다. ${resNews()} 많이 바쁘시겠어요."`:`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'오면서 현장에서 본 것을 짚었는가','날씨·교통 이야기 금지');
+  {const R=relaxIdeas(c);add('진입','01','릴렉스',R.length?`"${R[0]}"${R.length>1?` ${P('업체 상황에 맞춰 바꿔 쓸 거리: '+R.slice(1,4).map(x=>'"'+x+'"').join(' / '))}`:''}`:`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'오면서 현장에서 본 것을 짚었는가','날씨·교통 이야기 금지')}
   // 2 자존감·동질감
   const same={세무사:'저도 세법이 매년 바뀌어서 계속 공부하는데, 그래도 매년 조금씩 나아지는 것 같습니다.',회계사:'저도 회계기준이 계속 바뀌어서 매년 공부하는데, 하다 보면 조금씩 나아지더라고요.',노무사:'저도 노동법이 매년 바뀌어서 계속 공부하는데, 그래도 해마다 조금씩 나아지는 것 같습니다.',변리사:'저도 기술 흐름을 따라가느라 매년 공부하는데, 하다 보면 조금씩 보이는 게 늘더라고요.'}[cert];
   const praise=nz(c.profit)&&c.profit>0?`${c.occ==='결산'?'가결산 숫자가 현장에서도 보이네요.':`${co} 숫자를 보면 꾸준히 키워 오신 게 보입니다.`}`:`${J(co,'을','를')} ${nz(c.years)?c.years+'년':'오래'} 끌어오신 것 자체가 쉽지 않은 일입니다.`;

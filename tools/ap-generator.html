@@ -144,7 +144,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 <div class="layout">
 <!-- ===== 입력: 상황카드 ===== -->
 <section class="card form" id="form">
-  <div class="btns" style="margin-bottom:12px"><button class="b" id="sample">예시 1: 제조업 대표</button><button class="b" id="sample2">예시 2: 강사 원장</button><button class="b" id="reset">비우기</button></div>
+  <div class="btns" style="margin-bottom:12px"><button class="b" id="sample">예시 보기</button><button class="b" id="reset">비우기</button></div>
   <details id="dartBox" open style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">업체자료 불러오기 (회사 정보 찾기)</summary>
     <div class="crmbox">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:6px">
@@ -1054,7 +1054,7 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   if(got.length)notes.push(`회사 정보도 채웠어요: ${got.join(', ')}.${info.founded==null&&info.foundedEst?` 업력은 «제${info.term}기»로 짐작한 값이라 등기부로 확인하세요.`:''}`);
   return got.length}
 
-let FSF=[];
+let FSF=[];window.__fsReset=()=>{FSF=[];fsList();$('#fsFileMsg').textContent=''};
 function fsList(){const el=$('#fsList');if(!el)return;el.innerHTML=FSF.length?FSF.map((f,i)=>`<span class="fchip">${esc(f.name)}<button type="button" data-fx="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" class="b" id="fsClr" style="padding:3px 10px">모두 빼기</button>':'';
   el.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{FSF.splice(+b.dataset.fx,1);fsList();if(FSF.length)readFs(FSF);else $('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
   const c=$('#fsClr');if(c)c.onclick=()=>{FSF=[];fsList();$('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}
@@ -1069,13 +1069,13 @@ async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');m
       if(isPdf&&raw.length){const np=raw.filter(r=>String(r[0]).startsWith(PAGE)).length||1,nc=raw.filter(r=>!String(r[0]).startsWith(PAGE)).map(r=>r.join('')).join('').replace(/\s/g,'').length;if(nc<30*np)raw=[]}
       let ocr=false;if(!raw.length&&isPdf){raw=ocrClean(await ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`));ocr=true}
       if(!raw.length){notes.push(`${f.name}: 글자가 없어요(스캔본). 글자가 있는 PDF나 엑셀로 넣어 주세요.`);continue}
-      try{const di=parseDocInfo(raw);Object.entries(di).forEach(([k,v])=>{if(v!=null&&v!==''&&INFO[k]==null)INFO[k]=v})}catch(err){}
+      let di={};try{di=parseDocInfo(raw);Object.entries(di).forEach(([k,v])=>{if(v!=null&&v!==''&&INFO[k]==null)INFO[k]=v})}catch(err){}
       if(ocr)notes.push(`${f.name}: <span style="color:#c0392b">스캔본이라 글자 인식으로 읽었어요. 숫자가 틀릴 수 있으니 꼭 원본과 맞춰 보세요.</span>`);
       const pg=fsPages(raw,ocr),rows=pg.rows;
       const head=rows.slice(0,12).map(r=>r.join(' ')).join(' ');const hy=()=>{const h=rows.map(r=>r.join(' ')).find(l=>/구\s*분|과\s*목|계\s*정/.test(l)&&(l.match(/(?<!\d)20\d\d(?!\d)/g)||[]).length>=2);return h?[Math.max(...h.match(/(?<!\d)20\d\d(?!\d)/g).map(Number))]:null};
       const ys=pg.std?pg.year:(fsYears(head)||fsYears(rows.slice(0,40).map(r=>r.join(' ')).join(' '))||hy());
       const r=parseRows(rows);corp=corp||r.corp;if(pg.std)r.prev={};const nk=Object.keys(r.cur).length;
-      if(!nk){notes.push(`${f.name}: 재무제표 항목을 찾지 못했어요.`);continue}
+      if(!nk){notes.push(di.kind?`${f.name}: ${di.kind}에서 기본정보를 읽었어요.`:`${f.name}: 재무제표 항목을 찾지 못했어요.`);continue}
       const y0=ys?ys[0]:new Date().getFullYear()-1;
       /* 값이 모두 0인 해(설립 첫해 재무제표의 «전기» 칸)는 만들지 않음. 같은 해가 여러 파일에 있으면 그 해가 «당기»인 파일을 우선 */
       [[y0,r.cur,2],[y0-1,r.prev,1]].forEach(([y,o,p])=>{if(!Object.values(o).some(v=>v))return;const b=byYear[y]=byYear[y]||{},q=pri[y]=pri[y]||{};
@@ -1766,7 +1766,7 @@ $('#crmCo').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault(
 $$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['dx','sc','ck','gr','am','rp','pp','fc','pr','pc','ar'].forEach(k=>$('#t-'+k).hidden=k!==t.dataset.t);if(t.dataset.t==='fc')renderFinal();if(t.dataset.t==='pr')renderPrompt()});
 $('#gen').onclick=()=>{run();document.querySelector('.tab[data-t="rp"]').click();document.getElementById('out').scrollIntoView({behavior:'smooth'})};
 const SAMPLE2={name:'A 원장님',co:'A 강의',ind:'서비스',form_:'개인',years:'',emp:'',sales:4.25,profit:3.3,age:'',sex:'남',kids:2,heir:'모름',rel:'기장',relYears:2,cert:'세무사',occ:'단독',obs:'',k1:'소득이 대표 한 명에게 몰려 높은 세율 구간',k2:'배우자가 일부 업무를 함께 함',k3:'월 생활비 1,200만원 수준 필요',goal:'',day:'금요일',time:'오후 3시 30분',dur:'30분',introN:'두',apMin:'20',notes:'매출 5억 근접, 넘기 전에 법인 검토\n부부 월 생활비 약 1,200만원\n교재 집필·영상 콘텐츠로 확장 계획\n해외주식 등 투자 관심\n자녀 2명, 승계 관심',f_noRetire:1,f_reliefEnd:1,f_newBiz:1,f_highEarner:1};
-$('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE2,rs:['보험','나중']});toggle();run();document.querySelectorAll('.tab')[0].click()};
+if($('#sample2'))$('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE2,rs:['보험','나중']});toggle();run();document.querySelectorAll('.tab')[0].click()};
 $('#sample').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});run()};
 $('#reset').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'제조',form_:'개인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'결산',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각']});run()};
 $('#form').addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(run,250)});
@@ -1812,12 +1812,12 @@ toggle();run();
   const G=[...new Set(T.map(t=>t.g))].sort((x,y)=>(x==='AP 준비')-(y==='AP 준비'));
   /* «AP 준비» 칸들 앞에 작은 제목 */
   const ap=T.filter(t=>t.g==='AP 준비');if(ap.length){const d=document.createElement('div');d.className='apdiv';d.textContent='AP(첫 미팅) 준비 · 필요할 때만 펼치세요';ap[0].el.before(d)}
-  let st={};try{st=JSON.parse(localStorage.getItem('ap-topics2')||'{}')||{}}catch(e){}
+  let st={};try{st=JSON.parse(localStorage.getItem('ap-topics3')||'{}')||{}}catch(e){}
   const isOpen=t=>t.isD?t.el.open:!t.el.classList.contains('shut');
   const setOpen=(t,o)=>{if(t.isD)t.el.open=o;else t.el.classList.toggle('shut',!o)};
   const gOpen=g=>T.some(t=>t.g===g&&isOpen(t));
-  const keep=()=>{try{localStorage.setItem('ap-topics2',JSON.stringify(Object.fromEntries(G.map(g=>[g,gOpen(g)?1:0]))))}catch(e){}};
-  T.forEach(t=>setOpen(t,st[t.g]!=null?!!st[t.g]:['업체자료','재무자료','회사·대표'].includes(t.g)));
+  const keep=()=>{try{localStorage.setItem('ap-topics3',JSON.stringify(Object.fromEntries(G.map(g=>[g,gOpen(g)?1:0]))))}catch(e){}};
+  T.forEach(t=>setOpen(t,st[t.g]!=null?!!st[t.g]:false));
   const bar=document.createElement('div');bar.className='tbar';bar.setAttribute('role','navigation');bar.setAttribute('aria-label','입력 주제');
   bar.innerHTML=G.map(g=>`<button type="button" class="tc" data-g="${esc(g)}">${esc(g)}<i></i></button>`).join('')+'<button type="button" class="tx" data-all>모두 펴기</button>';
   form.insertBefore(bar,form.querySelector(':scope > details, :scope > fieldset'));

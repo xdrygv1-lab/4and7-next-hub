@@ -160,7 +160,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <h1>업체 분석 보고서</h1>
   <span class="sub">재무제표 → 이슈 신호등 → 보험 제안 · 내부용</span>
   <span class="sp"></span>
-  <button type="button" id="btnSample">예시(B사) 불러오기</button>
+  <button type="button" id="btnSample">예시 보기</button>
   <button type="button" id="btnClear">비우기</button>
   <button type="button" class="pri" onclick="window.print()">인쇄 / PDF</button>
 </header>
@@ -1067,7 +1067,7 @@ async function importFiles(files){
   if(hasFS)applyImport(all,notes);
   else{$('impMsg').innerHTML=notes.join('<br>');render();try{localStorage.setItem(KEY,JSON.stringify(snap()))}catch(e){}}}
 /* 11/24: 고를 때마다 앞에 넣은 파일과 같이 다시 읽음 · 끌어다 놓기 · 하나씩 빼기 */
-let IMPF=[];
+let IMPF=[];window.__impReset=()=>{IMPF=[];impList();$('impMsg').textContent=''};
 function impList(){const el=$('impList');el.innerHTML=IMPF.length?IMPF.map((f,i)=>`<span class="ichip">${esc(f.name)}<button type="button" data-ix="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" id="impClr" class="iclr">모두 빼기</button>':'';
   el.querySelectorAll('[data-ix]').forEach(b=>b.onclick=()=>{IMPF.splice(+b.dataset.ix,1);impList();if(IMPF.length)importFiles(IMPF);else $('impMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
   const c=$('impClr');if(c)c.onclick=()=>{IMPF=[];impList();$('impMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}

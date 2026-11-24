@@ -517,7 +517,8 @@ details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}d
 .mgsec{margin-top:26px}.mgsec h2{display:flex;align-items:center;gap:8px}
 .mgnote{font-size:13px;color:var(--sub);margin:4px 0 8px}
 .mg3{list-style:none;padding:0;margin:8px 0 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;counter-reset:s}.mg3 li{counter-increment:s;background:var(--tint);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.mg3 li b::before{content:counter(s) ". ";color:var(--accent)}.mg3 li span{font-size:13.5px;color:var(--sub)}.brc{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0;background:var(--panel)}.bch{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bch>b{font-size:17px}.bch code,.mkr code{font-size:14px;background:var(--tint);padding:2px 7px;border-radius:6px}.mkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;margin:10px 0}.mkrow textarea{flex:1;min-width:200px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--panel);color:var(--ink);resize:vertical}.mkout{border-radius:12px;background:var(--tint);padding:10px 12px;margin:8px 0}.mkh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.actbox{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}.actk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.actk .btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.mkr{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.mkr .nm{min-width:64px;font-weight:700}.mkr .mgcopy{flex-basis:100%;user-select:all}.btn.done{opacity:.7}
+.mkr{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.mkr .nm{min-width:64px;font-weight:700}.mkr .gostep{display:flex;gap:12px;align-items:flex-start;margin:14px 0}.gn{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.gob{flex:1;min-width:0}.godrop{border:1.5px dashed var(--accent);border-radius:14px;padding:14px 16px;display:grid;gap:4px;background:var(--panel)}.godrop.over{background:var(--tint)}.golist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.gchip{display:inline-flex;align-items:center;gap:4px;background:var(--tint);border-radius:999px;padding:3px 4px 3px 10px;font-size:13px;max-width:100%;overflow-wrap:anywhere}.gchip button{border:0;background:none;cursor:pointer;font-size:15px;padding:0 6px;color:inherit}.go2{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;margin-bottom:10px}.glab{display:block;font-size:13px;font-weight:700;margin:8px 0 5px}.gseg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}.gseg button{border:0;background:var(--panel);color:var(--ink);padding:7px 12px;font:inherit;font-size:13.5px;cursor:pointer}.gseg button+button{border-left:1px solid var(--line)}.gseg button.on{background:var(--accent);color:#fff}.gsig{display:flex;flex-wrap:wrap;gap:6px}.gsig button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer;text-align:left}.gsig button.on{background:var(--accent);border-color:var(--accent);color:#fff}#go_notes{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--panel);color:var(--ink)}.gotabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:18px 0 8px}.gotabs [data-p]{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer}.gotabs [data-p].on{background:var(--accent);border-color:var(--accent);color:#fff}.gotabs #goBig{margin-left:auto}.gofr{height:0;overflow:hidden}.gofr.shown{height:auto;overflow:visible}.gofr iframe{width:100%;height:calc(100vh - 140px);min-height:560px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.mgcopy{flex-basis:100%;user-select:all}.btn.done{opacity:.7}
 .mgcopy{white-space:pre-wrap;background:var(--tint);border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
 </style>
 <body>
@@ -600,7 +601,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div class="eyebrow" data-a="up">4&amp;7 NEXT 허브</div>
     <h1 data-a="up" data-d="1">업체 하나를 골라 <em>미팅 준비</em>부터<br>연습, 재정심사, 청약까지.</h1>
     <p class="lede" data-a="up" data-d="2">업체 자료를 넣으면 분석 보고서와 첫 미팅 멘트가 나오고, AI 대표님과 롤플레이로 연습하고, 원수사별 재정심사 한도까지 봅니다.</p>
-    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#manual">사용법 보기 (1분)</a><a class="btn ghost" href="#tool-ap">바로 업체 넣기</a></div>
+    <div class="btnrow" data-a="up" data-d="2"><a class="btn p" href="#manual">사용법 보기 (1분)</a><a class="btn ghost" href="#go">바로 업체 넣기</a></div>
   </section>
 
   <a class="mbti1" href="#tool-mbti"><span class="k">먼저 나부터</span><b>보험 MBTI · 52문항 9분</b><span>나는 어떤 영업 체질일까? 결과로 나에게 맞는 업체 규모, 잘 맞는 컨셉, 먼저 연습할 AP 단계를 추천받아요. 끝나면 «팀 기록에 저장»을 눌러 지점장과 함께 봅니다.</span><em>시작하기 →</em></a>
@@ -616,7 +617,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 
   <div class="nx-route" aria-label="영업 흐름">
     <a href="#tool-mbti"><b>⓪ 나 알기</b><span>보험 MBTI</span></a>
-    <a href="#tool-ap"><b>① 업체 분석</b><span>재무제표 넣기</span></a>
+    <a href="#go"><b>① 업체 분석</b><span>자료 넣고 돌리기</span></a>
     <a href="#tool-ap"><b>② 첫 미팅 멘트</b><span>15단계 스크립트</span></a>
     <a href="#tool-rplive"><b>③ 연습</b><span>AI 대표님과 말로</span></a>
     <a class="key" href="#tool-uw"><b>④ 재정심사</b><span>원수사별 한도</span></a>
@@ -633,8 +634,8 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <h1>사용법</h1>
   <p class="lede">업체 자료(<b>세무조정계산서 PDF</b>) 하나만 넣으면 아래 네 가지가 다 됩니다.</p>
   <div class="use4">
-    <a href="#tool-ap"><i>1 · 업체 자료 넣기</i><b>업체 분석 → 제안 준비</b><span>PDF를 끌어 놓고 대표 나이·연소득을 넣은 뒤 «분석 시작». 컨셉과 첫 미팅 멘트가 나와요.</span></a>
-    <a href="#tool-ca"><i>2 · 보고서</i><b>업체 분석 보고서</b><span>같은 PDF로 회사 가치·잉여금·상속세를 한 장으로. 대표님께 보여 드릴 수 있어요.</span></a>
+    <a href="#go"><i>1 · 자료 넣고 돌리기</i><b>업체 분석</b><span>재무제표·법인세·소득세 신고서 PDF·엑셀을 넣고 «돌리기». 보고서와 제안 준비가 같이 나와요.</span></a>
+    <a href="#go"><i>2 · 아는 것만 고르기</i><b>더 맞게 고르기</b><span>관계·대표 나이·알고 있는 것만 누르고 «다시 돌리기». 안 골라도 돼요.</span></a>
     <a href="#tool-rplive"><i>3 · 연습</i><b>롤플레이</b><span>AI 대표님과 말로 미팅 연습. 끝나면 고칠 점이 나와요. 노트북 크롬에서 이어폰 끼고.</span></a>
     <a href="#tool-uw"><i>4 · 금액</i><b>재정심사</b><span>원수사별로 가입할 수 있는 금액. 업체 분석에서 «재정심사 한도 확인»을 누르면 숫자가 넘어가요.</span></a>
   </div>
@@ -687,7 +688,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div class="prog" aria-hidden="true"><i id="stProg"></i></div><p class="small" id="stCnt"></p>
   <div class="steps8" id="steps8">
     <div class="st" data-k="0"><h3>먼저 나 알기: 보험 MBTI</h3><p>52문항, 9분. 내 영업 체질과 잘 맞는 업체 규모·컨셉, 먼저 연습할 AP 단계를 추천받습니다. 따라하기 내내 이 결과를 떠올리며 보세요.</p><div class="btnrow"><a class="btn p sm" href="#tool-mbti">보험 MBTI</a><label class="ck"><input type="checkbox" data-ck="0"> 해 봤어요</label></div></div>
-    <div class="st" data-k="1"><h3>업체 분석: 예시 넣고 분석 시작</h3><p>«업체 분석 → 제안 준비»를 열고 <b>예시 1: 제조업 대표</b>를 누릅니다. 실제 업체라면 위하고 재무제표 PDF·엑셀을 넣습니다 (<a href="#data">무엇을 넣나</a>).</p><p>보고서 탭에 신호등이 나옵니다. 빨강·주황이 오늘 미팅에서 꺼낼 이야기입니다.</p><div class="btnrow"><a class="btn p sm" href="#tool-ap?sample=1">예시로 열기</a><label class="ck"><input type="checkbox" data-ck="1"> 해 봤어요</label></div></div>
+    <div class="st" data-k="1"><h3>업체 분석: 예시 넣고 분석 시작</h3><p>«업체 분석 → 제안 준비»를 열고 <b>예시 보기</b>를 누릅니다. 실제 업체라면 위하고 재무제표 PDF·엑셀을 넣습니다 (<a href="#data">무엇을 넣나</a>).</p><p>보고서 탭에 신호등이 나옵니다. 빨강·주황이 오늘 미팅에서 꺼낼 이야기입니다.</p><div class="btnrow"><a class="btn p sm" href="#tool-ap?sample=1">예시로 열기</a><label class="ck"><input type="checkbox" data-ck="1"> 해 봤어요</label></div></div>
     <div class="st" data-k="2"><h3>컨셉 진단: 무엇을 이야기할까</h3><p><b>컨셉 진단</b> 탭에서 1~3순위 컨셉과 근거 신호를 봅니다. OO정밀은 이익이 커진 개인사업자라 <b>법인전환</b>이 위로 올라옵니다. 처음 보는 컨셉은 이름을 눌러 «컨셉 사전»에서 "한눈에"만 읽어 보세요.</p><div class="btnrow"><a class="btn sm" href="#concepts">컨셉 사전</a><label class="ck"><input type="checkbox" data-ck="2"> 해 봤어요</label></div></div>
     <div class="st" data-k="3"><h3>첫 미팅(AP) 스크립트</h3><p><b>AP 스크립트</b> 탭에 15단계 멘트가 나옵니다. 가결산 겸인데 컨셉을 안 고르면 <b>B형(니즈 파악)</b>, 컨셉을 고르면 <b>A형(니즈 환기)</b>입니다. 07단계에 "1.1억이라 35% 구간"처럼 이 업체 숫자가 들어가 있어요.</p><p><code>[ ]</code>는 대표님 입에서 받을 숫자입니다. 상품 이름은 AP에서 말하지 않습니다.</p><div class="btnrow"><a class="btn sm" href="#learn-ap">첫 미팅 화법</a><label class="ck"><input type="checkbox" data-ck="3"> 해 봤어요</label></div></div>
     <div class="st" data-k="4"><h3>미팅 전날 연습</h3><p>«실전 롤플레이 (음성)»에서 이어폰을 끼고 AI 대표님과 10분 말로 연습합니다. 글로 연습하고 채점받으려면 «AP 롤플레이».</p><div class="btnrow"><a class="btn p sm" href="#tool-rplive">실전 롤플레이</a><a class="btn sm" href="#tool-rp">AP 롤플레이</a><label class="ck"><input type="checkbox" data-ck="4"> 해 봤어요</label></div></div>
@@ -893,6 +894,36 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div class="btnrow" style="margin-top:4px"><button class="btn sm" type="button" id="askReset">대화 새로 시작</button><span class="small">AI 답은 참고용입니다. 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확인하세요.</span></div>
 </template>
 
+<template id="tpl-go">
+  <h1>업체 분석</h1>
+  <p class="lede">있는 자료만 넣고 <b>돌리기</b>를 누르세요. <b>업체 분석 보고서</b>와 <b>제안 준비</b>가 한꺼번에 만들어져요.</p>
+  <div class="gostep"><span class="gn">1</span><div class="gob">
+    <div id="goDrop" class="godrop">
+      <b>자료 넣기</b>
+      <span class="small">재무제표 · 법인세 신고서(세무조정계산서) · 종합소得세 신고서 · 법인등기부 · 주주명부 · 감사보고서. PDF·엑셀, 여러 개 한꺼번에</span>
+      <div class="btnrow" style="margin:8px 0 0"><label class="btn p">파일 고르기<input type="file" id="goFile" multiple hidden accept=".pdf,.xlsx,.xls,.csv,.txt,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label><span class="small">또는 여기로 끌어다 놓기</span></div>
+      <div id="goList" class="golist"></div>
+    </div>
+    <div class="brrow"><input id="goCo" placeholder="상호명 (선택)" style="flex:1;min-width:160px"><button class="btn p" id="goRun" type="button">돌리기</button><button class="btn" id="goNew" type="button">새 업체</button></div>
+    <p class="small" id="goMsg"></p>
+  </div></div>
+  <div class="gostep" id="goS2" hidden><span class="gn">2</span><div class="gob">
+    <h2 style="margin-top:0">더 맞게 고르기 <span class="small">아는 것만 · 안 골라도 돼요</span></h2>
+    <div class="go2">
+      <div><span class="glab">나와의 관계</span><div class="gseg" data-k="rel"><button type="button" data-v="기장">기장거래처</button><button type="button" data-v="소개">소개</button><button type="button" data-v="초면">초면</button></div></div>
+      <div><span class="glab">물려받을 자녀</span><div class="gseg" data-k="heir"><button type="button" data-v="모름">모름</button><button type="button" data-v="있음">있음</button><button type="button" data-v="없음">없음</button></div></div>
+      <div class="brrow" style="margin:0"><label class="small">대표 나이 <input id="go_age" type="number" min="20" max="90" style="width:80px"></label><label class="small">자녀 수 <input id="go_kids" type="number" min="0" style="width:70px"></label></div>
+    </div>
+    <span class="glab">알고 있는 것 (누르면 켜짐)</span><div class="gsig" id="goSig"></div>
+    <span class="glab">업체 이야기 <span class="small">숫자로 안 보이는 것: 대표 고민·회사 강점·가족·직원·최근 변화</span></span>
+    <textarea id="go_notes" rows="3" placeholder="예) 대표 고민: 공장 이전 / 회사 강점: 대기업 납품 / 가족: 아들이 입사 2년차"></textarea>
+    <div class="btnrow"><button class="btn p" id="goAgain" type="button">반영하고 다시 돌리기</button><button class="btn" id="goRes2" type="button">회사 정보 찾기 (인터넷)</button><span class="small" id="goMsg2"></span></div>
+  </div></div>
+  <div id="goOut" hidden>
+    <div class="gotabs"><button type="button" class="on" data-p="ca">업체 분석 보고서</button><button type="button" data-p="ap">제안 준비 (AP · PC)</button><a class="btn sm" id="goBig" href="#tool-ca">크게 열기</a></div>
+  </div>
+  <div class="gofr" id="goFr"><iframe id="frCa" title="업체 분석 보고서" allow="clipboard-write"></iframe><iframe id="frAp" title="제안 준비" allow="clipboard-write" hidden></iframe></div>
+</template>
 <template id="tpl-manage">
   <h1>관리자 홈</h1>
   <p class="lede">4&amp;7 운영진이 같이 봅니다. 운영진 비밀번호(또는 관리자 키)를 한 번 넣으면 이 창을 닫을 때까지 기억해요.</p>
@@ -1059,8 +1090,7 @@ const NAVDEF=[
  {h:'tool-mbti',ic:'puzzle',t:'보험 MBTI',d:'9분, 나부터 알아보기'},
  {h:'start',ic:'compass',t:'처음이라면',d:'사용법 · 무엇을 넣나',sub:'guide'},
  {g:'준비하기 · 미팅 전'},
- {h:'tool-ap',ic:'search',t:'업체 분석 → 제안 준비',d:'재무제표 넣고 컨셉·AP·PC까지'},
- {h:'tool-ca',ic:'file',t:'업체 분석 보고서',d:'법인 서류로 깊게 한 장'},
+ {h:'go',ic:'search',t:'업체 분석',d:'자료 넣고 한 번에 · 보고서 · 제안 준비',sub:'biz'},
  {h:'uw',ic:'coins',t:'재정심사 → 청약',d:'원수사별 한도 · 청약 점검',sub:'uw'},
  {g:'연습하기'},
  {h:'tool-rplive',ic:'mic',t:'실전 롤플레이',d:'AI 대표님과 목소리로',sub:'rp'},
@@ -1077,6 +1107,7 @@ function familyOf(h){
   if(UWNAV.some(x=>x.h===h))return 'uw';
   if(GUIDE.some(x=>x.h===h)||h==='rules')return 'start';
   if(h==='tool-rplive-admin')return 'tool-rplive';
+  if(h==='tool-ap'||h==='tool-ca')return 'go';
   if(h==='calcs'||h==='tool-sim'||h==='tool-jm'||h==='tool-emp'||h==='tool-labor')return 'learn';
   if(NAVDEF.some(x=>x.h===h))return h;
   if(h==='learn'||catByHash(h))return 'learn';
@@ -1086,12 +1117,13 @@ function subHtml(k,h){const L=(arr)=>arr.map(c=>`<a class="navl ${c.h===h?'on':'
   const d=M.docs.find(x=>x.id===h),cur=d?(catOfDoc(d)||{}).h:h;
   if(k==='guide')return L(GUIDE);
   if(k==='uw')return L(UWNAV);
+  if(k==='biz')return L([{h:'go',label:'자료 넣고 한 번에'},{h:'tool-ca',label:'업체 분석 보고서'},{h:'tool-ap',label:'제안 준비 (AP · PC)'}]);
   if(k==='rp')return L([{h:'tool-rplive',label:'연습하기'},{h:'tool-rplive-admin',label:'연습 기록 (지점장)'}]);
   if(k==='learn')return LEARN.map(c=>`<a class="navl ${c.h===cur||(c.h==='calcs'&&/^tool-(sim|jm|emp|labor)$/.test(h))?'on':''}" href="#${c.h}"><span class="tx">${esc(c.label)}</span></a>`).join('');
   return ''}
 function renderNav(h){
   const fam=familyOf(h);
-  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">관리자</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}${STAFF?'':`<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`}`:'');
+  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">${STAFF?`운영진 · ${esc(store.get('team_name')||'')}`:'관리자'}</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}${STAFF?'':`<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`}`:'');
 }
 
 function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>String(j.endpoint||''));const TP=store.get('team_pass')||'';
@@ -1136,10 +1168,11 @@ async function show(){
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
     main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><button class="btn sm p" type="button" data-fb>의견 남기기</button><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     document.title=t+' · 4&7 NEXT 허브';return}
-  if(h==='admin'){try{sessionStorage.setItem('hub-openadm','1')}catch(e){}location.replace(location.pathname+'?admin#manage');return}
+  if(h==='admin'){try{sessionStorage.setItem('hub-openadm','1')}catch(e){}location.replace(location.pathname+(STAFF?'':'?admin')+'#manage');return}
   if(h==='admin-off'){try{sessionStorage.removeItem('hub-mg')}catch(e){}location.replace(location.pathname+'#home');return}
   if(ADMONLY.includes(h)&&!ADM()){location.replace('#home');return}
   if(h==='manage')return showManage();
+  if(h==='go')return showGo();
   if(h==='mine')return showMine();
   if(h==='home'){tpl('tpl-home');homeInit();return}
   if(h==='start'){tpl('tpl-start');startInit();return}
@@ -1431,6 +1464,52 @@ async function showMine(){tpl('tpl-rules');document.title='내 의견 · 4&7 NEX
     $('#mineL').innerHTML=it.length?it.map(x=>`<div class="fbi"><div class="top">${fbPill(x.status)}<span>${esc(x.target)}</span><span>${esc(x.time)}</span></div><div class="c">${esc(x.content)}</div>${x.note?`<div class="note"><b>운영진 한마디</b> ${esc(x.note)}</div>`:''}</div>`).join(''):'<p class="small">아직 보낸 의견이 없어요. 화면 구석 «의견 남기기»를 눌러 보세요.</p>'}
   catch(e){$('#mineL').innerHTML='<p class="small">불러오지 못했어요. 잠시 후 다시 열어 보세요.</p>'}}
 
+
+/* ---------- 업체 분석: 자료 한 번 넣고 두 도구 같이 돌리기 (11/24 상권 «한군데서 자료 넣고 두 개가 동시에, 1차로 돌고 다시 고르기») ---------- */
+const GO_SIG=['f_askedCorp','f_noRetire','f_loan','f_retained','f_ownerAsset','f_realEstate','f_giftHistory','f_health'];
+function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브';
+  const v=encodeURIComponent((M&&M.built)||Date.now()),frCa=$('#frCa'),frAp=$('#frAp');frCa.src='tools/company-analysis.html?v='+v;frAp.src='tools/ap-generator.html?v='+v;
+  let FILES=[],busy=false;const sleep=ms=>new Promise(r=>setTimeout(r,ms)),msg=$('#goMsg'),OK=/\.(pdf|xlsx|xls|csv|txt)$/i;
+  const ready=async(fr,sel)=>{for(let i=0;i<150;i++){try{const d=fr.contentDocument;if(d&&d.readyState==='complete'&&d.querySelector(sel))return d}catch(e){}await sleep(200)}throw new Error('도구를 열지 못했어요')};
+  const list=()=>{$('#goList').innerHTML=FILES.map((f,i)=>`<span class="gchip">${esc(f.name)}<button type="button" data-i="${i}" aria-label="빼기">×</button></span>`).join('')};
+  $('#goList').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){FILES.splice(+b.dataset.i,1);list()}});
+  const add=fl=>{const a=[...fl].filter(f=>OK.test(f.name)&&!FILES.some(g=>g.name===f.name&&g.size===f.size)),bad=[...fl].filter(f=>!OK.test(f.name));FILES=FILES.concat(a);list();
+    msg.textContent=bad.length?`${bad.map(f=>f.name).join(', ')}: PDF·엑셀만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`:(FILES.length?`${FILES.length}개 넣었어요. «돌리기»를 누르세요.`:'')};
+  $('#goFile').onchange=e=>{add(e.target.files);e.target.value=''};
+  const z=$('#goDrop');['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove('over')}));z.addEventListener('drop',e=>add(e.dataTransfer.files));
+  const feed=async(fr,sel,files)=>{const d=await ready(fr,sel),w=fr.contentWindow,inp=d.querySelector(sel);const dt=new w.DataTransfer();for(const f of files)dt.items.add(new w.File([new w.Uint8Array(await f.arrayBuffer())],f.name,{type:f.type,lastModified:f.lastModified}));inp.files=dt.files;
+    inp.dispatchEvent(new w.Event('change',{bubbles:true}));const t0=Date.now();await sleep(300);while(inp.value!==''&&Date.now()-t0<240000)await sleep(400)};
+  const apEl=id=>{try{return frAp.contentDocument.getElementById(id)}catch(e){return null}};
+  const apRun=()=>{try{const w=frAp.contentWindow;w.toggle&&w.toggle();w.run&&w.run();w.save&&w.save()}catch(e){}};
+  const tab=p=>{document.querySelectorAll('.gotabs [data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===p));frCa.hidden=p!=='ca';frAp.hidden=p!=='ap';$('#goBig').href=p==='ca'?'#tool-ca':'#tool-ap'};
+  document.querySelector('.gotabs').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)tab(b.dataset.p)});
+  /* 2단계 칸: 제안 준비의 값으로 채우고, 바꾸면 제안 준비에 넣음 */
+  const s2fill=()=>{const g=id=>{const e=apEl(id);return e?e.value:''};
+    document.querySelectorAll('.gseg').forEach(s=>{const v=g(s.dataset.k);s.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))});
+    $('#go_age').value=g('age');$('#go_kids').value=g('kids');$('#go_notes').value=g('notes');
+    $('#goSig').innerHTML=GO_SIG.map(id=>{const e=apEl(id);if(!e)return '';const lb=(e.closest('label')||{}).textContent||id;return `<button type="button" class="${e.checked?'on':''}" data-s="${id}">${esc(lb.trim().replace(/^"|"$/g,''))}</button>`}).join('')};
+  document.querySelectorAll('.gseg').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))}));
+  $('#goSig').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(b)b.classList.toggle('on')});
+  const s2apply=()=>{const set=(id,val)=>{const e=apEl(id);if(!e)return;if(e.type==='checkbox')e.checked=!!val;else e.value=val};
+    document.querySelectorAll('.gseg').forEach(s=>{const b=s.querySelector('button.on');if(b)set(s.dataset.k,b.dataset.v)});
+    set('age',$('#go_age').value);set('kids',$('#go_kids').value);set('notes',$('#go_notes').value);
+    document.querySelectorAll('#goSig [data-s]').forEach(b=>set(b.dataset.s,b.classList.contains('on')));apRun()};
+  const run=async()=>{if(busy)return;const co=$('#goCo').value.trim();if(!FILES.length&&!co){msg.textContent='자료 파일을 넣거나 상호명을 적어 주세요.';return}
+    busy=true;$('#goRun').disabled=true;msg.textContent='돌리는 중… 보고서와 제안 준비를 같이 만들고 있어요 (PDF가 많으면 1분쯤)';
+    try{if(FILES.length)await Promise.all([feed(frCa,'#impFile',FILES),feed(frAp,'#fsFile',FILES)]);else{await ready(frCa,'#impFile');await ready(frAp,'#fsFile')}
+      if(co){const a=apEl('co'),c=frCa.contentDocument.getElementById('co');if(a&&!a.value.trim())a.value=co;if(c&&!c.value.trim()){c.value=co;c.dispatchEvent(new Event('input',{bubbles:true}))}const k=apEl('crmCo');if(k)k.value=co}
+      apRun();s2fill();$('#goS2').hidden=false;$('#goOut').hidden=false;$('#goFr').classList.add('shown');
+      const nm=(apEl('co')||{}).value||co;msg.innerHTML=`<b>${esc(nm||'업체')}</b> 1차 결과가 나왔어요. 아래 2단계에서 아는 것만 고르면 더 맞게 바뀌어요.`}
+    catch(e){msg.textContent='돌리지 못했어요: '+(e.message||e)}
+    busy=false;$('#goRun').disabled=false};
+  $('#goRun').onclick=run;
+  $('#goAgain').onclick=()=>{s2apply();$('#goMsg2').textContent='반영했어요. 아래 결과가 바뀌었어요.';tab('ap')};
+  $('#goRes2').onclick=()=>{const co=$('#goCo').value.trim()||((apEl('co')||{}).value||'').trim(),k=apEl('crmCo'),b=apEl('resBtn');if(!co){$('#goMsg2').textContent='상호명을 먼저 적어 주세요.';return}
+    if(k)k.value=co;if(b){b.click();$('#goMsg2').textContent='회사 정보를 찾는 중이에요 (1분쯤). 찾으면 제안 준비의 «회사 공개 정보»에 들어가요.';tab('ap')}};
+  $('#goNew').onclick=async()=>{FILES=[];list();$('#goCo').value='';msg.textContent='새 업체를 넣으세요.';$('#goS2').hidden=true;$('#goOut').hidden=true;$('#goFr').classList.remove('shown');
+    try{const w=frAp.contentWindow,d=await ready(frAp,'#fsFile');w.__fsReset&&w.__fsReset();const r=d.getElementById('reset');if(r)r.click();const c=apEl('co');if(c)c.value='';apRun()}catch(e){}
+    try{const w=frCa.contentWindow,d=await ready(frCa,'#impFile');w.__impReset&&w.__impReset();const b=d.getElementById('btnClear');if(b)b.click()}catch(e){}};
+}
 /* ---------- 관리자 홈 (11/23) ---------- */
 function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEXT 허브';
   const ss={get:k=>{try{return sessionStorage.getItem(k)||''}catch(e){return ''}},set:(k,v)=>{try{v?sessionStorage.setItem(k,v):sessionStorage.removeItem(k)}catch(e){}}};

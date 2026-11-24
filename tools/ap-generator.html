@@ -101,6 +101,7 @@ fieldset.tp.shut>:not(legend){display:none!important}fieldset.tp.shut{margin-bot
 .apdiv{margin:14px 0 2px;font-size:12px;font-weight:700;color:#8a938f;letter-spacing:.02em}
 details.more{margin-top:6px}details.more>summary{cursor:pointer;font-size:13px;color:var(--acc);padding:4px 0}
 .qchips{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 6px}.qc{border:1px solid var(--line,#dfe3e1);background:transparent;color:inherit;border-radius:999px;padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer}.qc:hover{border-color:var(--acc);color:var(--acc)}
+.relaxbox{margin:10px 0 14px;padding:12px 14px;border-radius:12px;background:rgba(0,82,255,.06);border:1px solid rgba(0,82,255,.18)}.relaxbox ol{margin:6px 0 6px 20px;padding:0}.relaxbox li{margin:3px 0}
 </style>
 </head>
 <body>
@@ -488,6 +489,7 @@ function RO(w){const t=bat(w);return w+(t===0||t===8?'로':'으로')}
 const CONCEPTS=[
  {id:'corpConv',name:'법인전환 (그릇 바꾸기)',card:'',
   test:c=>{const s=[];if(c.form!=='개인')return s;
+    s.push([4,c.ind==='병의원'?'개인 병의원: 의원은 일반 법인으로 바로 못 바꿔요. 의료법인·관리회사(MSO) 구조로 검토':'개인사업자: 법인전환 검토가 기본 컨셉']);
     if(nz(c.profit)&&c.profit>=0.88)s.push([3,`당기순이익 ${eok(c.profit)}: 종합소득세 ${itBracket(c.profit)}% 구간`]);
     if(nz(c.sales)&&c.sales>=SINCERE[c.ind])s.push([2,`매출 ${eok(c.sales)}: 성실신고확인 대상 수준(${c.ind} ${SINCERE[c.ind]}억 이상)`]);
     if(c.f_askedCorp)s.push([3,'"법인이 유리하냐" 물어본 적 있음']);if(c.f_ownerAsset)s.push([1,'사업용 자산이 대표 개인 명의 (상속재산에 그대로 포함)']);
@@ -645,9 +647,14 @@ function productHint(c,top){const a=c.age,m=c.sex!=='여';const out=[];
   if(nz(a)&&(c.form==='법인'||top&&['ceo','inherit','corpConv','exitRet'].includes(top.id))){const q=`simulator.html?age=${a}&sex=${encodeURIComponent(c.sex||'남')}&uw=${encodeURIComponent('일반')}`;out.push(`<a href="${q}" target="_blank">경정기 시뮬레이터에서 ${a}세 ${c.sex||'남'} 바로 보기</a> `)}
   out.push('상품 조건은 수시로 바뀝니다. 현행 상품설명서·가입설계서로 확인');return out}
 
+function relaxBox(c){let R=[];try{R=relaxIdeas(c)}catch(e){}if(!R.length)return '';
+  return `<div class="relaxbox"><b>릴렉스 아이디어</b> <span class="muted">이 업체 상황에 맞춘 첫마디 · 날씨·교통 이야기 대신</span><ol>${R.map(x=>`<li>"${esc(x)}"</li>`).join('')}</ol><div class="muted" style="font-size:12.5px">01 단계에는 1번을 넣었어요. 오면서 직접 본 것을 «오면서 볼 수 있는 것» 칸에 적으면 그게 맨 앞에 와요.</div></div>`}
 /* 01 릴렉스: 업체 상황에 맞춘 첫마디 거리 (11/24 상권 «릴렉스에서도 그 업체 상황에 맞게 아이디어를») */
 function relaxIdeas(c){const R=[],add=s=>{if(s&&!R.includes(s))R.push(s)};
   if(c.obs)add(c.obs);
+  /* 회사 공개 정보(회사 정보 찾기 결과 포함)에서 최근 소식 */
+  String(c.bizinfo||'').split(/\n|\s\/\s|·/).map(s=>s.trim()).filter(s=>s.length>=6&&s.length<=60&&/(수상|인증|증설|이전|신축|확장|투자|채용|특허|선정|계약|수주|오픈|개원|출시|진출|기사)/.test(s)).slice(0,2)
+    .forEach(s=>add(`${s.replace(/[.。]$/,'')} 소식 봤습니다. 대단하세요. 그거 준비하시느라 많이 바쁘셨죠?`));
   try{const n=resNews();if(n)add(`요즘 회사 소식 봤습니다. ${n} 많이 바쁘시겠어요.`)}catch(e){}
   /* 업체 이야기 칸의 «최근 변화·회사 강점·대표 고민» 줄 */
   String(c.notes||'').split(/\n/).forEach(l=>{const m=l.match(/^\s*(최근 변화|회사 강점|거래처·경쟁|직원·조직)\s*:\s*(.{2,40})/);if(!m)return;
@@ -665,6 +672,8 @@ function relaxIdeas(c){const R=[],add=s=>{if(s&&!R.includes(s))R.push(s)};
     부동산임대:'건물 관리가 정말 잘 돼 있네요. 직접 챙기세요?',IT연구:'개발하시는 분들이 늘었던데요. 요즘 어떤 프로젝트가 제일 바쁘세요?',
     서비스:'예약 판이 꽉 차 있던데요. 요즘 손님이 많이 느셨어요?'};
   if(IND[c.ind])add(IND[c.ind]);
+  if(c.form==='개인'&&nz(c.profit)&&c.profit>=1)add('요즘 세금 신고 때마다 생각 많아지시죠? 이익이 이 정도면 다들 한 번씩 고민하시더라고요.');
+  if(c.form==='법인'&&nz(c.years)&&c.years>=7)add(`법인 세운 지 ${c.years}년이면 이제 회사가 대표님 손을 조금 덜 타시죠?`);
   if(nz(c.emp)&&c.emp>=10)add(`직원분이 ${c.emp}명이나 되시는데, 처음 시작하실 때는 몇 분이셨어요?`);
   if(nz(c.years)&&c.years>=10)add(`벌써 ${c.years}년째시죠. 처음 시작하실 때랑 지금이랑 제일 달라진 게 뭐예요?`);
   else if(nz(c.years)&&c.years<=3)add(`시작하신 지 얼마 안 되셨는데 자리를 빨리 잡으셨네요. 처음에 제일 힘드셨던 게 뭐였어요?`);
@@ -678,7 +687,7 @@ function build(c){
   const v=stockVal(c),br=itBracket(c.profit);
   const S=[];const add=(blk,no,tt,say,pt,warn)=>S.push({blk,no,tt,say,pt,warn});
   // 1 릴렉스
-  {const R=relaxIdeas(c);add('진입','01','릴렉스',R.length?`"${R[0]}"${R.length>1?` ${P('업체 상황에 맞춰 바꿔 쓸 거리: '+R.slice(1,4).map(x=>'"'+x+'"').join(' / '))}`:''}`:`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'오면서 현장에서 본 것을 짚었는가','날씨·교통 이야기 금지')}
+  {const R=relaxIdeas(c);add('진입','01','릴렉스',R.length?`"${R[0]}"${R.length>1?' (다른 첫마디는 위 «릴렉스 아이디어»)':''}`:`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'오면서 현장에서 본 것을 짚었는가','날씨·교통 이야기 금지')}
   // 2 자존감·동질감
   const same={세무사:'저도 세법이 매년 바뀌어서 계속 공부하는데, 그래도 매년 조금씩 나아지는 것 같습니다.',회계사:'저도 회계기준이 계속 바뀌어서 매년 공부하는데, 하다 보면 조금씩 나아지더라고요.',노무사:'저도 노동법이 매년 바뀌어서 계속 공부하는데, 그래도 해마다 조금씩 나아지는 것 같습니다.',변리사:'저도 기술 흐름을 따라가느라 매년 공부하는데, 하다 보면 조금씩 보이는 게 늘더라고요.'}[cert];
   const praise=nz(c.profit)&&c.profit>0?`${c.occ==='결산'?'가결산 숫자가 현장에서도 보이네요.':`${co} 숫자를 보면 꾸준히 키워 오신 게 보입니다.`}`:`${J(co,'을','를')} ${nz(c.years)?c.years+'년':'오래'} 끌어오신 것 자체가 쉽지 않은 일입니다.`;
@@ -1127,7 +1136,7 @@ async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');m
   /* 가장 최근 해는 위 "읽어서 채우기"와 같은 방식으로 (자동 체크 포함) */
   const last=byYear[yrs[yrs.length-1]],NM={sales:'매출액',profit:'당기순이익',pretax:'법인세차감전이익',equity:'자본총계',retained:'이익잉여금',capital:'자본금',assets:'자산총계',debt:'부채총계',cash:'현금및현금성자산',stfin:'단기금융상품',loan:'가지급금',land:'토지',bldg:'건물',ins:'보험예치금',labor:'급여',gasu:'가수금',apay:'매입채무',stb:'단기차입금',ltb:'장기차입금'};
   $('#fsText').value='(단위: 원)\n'+(corp?'법인 자본금\n':'')+Object.entries(last).filter(([k])=>NM[k]).map(([k,v])=>`${NM[k]} ${Math.round(v*1e8)}`).join('\n');
-  applyFS();
+  applyFS();if(INFO.personal){$('#form_').value='개인';toggle()}
   [0,1,2].forEach(i=>{$('#fy'+i).value='';FS3.forEach(k=>{const el=$(`#f3_${k}_${i}`);if(el)el.value=''})});
   yrs.forEach((y,i)=>{const col=i+3-yrs.length,o=byYear[y];$('#fy'+col).value=y;
     const v={sales:o.sales,op:o.op,ni:o.profit!=null?o.profit:o.pretax,equity:o.equity,debt:o.debt,retained:o.retained,loan:o.loan,cash:(o.cash||0)+(o.stfin||0)||null};
@@ -1668,7 +1677,7 @@ function renderSc(){const{S}=last;let html='',cur='';const tm={진입:'5분',전
   S.forEach(s=>{if(s.blk!==cur){cur=s.blk;html+=`<div class="blk"><b>${cur}</b><span class="muted">${tm[cur]} (20분 기준)</span></div>`}
     html+=`<div class="step"><div class="sh"><span class="no">${s.no}</span><span class="tt">${s.tt}</span></div><div class="say">${esc(s.say).replace(/\[([^\]]*)\]/g,(m,a)=>a==='저항'?'<b>[저항]</b>':`<span class="ph">[${a}]</span>`)}</div><div class="pt">✓ ${s.pt}${s.warn?' · '+s.warn:''}</div></div>`});
   const hits=check(S.map(s=>s.say).join('\n'));
-  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><span><a class="b" href="roleplay.html" onclick="if(window.top!==window){event.preventDefault();window.top.location.hash='#tool-rp'}" target="_blank">이 업체로 AP 롤플레이 연습</a> <button class="b" onclick="window.print()">인쇄</button></span></div>`+styleBox(last.c,false)+html}
+  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><span><a class="b" href="roleplay.html" onclick="if(window.top!==window){event.preventDefault();window.top.location.hash='#tool-rp'}" target="_blank">이 업체로 AP 롤플레이 연습</a> <button class="b" onclick="window.print()">인쇄</button></span></div>`+styleBox(last.c,false)+relaxBox(last.c)+html}
 function plain(){const{S}=last;return S.map(s=>`[${s.no}] ${s.tt}\n${s.say}\n`).join('\n')}
 function fillEdit(){$('#edit').value=plain();runCheck()}
 function runCheck(){const t=$('#edit').value;const h=check(t);const b=h.filter(x=>x.lv==='bad'),w=h.filter(x=>x.lv==='warn');

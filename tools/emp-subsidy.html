@@ -50,21 +50,24 @@ input,select{font:inherit;color:var(--fg);background:var(--card);border:1px soli
 <div id="g47" style="position:fixed;inset:0;z-index:2147483000;background:#0a0b0d;display:grid;place-items:center;font-family:Pretendard,'Malgun Gothic',system-ui,sans-serif">
   <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
     <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
-    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요. 한 번 넣으면 이 기기에서 기억합니다.</div>
+    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요.</div>
     <input id="g47i" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="아이디 (예: 홍길동)" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px;margin-bottom:8px">
     <input id="g47p" type="password" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
-    <button type="submit" style="margin-top:12px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
+    <label style="display:flex;gap:6px;align-items:center;margin-top:10px;color:#5f6b66;font-size:13px"><input type="checkbox" id="g47k"> 이 기기에서 로그인 유지</label>
+    <button type="submit" style="margin-top:10px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
     <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
     <div style="color:#8a938f;font-size:12px;margin-top:4px">운영진도 받은 아이디와 비밀번호로 들어오면 관리 메뉴가 함께 보여요.</div>
   </form>
 </div>
 <script>(function(){var K='team_pass',CFG='../config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
+/* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
 var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
 function keep(j){try{if(j&&j.id){localStorage.setItem('team_id',j.id);localStorage.setItem('team_name',j.name||j.id);
   var me=null;try{me=JSON.parse(localStorage.getItem('hub-me')||'null')}catch(e){}
-  if(j.branch&&(!me||!me.name||me.name!==j.name||me.branch!==j.branch||!!me.boss!==!!j.boss))localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch,boss:!!j.boss}))}
+  localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch||(j.staff?'운영진':''),boss:!!j.boss,staff:!!j.staff,id:j.id}))}
   else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}
   if(j&&j.staff)localStorage.setItem('team_staff','1');else localStorage.removeItem('team_staff')}catch(e){}}
 function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.ok)keep(j);return j&&j.ok?true:false}).catch(function(){return null})})}
@@ -73,7 +76,7 @@ else setTimeout(function(){var i=document.getElementById('g47i');if(i)i.focus()}
 document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var id=document.getElementById('g47i').value.trim().toLowerCase(),p=document.getElementById('g47p').value.trim();if(!p)return;var t=id?id+':'+p:p;m.style.color='#5f6b66';m.textContent='확인 중…';
   check(t,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent=id?'아이디 또는 비밀번호가 맞지 않아요.':'비밀번호가 맞지 않아요.';return}
     if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
-    try{localStorage.setItem(K,t)}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
+    try{localStorage.setItem(K,t);sessionStorage.setItem('g47s','1');localStorage.setItem('g47keep',document.getElementById('g47k').checked?'1':'0')}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
 })();</script>
 
 <div class="wrap">

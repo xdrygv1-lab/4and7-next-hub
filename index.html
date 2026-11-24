@@ -527,21 +527,24 @@ details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}d
 <div id="g47" style="position:fixed;inset:0;z-index:2147483000;background:#0a0b0d;display:grid;place-items:center;font-family:Pretendard,'Malgun Gothic',system-ui,sans-serif">
   <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
     <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
-    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요. 한 번 넣으면 이 기기에서 기억합니다.</div>
+    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요.</div>
     <input id="g47i" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="아이디 (예: 홍길동)" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px;margin-bottom:8px">
     <input id="g47p" type="password" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
-    <button type="submit" style="margin-top:12px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
+    <label style="display:flex;gap:6px;align-items:center;margin-top:10px;color:#5f6b66;font-size:13px"><input type="checkbox" id="g47k"> 이 기기에서 로그인 유지</label>
+    <button type="submit" style="margin-top:10px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
     <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
     <div style="color:#8a938f;font-size:12px;margin-top:4px">운영진도 받은 아이디와 비밀번호로 들어오면 관리 메뉴가 함께 보여요.</div>
   </form>
 </div>
 <script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
+/* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
 var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
 function keep(j){try{if(j&&j.id){localStorage.setItem('team_id',j.id);localStorage.setItem('team_name',j.name||j.id);
   var me=null;try{me=JSON.parse(localStorage.getItem('hub-me')||'null')}catch(e){}
-  if(j.branch&&(!me||!me.name||me.name!==j.name||me.branch!==j.branch||!!me.boss!==!!j.boss))localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch,boss:!!j.boss}))}
+  localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch||(j.staff?'운영진':''),boss:!!j.boss,staff:!!j.staff,id:j.id}))}
   else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}
   if(j&&j.staff)localStorage.setItem('team_staff','1');else localStorage.removeItem('team_staff')}catch(e){}}
 function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.ok)keep(j);return j&&j.ok?true:false}).catch(function(){return null})})}
@@ -550,7 +553,7 @@ else setTimeout(function(){var i=document.getElementById('g47i');if(i)i.focus()}
 document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var id=document.getElementById('g47i').value.trim().toLowerCase(),p=document.getElementById('g47p').value.trim();if(!p)return;var t=id?id+':'+p:p;m.style.color='#5f6b66';m.textContent='확인 중…';
   check(t,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent=id?'아이디 또는 비밀번호가 맞지 않아요.':'비밀번호가 맞지 않아요.';return}
     if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
-    try{localStorage.setItem(K,t)}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
+    try{localStorage.setItem(K,t);sessionStorage.setItem('g47s','1');localStorage.setItem('g47keep',document.getElementById('g47k').checked?'1':'0')}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
 })();</script>
 
 <div class="skinbar" id="skinbar" role="group" aria-label="디자인 시안">디자인 골라 보기:
@@ -710,6 +713,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <h1>지점장 보기</h1>
   <p class="lede">우리 지점원이 돌린 <b>업체 분석</b>과 <b>보험 MBTI</b> 기록만 봅니다. <b>지점장 아이디</b>로 들어왔으면 우리 지점 기록이 바로 열려요. 지점원이 이름·지점을 넣고 분석하면 여기에 저절로 쌓여요. 운영진은 «전체 보기»에 운영진 비밀번호를 넣으면 모든 지점을 봅니다. 비밀번호는 이 창을 닫을 때까지만 기억합니다.</p>
   <div class="card brlog"><div class="brrow"><select id="brSel"><option value="">지점 고르기</option></select><input id="brPass" type="password" placeholder="지점장 비밀번호" autocomplete="off"><button class="btn p" id="brOpen">열기</button></div><p class="small" id="brMsg"></p></div>
+  <div id="brMem"></div>
   <div id="brOut"></div>
   <details class="card adm brlog" style="margin-top:18px"><summary><b>지점 만들기 · 비밀번호 바꾸기 (운영진)</b></summary>
     <p class="small">4&amp;7 운영진이 같이 관리합니다. 맨 앞 칸에 <b>운영진 비밀번호</b>(지점장 보기 공통 비밀번호)를 넣고, 지점 이름과 그 지점장 비밀번호(4~30자)를 정하세요. 같은 이름으로 다시 넣으면 비밀번호만 바뀝니다. 넣은 비밀번호는 저장하지 않아요.</p>
@@ -900,7 +904,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <div class="gostep"><span class="gn">1</span><div class="gob">
     <div id="goDrop" class="godrop">
       <b>자료 넣기</b>
-      <span class="small">재무제표 · 법인세 신고서(세무조정계산서) · 종합소得세 신고서 · 법인등기부 · 주주명부 · 감사보고서. PDF·엑셀, 여러 개 한꺼번에</span>
+      <span class="small">재무제표 · 법인세 신고서(세무조정계산서) · 종합소득세 신고서 · 법인등기부 · 주주명부 · 감사보고서. PDF·엑셀, 여러 개 한꺼번에</span>
       <div class="btnrow" style="margin:8px 0 0"><label class="btn p">파일 고르기<input type="file" id="goFile" multiple hidden accept=".pdf,.xlsx,.xls,.csv,.txt,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label><span class="small">또는 여기로 끌어다 놓기</span></div>
       <div id="goList" class="golist"></div>
     </div>
@@ -1123,9 +1127,17 @@ function subHtml(k,h){const L=(arr)=>arr.map(c=>`<a class="navl ${c.h===h?'on':'
   return ''}
 function renderNav(h){
   const fam=familyOf(h);
-  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">${STAFF?`운영진 · ${esc(store.get('team_name')||'')}`:'관리자'}</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}${STAFF?'':`<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`}`:'');
+  $('#nav').innerHTML=NAVDEF.map(x=>x.g?`<div class="navg">${esc(x.g)}</div>`:`<a class="navl ${x.h===fam?'on':''}" href="#${x.h}" title="${esc(x.t+' · '+x.d)}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.t)}<span class="nd">${esc(x.d)}</span></span></a>${x.sub&&x.h===fam?`<div class="navs">${subHtml(x.sub,h)}</div>`:''}`).join('')+(ADM()?`<div class="navg">${STAFF?`운영진 · ${esc(store.get('team_name')||'')}`:'관리자'}</div>${GUIDE_ADM.map(x=>`<a class="navl ${x.h===h?'on':''}" href="#${x.h}"><span class="ic">${svgi(x.ic)}</span><span class="tx">${esc(x.label)}</span></a>`).join('')}${STAFF?'':`<a class="navl" href="#admin-off"><span class="ic">${svgi('out')}</span><span class="tx">관리자 보기 끄기</span></a>`}`:'')+(store.get('team_pass')?`<a class="navl" href="#logout"><span class="ic">${svgi('out')}</span><span class="tx">로그아웃${store.get('team_name')?`<span class="nd">${esc(store.get('team_name'))}</span>`:''}</span></a>`:'');
 }
 
+
+/* 지점장·운영진: 우리 지점원과 한 사람 활동 (11/24) */
+function brMembers(post,TP){const box=$('#brMem');box.innerHTML='<p class="small">지점원 불러오는 중…</p>';
+  post({action:'boss',pass:TP}).then(j=>{if(!j.ok){box.innerHTML='';return}
+    box.innerHTML=`<h2>${j.branch==='전체'?'모든 지점원':'우리 지점원'} <span class="pill">${j.rows.length}명</span></h2><div class="tw"><table class="brt"><thead><tr><th>이름</th>${j.branch==='전체'?'<th>지점</th>':''}<th>마지막 접속</th><th>7일</th><th></th></tr></thead><tbody>${j.rows.map(r=>`<tr><td><b>${esc(r.name)}</b>${r.boss?' <span class="pill">지점장</span>':''}</td>${j.branch==='전체'?`<td>${esc(r.branch||'운영진')}</td>`:''}<td>${esc(r.last)||'<span class="small">아직</span>'}</td><td>${r.n7}</td><td><button class="btn sm p" type="button" data-blog="${esc(r.id)}">활동</button></td></tr>`).join('')||'<tr><td colspan="5" class="small">아직 아이디가 없어요.</td></tr>'}</tbody></table></div><div id="brAct"></div>`;
+    box.addEventListener('click',e=>{const b=e.target.closest('[data-blog]');if(!b)return;const a=$('#brAct');a.innerHTML='<p class="small">불러오는 중…</p>';
+      post({action:'boss',sub:'log',pass:TP,id:b.dataset.blog}).then(x=>{if(!x.ok){a.innerHTML=`<p class="small">${esc(x.error||'')}</p>`;return}
+        a.innerHTML=`<div class="actbox"><div class="mkh"><b>${esc(x.name)} 활동</b><span class="small">${Object.entries(x.count).map(([k,n])=>`${esc(k)} ${n}`).join(' · ')}</span></div><div class="tw" style="max-height:420px;overflow:auto"><table class="brt"><thead><tr><th>시각</th><th>종류</th><th>내용</th></tr></thead><tbody>${x.items.map(e=>`<tr><td style="white-space:nowrap">${esc(String(e.t).slice(2,16))}</td><td><span class="pill">${esc(e.k)}</span></td><td>${esc(e.d)}</td></tr>`).join('')||'<tr><td colspan="3" class="small">아직 없어요.</td></tr>'}</tbody></table></div></div>`;a.scrollIntoView({block:'nearest'})})})}).catch(()=>{box.innerHTML=''})}
 function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(r=>r.json()).then(j=>String(j.endpoint||''));const TP=store.get('team_pass')||'';
   const sel=$('#brSel'),msg=$('#brMsg'),out=$('#brOut');let ss={};try{ss=JSON.parse(sessionStorage.getItem('hub-br')||'{}')}catch(e){}
   const names=()=>ep().then(u=>fetch(u+'?action=branches&pass='+encodeURIComponent(TP))).then(r=>r.json()).then(j=>{const n=(j&&j.names)||[];sel.innerHTML='<option value="">지점 고르기</option>'+n.map(x=>`<option${ss.b===x?' selected':''}>${esc(x)}</option>`).join('')+`<option value="*"${ss.b==='*'?' selected':''}>전체 보기 (운영진)</option>`;if(j&&j.mgr===false)$('#adMsg').textContent='운영진 비밀번호가 아직 없어요. 관리자 키로 아래 «운영진 비밀번호 정하기»를 먼저 해 주세요.';
@@ -1152,6 +1164,7 @@ function showBranch(){const ep=()=>fetch('config.json',{cache:'no-store'}).then(
   try{const t=sessionStorage.getItem('hub-mg');if(t)$('#adTok').value=t}catch(e){}
   try{if(sessionStorage.getItem('hub-openadm')){sessionStorage.removeItem('hub-openadm');const d=document.querySelector('details.adm');if(d){d.open=true;d.scrollIntoView({block:'start'});$('#adTok').focus()}}}catch(e){}
   let me={};try{me=JSON.parse(store.get('hub-me')||'{}')||{}}catch(e){}
+  if((STAFF||me.boss)&&TP.includes(':'))brMembers(post,TP);
   if(STAFF&&TP.includes(':')){msg.textContent='불러오는 중…';Promise.all([post({action:'aplist',mgr:TP}),post({action:'mbtibranch',mgr:TP})]).then(([a,m])=>{if(a.ok){msg.textContent='운영진 아이디로 전체 지점 기록을 열었어요.';render(a,m.ok?m.rows:[])}else msg.textContent=a.error||''}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})}
   else if(me.boss&&TP.includes(':')){msg.textContent='불러오는 중…';Promise.all([post({action:'aplist',pass:TP}),post({action:'mbtibranch',pass:TP})]).then(([a,m])=>{if(a.ok){msg.textContent=`지점장 아이디로 ${a.branch} 기록을 바로 열었어요.`;render(a,m.ok?m.rows:[])}else msg.textContent=a.error||''}).catch(()=>{msg.textContent='서버에 연결하지 못했어요.'})}
   names().then(()=>{if(!me.boss&&!STAFF&&ss.b&&ss.p)open()})}
@@ -1166,9 +1179,10 @@ async function show(){
   if(narrow())setCollapsed(true);
   const main=$('#main');
   if(TOOLS[h]){const[t,src]=TOOLS[h];main.classList.add('toolmode');
-    main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><button class="btn sm p" type="button" data-fb>의견 남기기</button><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank" rel="noopener">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
+    main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><button class="btn sm p" type="button" data-fb>의견 남기기</button><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     document.title=t+' · 4&7 NEXT 허브';return}
   if(h==='admin'){try{sessionStorage.setItem('hub-openadm','1')}catch(e){}location.replace(location.pathname+(STAFF?'':'?admin')+'#manage');return}
+  if(h==='logout'){['team_pass','team_id','team_name','team_staff','hub-me','g47keep'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});try{sessionStorage.clear()}catch(e){}location.replace(location.pathname+'#home');setTimeout(()=>location.reload(),50);return}
   if(h==='admin-off'){try{sessionStorage.removeItem('hub-mg')}catch(e){}location.replace(location.pathname+'#home');return}
   if(ADMONLY.includes(h)&&!ADM()){location.replace('#home');return}
   if(h==='manage')return showManage();
@@ -1480,7 +1494,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   const feed=async(fr,sel,files)=>{const d=await ready(fr,sel),w=fr.contentWindow,inp=d.querySelector(sel);const dt=new w.DataTransfer();for(const f of files)dt.items.add(new w.File([new w.Uint8Array(await f.arrayBuffer())],f.name,{type:f.type,lastModified:f.lastModified}));inp.files=dt.files;
     inp.dispatchEvent(new w.Event('change',{bubbles:true}));const t0=Date.now();await sleep(300);while(inp.value!==''&&Date.now()-t0<240000)await sleep(400)};
   const apEl=id=>{try{return frAp.contentDocument.getElementById(id)}catch(e){return null}};
-  const apRun=()=>{try{const w=frAp.contentWindow;w.toggle&&w.toggle();w.run&&w.run();w.save&&w.save()}catch(e){}};
+  const apRun=()=>{try{const w=frAp.contentWindow,g=frAp.contentDocument.getElementById('gen');w.toggle&&w.toggle();if(g)g.click();else{w.run&&w.run()}w.save&&w.save()}catch(e){}};
   const tab=p=>{document.querySelectorAll('.gotabs [data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===p));frCa.hidden=p!=='ca';frAp.hidden=p!=='ap';$('#goBig').href=p==='ca'?'#tool-ca':'#tool-ap'};
   document.querySelector('.gotabs').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)tab(b.dataset.p)});
   /* 2단계 칸: 제안 준비의 값으로 채우고, 바꾸면 제안 준비에 넣음 */

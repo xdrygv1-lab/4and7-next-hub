@@ -538,6 +538,8 @@ details.more{margin-top:26px;border-top:1px solid var(--line);padding-top:12px}d
 </div>
 <script>(function(){var K='team_pass',CFG='config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
 /* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{var sm=location.search.match(/[?&]s=([a-z0-9]{8,20})/);if(sm){localStorage.setItem(K,sm[1]);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff'].forEach(function(k){localStorage.removeItem(k)});
+  history.replaceState(null,'',location.pathname+location.search.replace(/([?&])s=[a-z0-9]{8,20}&?/,'$1').replace(/[?&]$/,'')+location.hash)}}catch(e){}
 try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
@@ -916,7 +918,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div class="go2">
       <div><span class="glab">나와의 관계</span><div class="gseg" data-k="rel"><button type="button" data-v="기장">기장거래처</button><button type="button" data-v="소개">소개</button><button type="button" data-v="초면">초면</button></div></div>
       <div><span class="glab">물려받을 자녀</span><div class="gseg" data-k="heir"><button type="button" data-v="모름">모름</button><button type="button" data-v="있음">있음</button><button type="button" data-v="없음">없음</button></div></div>
-      <div class="brrow" style="margin:0"><label class="small">대표 나이 <input id="go_age" type="number" min="20" max="90" style="width:80px"></label><label class="small">자녀 수 <input id="go_kids" type="number" min="0" style="width:70px"></label></div>
+      <div class="brrow" style="margin:0"><label class="small">대표 나이 <input id="go_age" type="number" min="20" max="90" style="width:80px"></label><label class="small">생년월일 <input id="go_birth" type="date"></label><span class="small" id="go_ageOut"></span><label class="small">자녀 수 <input id="go_kids" type="number" min="0" style="width:70px"></label></div>
     </div>
     <span class="glab">알고 있는 것 (누르면 켜짐)</span><div class="gsig" id="goSig"></div>
     <span class="glab">업체 이야기 <span class="small">숫자로 안 보이는 것: 대표 고민·회사 강점·가족·직원·최근 변화</span></span>
@@ -942,6 +944,9 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <ol class="mg3"><li><b>지점 만들기</b><span>이름만 넣으면 끝</span></li><li><b>이름 붙여 넣기</b><span>지점 칸에 한 줄에 한 명</span></li><li><b>복사해서 개인톡</b><span>아이디·비밀번호가 저절로 나와요</span></li></ol>
       <div class="card brlog"><div class="brrow"><input id="nbName" placeholder="새 지점 이름 (예: 광주지점)" style="flex:1;min-width:180px"><button class="btn p" id="nbAdd" type="button">지점 만들기</button></div><p class="small" id="acMsg"></p></div>
       <div id="brCards"></div>
+      <div class="card brlog" style="margin-top:14px"><b>공유 링크</b><p class="small" style="margin:0">켜 두면 이 링크를 받은 사람은 로그인 없이 들어와요. 끄면 아이디로만 들어올 수 있어요 (지금 만든 아이디·지점은 그대로).</p>
+        <label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="shOn"> 공유 링크로 들어오게 두기</label>
+        <div class="brrow" style="margin:0"><code id="shUrl" style="overflow-wrap:anywhere;flex:1;min-width:0"></code><button class="btn sm p" type="button" id="shCp">링크 복사</button><button class="btn sm" type="button" id="shNew">새 링크로 바꾸기</button></div><p class="small" id="shMsg"></p></div>
       <label class="small" style="display:flex;gap:6px;align-items:center;margin-top:12px"><input type="checkbox" id="tpOn"> 팀 공용 비밀번호로도 들어오게 두기 (아이디를 다 나눠 준 뒤 끄세요. 끄면 공용 비밀번호로 들어온 기기는 다시 로그인해야 해요)</label>
     </section>
     <section class="mgsec"><h2>관리 메뉴</h2><div class="cards">
@@ -1500,13 +1505,13 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   /* 2단계 칸: 제안 준비의 값으로 채우고, 바꾸면 제안 준비에 넣음 */
   const s2fill=()=>{const g=id=>{const e=apEl(id);return e?e.value:''};
     document.querySelectorAll('.gseg').forEach(s=>{const v=g(s.dataset.k);s.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))});
-    $('#go_age').value=g('age');$('#go_kids').value=g('kids');$('#go_notes').value=g('notes');
+    $('#go_age').value=g('age');$('#go_birth').value=g('birth');$('#go_ageOut').textContent=(apEl('ageOut')||{}).textContent||'';$('#go_kids').value=g('kids');$('#go_notes').value=g('notes');
     $('#goSig').innerHTML=GO_SIG.map(id=>{const e=apEl(id);if(!e)return '';const lb=(e.closest('label')||{}).textContent||id;return `<button type="button" class="${e.checked?'on':''}" data-s="${id}">${esc(lb.trim().replace(/^"|"$/g,''))}</button>`}).join('')};
   document.querySelectorAll('.gseg').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))}));
   $('#goSig').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(b)b.classList.toggle('on')});
   const s2apply=()=>{const set=(id,val)=>{const e=apEl(id);if(!e)return;if(e.type==='checkbox')e.checked=!!val;else e.value=val};
     document.querySelectorAll('.gseg').forEach(s=>{const b=s.querySelector('button.on');if(b)set(s.dataset.k,b.dataset.v)});
-    set('age',$('#go_age').value);set('kids',$('#go_kids').value);set('notes',$('#go_notes').value);
+    {const bd=apEl('birth'),nb=$('#go_birth').value;if(bd&&nb&&bd.value!==nb){bd.value=nb;bd.dispatchEvent(new Event('input',{bubbles:true}))}else set('age',$('#go_age').value)}set('kids',$('#go_kids').value);set('notes',$('#go_notes').value);
     document.querySelectorAll('#goSig [data-s]').forEach(b=>set(b.dataset.s,b.classList.contains('on')));apRun()};
   const run=async()=>{if(busy)return;const co=$('#goCo').value.trim();if(!FILES.length&&!co){msg.textContent='자료 파일을 넣거나 상호명을 적어 주세요.';return}
     busy=true;$('#goRun').disabled=true;msg.textContent='돌리는 중… 보고서와 제안 준비를 같이 만들고 있어요 (PDF가 많으면 1분쯤)';
@@ -1517,6 +1522,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
     catch(e){msg.textContent='돌리지 못했어요: '+(e.message||e)}
     busy=false;$('#goRun').disabled=false};
   $('#goRun').onclick=run;
+  $('#go_birth').addEventListener('change',()=>{const bd=apEl('birth');if(!bd)return;bd.value=$('#go_birth').value;bd.dispatchEvent(new Event('input',{bubbles:true}));$('#go_age').value=(apEl('age')||{}).value||'';$('#go_ageOut').textContent=(apEl('ageOut')||{}).textContent||''});
   $('#goAgain').onclick=()=>{s2apply();$('#goMsg2').textContent='반영했어요. 아래 결과가 바뀌었어요.';tab('ap')};
   $('#goRes2').onclick=()=>{const co=$('#goCo').value.trim()||((apEl('co')||{}).value||'').trim(),k=apEl('crmCo'),b=apEl('resBtn');if(!co){$('#goMsg2').textContent='상호명을 먼저 적어 주세요.';return}
     if(k)k.value=co;if(b){b.click();$('#goMsg2').textContent='회사 정보를 찾는 중이에요 (1분쯤). 찾으면 제안 준비의 «회사 공개 정보»에 들어가요.';tab('ap')}};
@@ -1539,7 +1545,8 @@ function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEX
   const cp=(btn,txt)=>navigator.clipboard.writeText(txt).then(()=>{btn.textContent='복사했어요';btn.classList.add('done')}).catch(()=>{btn.textContent='아래 글을 직접 골라 복사';const p=btn.closest('.mkr');if(p){const c=p.querySelector('.mgcopy');if(c)c.hidden=false}});
   const NEW={};   /* 이번 창에서 만든 비밀번호 (닫으면 사라짐) */
   let AC=null;
-  const drawAc=r=>{AC=r;BR=r.branches||[];$('#tpOn').checked=!!r.teamPass;const BP=r.branchPass||{},rows=r.rows||[];
+  const drawSh=s=>{if(!s)return;$('#shOn').checked=!!s.on;$('#shUrl').textContent=s.key?LINK+'?s='+s.key:'(아직 없음)';$('#shUrl').style.opacity=s.on?1:.45};
+  const drawAc=r=>{AC=r;BR=r.branches||[];$('#tpOn').checked=!!r.teamPass;drawSh(r.share);const BP=r.branchPass||{},rows=r.rows||[];
     const groups=BR.slice();if(rows.some(a=>!a.branch||!BR.includes(a.branch)))groups.push('');
     $('#brCards').innerHTML=groups.map(g=>{const ms=rows.filter(a=>g?a.branch===g:(!a.branch||!BR.includes(a.branch))),on=ms.filter(a=>a.last).length;
       const made=(NEW[g]||[]);
@@ -1582,6 +1589,9 @@ function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEX
   $('#nbAdd').onclick=()=>{const n=$('#nbName').value.trim();if(!n){$('#acMsg').textContent='지점 이름을 넣어 주세요.';return}
     call('brset',{name:n}).then(j=>{if(!j.ok){$('#acMsg').textContent=j.error||'만들지 못했어요.';return}$('#nbName').value='';drawAc(j);$('#acMsg').textContent=`${n} 를 만들었어요. 아래 ${n} 칸에 이름을 붙여 넣으세요.`;
       const c=[...document.querySelectorAll('.brc')].find(x=>x.dataset.g===n);if(c){c.scrollIntoView({block:'center'});const ta=c.querySelector('textarea');if(ta)ta.focus()}})};
+  $('#shOn').onchange=e=>call('share',{on:e.target.checked}).then(j=>{if(!j.ok){$('#shMsg').textContent=j.error||'바꾸지 못했어요.';return}drawSh(j.share);$('#shMsg').textContent=j.share.on?'공유 링크로 로그인 없이 들어올 수 있어요.':'공유 링크를 껐어요. 이제 아이디로만 들어와요.'});
+  $('#shNew').onclick=()=>call('share',{renew:true}).then(j=>{if(j.ok){drawSh(j.share);$('#shMsg').textContent='새 링크로 바꿨어요. 예전 링크로는 이제 못 들어와요 (이미 들어와 있던 기기도 다시 물어요).'}});
+  $('#shCp').onclick=e=>cp(e.target,$('#shUrl').textContent);
   $('#nbName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#nbAdd').click()});
   const load=()=>{const m=$('#mgMsg');m.textContent='불러오는 중…';
     call('summary').then(s=>{if(!s.ok){m.textContent=s.error||'비밀번호가 맞지 않아요.';ss.set('hub-mg','');$('#mgOut').hidden=true;return}

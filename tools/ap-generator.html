@@ -120,6 +120,8 @@ details.more{margin-top:6px}details.more>summary{cursor:pointer;font-size:13px;c
 </div>
 <script>(function(){var K='team_pass',CFG='../config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
 /* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{var sm=location.search.match(/[?&]s=([a-z0-9]{8,20})/);if(sm){localStorage.setItem(K,sm[1]);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff'].forEach(function(k){localStorage.removeItem(k)});
+  history.replaceState(null,'',location.pathname+location.search.replace(/([?&])s=[a-z0-9]{8,20}&?/,'$1').replace(/[?&]$/,'')+location.hash)}}catch(e){}
 try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
@@ -922,6 +924,7 @@ function parseRows(rows){rows=mergeLabelRows(rows);const cur={},prev={},unit=uni
 const SHM='\u0002SH';
 const REL={'00':'본인','01':'배우자','02':'자녀','03':'부모','04':'형제자매','05':'손자녀','06':'조부모','07':'친족의 배우자','08':'기타 친족','09':'타인','10':'특수관계법인','99':'관계 모름'};
 const relCode=w=>{w=String(w||'').trim();if(/^(0\d|10)$/.test(w))return w;const e=Object.entries(REL).find(([,n])=>n===w);return e?e[0]:(/본인|대표/.test(w)?'00':/배우자/.test(w)?'01':/자녀|아들|딸/.test(w)?'02':/법인/.test(w)?'10':'09')};
+function birthDate(yymmdd,g){const s=String(yymmdd||'');if(!/^\d{6}$/.test(s))return '';const y=birthYear(s,g),mm=s.slice(2,4),dd=s.slice(4,6),d=new Date(`${y}-${mm}-${dd}T00:00:00`);return isNaN(d)||+mm<1||+mm>12||+dd<1||+dd>31?'':`${y}-${mm}-${dd}`}
 function birthYear(yymmdd,g){const yy=+String(yymmdd).slice(0,2);if(/^[1256]$/.test(g||''))return 1900+yy;if(/^[3478]$/.test(g||''))return 2000+yy;return yy>new Date().getFullYear()%100?1900+yy:2000+yy}
 function parseDocInfo(rows){
   const info={};
@@ -1010,7 +1013,7 @@ function parseDocInfo(rows){
     /* 말소(줄 그은) 임원을 글자 인식이 못 읽으면 그 «사임» 줄이 다른 임원에 붙음 → 이사가 하나도 안 남으면 사임 표시를 무시하고 경고 */
     if(!live.some(o=>/대표이사|사내이사/.test(o.role))&&offs.some(o=>/대표이사|사내이사/.test(o.role))){live=offs;info.outWarn=true}
     const ceo=live.find(o=>o.role==='대표이사')||live.find(o=>o.role==='사내이사');
-    if(ceo){info.ceoName=ceo.name;info.birth=birthYear(ceo.yy,ceo.g);info.ceoSince=ceo.since||info.founded||null;info.ceoSinceKind=ceo.kind||(!ceo.since&&info.founded?'설립':null)}
+    if(ceo){info.ceoName=ceo.name;info.birth=birthYear(ceo.yy,ceo.g);info.birthDate=ceo.g?birthDate(ceo.yy,ceo.g):'';info.ceoSince=ceo.since||info.founded||null;info.ceoSinceKind=ceo.kind||(!ceo.since&&info.founded?'설립':null)}
     const ex=new Set(live.filter(o=>/대표이사|사내이사/.test(o.role)).map(o=>o.name));if(ex.size)info.execN=ex.size;
     info.officers=live.map(o=>`${o.role} ${o.name}`).join(', ');
     m=S.match(/목\s*적\s+1\s*\.\s*(.+?)\s+1\s*\./);if(m&&!info.ind)info.ind=m[1].slice(0,30);
@@ -1020,7 +1023,7 @@ function parseDocInfo(rows){
     info.kind='종합소득세 신고서';info.personal=true;delete info.sh;
     const won=x=>+String(x).replace(/,/g,'');
     let m=S.match(/성\s*명\s+([가-힣]{2,5})(?=\s)/);if(m)info.ceoName=m[1];
-    m=S.match(/주\s*민\s*등\s*록\s*번\s*호\s+(\d{6})\s*-?\s*([1-8])/)||S.match(/(?<!\d)(\d{6})\s*-\s*([1-8])[\d*]{6}/);if(m)info.birthY=birthYear(m[1],m[2]);
+    m=S.match(/주\s*민\s*등\s*록\s*번\s*호\s+(\d{6})\s*-?\s*([1-8])/)||S.match(/(?<!\d)(\d{6})\s*-\s*([1-8])[\d*]{6}/);if(m){info.birthY=birthYear(m[1],m[2]);info.birthDate=birthDate(m[1],m[2])}
     m=S.match(/(20\d\d)\s*년\s*(?:도\s*)?귀\s*속/)||S.match(/귀\s*속\s*(?:연\s*도|년\s*도)\s*:?\s*(20\d\d)/)||S.match(/(20\d\d)\s*년\s*(?:도\s*)?종\s*합\s*소\s*득\s*세/);if(m)info.fy=+m[1];
     m=S.match(/상\s*호\s*(?:\(\s*법\s*인\s*명\s*\))?\s+(.+?)\s+(?:[①-⑳]|사\s*업\s*자|\d{3}-\d{2}-\d{5}|소\s*재\s*지|업\s*태)/);if(m&&!/^[\d,]+$/.test(m[1]))info.co=m[1].replace(/\s+/g,' ').trim().slice(0,40);
     m=S.match(/종\s*목\s+(.+?)\s+(?:[①-⑳]|업\s*종\s*코\s*드|\d{6}|주\s*업\s*종|$)/)||S.match(/업\s*태\s+(.+?)\s+(?:종\s*목|[①-⑳]|$)/);if(m)info.ind=m[1].replace(/\s+/g,' ').trim().slice(0,30);
@@ -1044,8 +1047,10 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   if(info.ind){const m=IND_MAP.find(([r])=>r.test(info.ind));set('ind',m?m[1]:'기타');got.push(`업종(«${esc(info.ind)}» → ${m?m[1]:'기타'})`)}
   const fd=info.founded??info.foundedEst;if(fd){set('years',Math.max(0,new Date().getFullYear()-fd));got.push('업력')}
   if(info.kind&&/세무조정|감사|등기/.test(info.kind))set('form_','법인');
+  if(info.birthDate||info.birthY||info.birth){const bd=$('#birth');
+    if(info.birthDate&&bd){bd.value=info.birthDate;bd.dispatchEvent(new Event('input',{bubbles:true}));got.push(`대표 생년월일(${info.birthDate}) → 보험나이·상령일`)}
+    else{const y=info.birthY||info.birth;set('age',new Date().getFullYear()-y);got.push(`대표 나이(${y}년생, 대략. 생년월일을 넣으면 보험나이·상령일이 나와요)`)}}
   if(info.personal){set('form_','개인');got.push('사업 형태(개인)');const eo=v=>Math.round(v/1e6)/100;
-    if(info.birthY){set('age',new Date().getFullYear()-info.birthY);got.push(`대표 나이(${info.birthY}년생, 대략)`)}
     if(info.totInc){set('ceoInc',eo(info.totInc));got.push(`대표 연소득(종합소득금액 ${eo(info.totInc)}억)`)}
     if(info.revenue&&!$('#sales').value){set('sales',eo(info.revenue));got.push('매출(총수입금액)')}
     if(info.bizInc&&!$('#profit').value){set('profit',eo(info.bizInc));got.push('이익(사업소득금액)')}

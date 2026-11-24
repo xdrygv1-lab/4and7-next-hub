@@ -110,6 +110,8 @@ footer{margin-top:28px;font-size:13px;color:var(--sub-d);border-top:1px solid va
 </div>
 <script>(function(){var K='team_pass',CFG='../config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
 /* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{var sm=location.search.match(/[?&]s=([a-z0-9]{8,20})/);if(sm){localStorage.setItem(K,sm[1]);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff'].forEach(function(k){localStorage.removeItem(k)});
+  history.replaceState(null,'',location.pathname+location.search.replace(/([?&])s=[a-z0-9]{8,20}&?/,'$1').replace(/[?&]$/,'')+location.hash)}}catch(e){}
 try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
 try{v=localStorage.getItem(K)||''}catch(e){}
 function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}

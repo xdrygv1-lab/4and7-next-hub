@@ -205,7 +205,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
           <label class="f">직위<select id="pos"><option value="ceo">대표이사</option><option value="exec">등기임원</option><option value="staff">미등기임원·직원</option></select></label>
         </div>
         <div class="row" style="margin-top:10px">
-          <label class="f"><span class="lt">생년월일 <span class="unit">보험나이 자동</span></span><input type="date" id="birth"></label>
+          <label class="f"><span class="lt">생년월일 <span class="unit">보험나이 자동</span></span><input type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="1965-08-12" data-ymd id="birth"></label>
           <div class="f" id="ageOut" style="font-size:13px;color:var(--sub);align-self:end;padding-bottom:6px"></div>
         </div>
         <div class="row" style="margin-top:10px">
@@ -217,7 +217,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <fieldset id="fsCorp">
         <legend>법인</legend>
         <div class="row">
-          <label class="f">설립일<input type="date" id="founded"></label>
+          <label class="f">설립일<input type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="1965-08-12" data-ymd id="founded"></label>
           <label class="f"><span class="lt">업력 <span class="unit">자동 계산</span></span><input type="text" id="yearsOut" readonly style="font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#f0f1f3;color:var(--ink)"></label>
         </div>
         <label class="check"><input type="checkbox" id="conversion"> 개인사업자에서 법인전환한 회사 (폐업사실증명원 등 준비 가능)</label>
@@ -637,5 +637,5 @@ if (saved) load(saved); else { $('fx').value = 1400; }
 render();
 })();
 </script>
-</body>
+<script>/* 날짜 칸: 연 4자리-월 2자리-일 2자리 (11/24 상권) */document.addEventListener('input',function(e){var el=e.target;if(!el||!el.hasAttribute||!el.hasAttribute('data-ymd'))return;var d=el.value.replace(/\D/g,'').slice(0,8),v=d.slice(0,4)+(d.length>4?'-'+d.slice(4,6):'')+(d.length>6?'-'+d.slice(6,8):'');if(el.value!==v)el.value=v},true);</script></body>
 </html>

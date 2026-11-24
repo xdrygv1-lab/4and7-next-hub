@@ -197,7 +197,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div><label>직원 수(명)</label><input type="number" id="emp" min="0"></div>
       <div><label>연 매출(억)</label><input type="number" id="sales" step="0.1"></div>
       <div><label>당기순이익(억)</label><input type="number" id="profit" step="0.1"></div>
-      <div><label>대표 나이 (보험나이)</label><input type="number" id="age" min="20" max="90"><input type="date" id="birth" title="생년월일을 넣으면 보험나이와 상령일이 나옵니다 (저장 안 함)" style="margin-top:4px"><div id="ageOut" class="muted" style="font-size:12px;margin-top:2px"></div></div>
+      <div><label>대표 나이 (보험나이)</label><input type="number" id="age" min="20" max="90"><input type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="1965-08-12" data-ymd id="birth" title="생년월일을 넣으면 보험나이와 상령일이 나옵니다 (저장 안 함)" style="margin-top:4px"><div id="ageOut" class="muted" style="font-size:12px;margin-top:2px"></div></div>
       <div><label>대표 성별</label><select id="sex"><option>남</option><option>여</option></select></div>
       <div><label>대표 연소득(억)</label><input type="number" id="ceoInc" step="0.1" placeholder="급여+배당, 재정심사용"></div>
       <div><label>자녀 수</label><input type="number" id="kids" min="0"></div>
@@ -1886,7 +1886,7 @@ toggle();run();
   window.__topicsDraw=draw;draw();
   ['sample','sample2','reset'].forEach(id=>{const b=document.getElementById(id);if(b)b.addEventListener('click',()=>setTimeout(()=>{window.__sigSync&&window.__sigSync();draw()},50))})})();
 </script>
-<script>(function(){var c=document.getElementById('cert'),r=document.getElementById('rel');if(!c||!r)return;
+<script>/* 날짜 칸: 연 4자리-월 2자리-일 2자리 (11/24 상권) */document.addEventListener('input',function(e){var el=e.target;if(!el||!el.hasAttribute||!el.hasAttribute('data-ymd'))return;var d=el.value.replace(/\D/g,'').slice(0,8),v=d.slice(0,4)+(d.length>4?'-'+d.slice(4,6):'')+(d.length>6?'-'+d.slice(6,8):'');if(el.value!==v)el.value=v},true);</script><script>(function(){var c=document.getElementById('cert'),r=document.getElementById('rel');if(!c||!r)return;
 function f(){var o=r.querySelector('option[value="기장"]');if(o)o.textContent=c.value==='노무사'?'노무 자문·급여 아웃소싱 거래처':'기장거래처'}
 c.addEventListener('change',f);f()})();</script>
 <script>

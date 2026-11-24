@@ -947,7 +947,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div><span class="glab">사업 형태</span><div class="gseg" data-k="form_"><button type="button" data-v="개인">개인사업자</button><button type="button" data-v="법인">법인</button></div></div>
       <div><span class="glab">나와의 관계</span><div class="gseg" data-k="rel"><button type="button" data-v="기장">기장거래처</button><button type="button" data-v="소개">소개</button><button type="button" data-v="초면">초면</button></div></div>
       <div><span class="glab">물려받을 자녀</span><div class="gseg" data-k="heir"><button type="button" data-v="모름">모름</button><button type="button" data-v="있음">있음</button><button type="button" data-v="없음">없음</button></div></div>
-      <div class="brrow" style="margin:0"><label class="small">대표 나이 <input id="go_age" type="number" min="20" max="90" style="width:80px"></label><label class="small">생년월일 <input id="go_birth" type="date"></label><span class="small" id="go_ageOut"></span><label class="small">자녀 수 <input id="go_kids" type="number" min="0" style="width:70px"></label></div>
+      <div class="brrow" style="margin:0"><label class="small">대표 나이 <input id="go_age" type="number" min="20" max="90" style="width:80px"></label><label class="small">생년월일 <input id="go_birth" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="1965-08-12" data-ymd style="width:120px"></label><span class="small" id="go_ageOut"></span><label class="small">자녀 수 <input id="go_kids" type="number" min="0" style="width:70px"></label></div>
     </div>
     <span class="glab">알고 있는 것 (누르면 켜짐)</span><div class="gsig" id="goSig"></div>
     <span class="glab">업체 이야기 <span class="small">숫자로 안 보이는 것: 대표 고민·회사 강점·가족·직원·최근 변화</span></span>
@@ -1742,6 +1742,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   drawSaved();
   $('#goSave').onclick=()=>saveNow();$('#goSave2').onclick=()=>{$('#goSv2').textContent='저장 중…';saveNow().then(()=>{if(!/저장됨/.test($('#goSv2').textContent))$('#goSv2').textContent='회사 이름이 없어 저장하지 못했어요'})};
   $('#goRun').onclick=()=>run().then(()=>{if(!$('#goS2').hidden)setTimeout(saveNow,1500)});
+  $('#go_birth').addEventListener('input',()=>{if($('#go_birth').value.length===10)$('#go_birth').dispatchEvent(new Event('change'))});
   $('#go_birth').addEventListener('change',()=>{const bd=apEl('birth');if(!bd)return;bd.value=$('#go_birth').value;bd.dispatchEvent(new Event('input',{bubbles:true}));$('#go_age').value=(apEl('age')||{}).value||'';$('#go_ageOut').textContent=(apEl('ageOut')||{}).textContent||''});
   $('#goAgain').onclick=()=>{s2apply();setTimeout(saveNow,800);$('#goMsg2').textContent='반영했어요. 아래 결과가 바뀌었어요.';setTimeout(fit,300)};
   $('#goRes2').onclick=()=>{const co=$('#goCo').value.trim()||((apEl('co')||{}).value||'').trim(),k=apEl('crmCo'),b=apEl('resBtn');if(!co){$('#goMsg2').textContent='상호명을 먼저 적어 주세요.';return}
@@ -1750,6 +1751,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
     try{const w=frAp.contentWindow,d=await ready(frAp,'#fsFile');w.__fsReset&&w.__fsReset();const r=d.getElementById('reset');if(r)r.click();const c=apEl('co');if(c)c.value='';apRun()}catch(e){}
     try{const w=frCa.contentWindow,d=await ready(frCa,'#impFile');w.__impReset&&w.__impReset();const b=d.getElementById('btnClear');if(b)b.click()}catch(e){}};
 }
+document.addEventListener('input',e=>{const el=e.target;if(!el||!el.hasAttribute||!el.hasAttribute('data-ymd'))return;const d=el.value.replace(/\D/g,'').slice(0,8),v=d.slice(0,4)+(d.length>4?'-'+d.slice(4,6):'')+(d.length>6?'-'+d.slice(6,8):'');if(el.value!==v)el.value=v},true);   /* 날짜 칸: 1965-08-12 */
 /* ---------- 관리자 홈 (11/23) ---------- */
 function showManage(){tpl('tpl-manage');document.title='관리자 홈 · 4&7 NEXT 허브';
   const ss={get:k=>{try{return sessionStorage.getItem(k)||''}catch(e){return ''}},set:(k,v)=>{try{v?sessionStorage.setItem(k,v):sessionStorage.removeItem(k)}catch(e){}}};

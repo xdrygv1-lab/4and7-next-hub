@@ -1218,7 +1218,7 @@ async function show(){
     main.innerHTML=`<div class="toolbar"><b>${t}<span class="tool-hint">${esc(TOOLHINT[h]||'')}</span></b><span class="btnrow" style="margin:0"><button class="btn sm p" type="button" data-fb>의견 남기기</button><a class="btn sm" href="#review">결과 검토받기</a><a class="btn sm" href="${src}" target="_blank">크게 보기</a></span></div><iframe class="frame" allow="microphone; autoplay; clipboard-write" src="${src}?${QS?QS+'&':''}v=${encodeURIComponent((M&&M.built)||Date.now())}" title="${t}"></iframe>`;
     document.title=t+' · 4&7 NEXT 허브';return}
   if(h==='admin'){try{sessionStorage.setItem('hub-openadm','1')}catch(e){}location.replace(location.pathname+(STAFF?'':'?admin')+'#manage');return}
-  if(h==='login'){location.replace('#home');return}
+  if(h==='login'){if(store.get('team_pass'))location.replace('#home');return}
   if(h==='logout'){['team_pass','team_id','team_name','team_staff','hub-me','g47keep'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});try{sessionStorage.clear()}catch(e){}location.replace(location.pathname+'#login');setTimeout(()=>location.reload(),50);return}
   if(h==='admin-off'){try{sessionStorage.removeItem('hub-mg')}catch(e){}location.replace(location.pathname+'#home');return}
   if(ADMONLY.includes(h)&&!ADM()){location.replace('#home');return}

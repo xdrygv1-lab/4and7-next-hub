@@ -161,8 +161,8 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
   <details id="fsBox" open style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;color:var(--acc)">재무자료 (파일 · 붙여넣기)</summary>
     
     <div id="fsDrop" class="fdrop">
-      <b>파일 넣기</b> <span class="muted">PDF · 엑셀, 여러 개 · 여러 번 넣어도 쌓여요 (끌어다 놓아도 돼요)</span><br>
-      <label class="b p" style="display:inline-block;margin-top:6px;cursor:pointer">파일 고르기<input type="file" id="fsFile" accept=".pdf,.xlsx,.xls,.csv,.txt" multiple hidden></label>
+      <b>파일 넣기</b> <span class="muted">PDF · 엑셀(xlsx·xls) · CSV, 여러 개 · 여러 번 넣어도 쌓여요 (끌어다 놓아도 돼요)</span><br>
+      <label class="b p" style="display:inline-block;margin-top:6px;cursor:pointer">파일 고르기<input type="file" id="fsFile" accept=".pdf,.xlsx,.xls,.csv,.txt,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden></label>
       <div id="fsList" class="flist"></div>
       <details class="muted" style="margin-top:4px;font-size:12.5px"><summary>어떤 파일이 되나요?</summary>재무상태표·손익계산서, 세무조정계산서(여러 파일로 나뉘어 있어도 한꺼번에), 결산보고서, 감사보고서, 법인등기부, 홈택스 주주명부, <b>종합소득세 신고서</b>(성명·나이·상호·업종·총수입금액·사업소득금액·종합소득금액), 표준재무제표증명. 해마다 다른 파일을 같이 넣으면 연도별 표까지 채워요. 스캔(사진) PDF는 10쪽까지 글자 인식으로 읽지만 틀릴 수 있어요.</details>
       <div id="fsFileMsg" class="muted" style="margin-top:4px"></div>
@@ -1058,8 +1058,9 @@ let FSF=[];
 function fsList(){const el=$('#fsList');if(!el)return;el.innerHTML=FSF.length?FSF.map((f,i)=>`<span class="fchip">${esc(f.name)}<button type="button" data-fx="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" class="b" id="fsClr" style="padding:3px 10px">모두 빼기</button>':'';
   el.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{FSF.splice(+b.dataset.fx,1);fsList();if(FSF.length)readFs(FSF);else $('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
   const c=$('#fsClr');if(c)c.onclick=()=>{FSF=[];fsList();$('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}
-function addFs(list){const add=[...list].filter(f=>/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name)&&!FSF.some(g=>g.name===f.name&&g.size===f.size));if(!add.length)return;FSF=FSF.concat(add);fsList();readFs(FSF)}
-$('#fsFile').onchange=e=>{addFs(e.target.files);e.target.value=''};
+function addFs(list){const add=[...list].filter(f=>/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name)&&!FSF.some(g=>g.name===f.name&&g.size===f.size));const bad=[...list].filter(f=>!/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name));if(bad.length)$('#fsFileMsg').textContent=`${bad.map(f=>f.name).join(', ')}: PDF·엑셀·CSV만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`;
+  if(!add.length)return Promise.resolve();FSF=FSF.concat(add);fsList();return readFs(FSF)}
+$('#fsFile').onchange=e=>{addFs(e.target.files).finally(()=>e.target.value='')};
 {const z=$('#fsDrop');if(z){['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove('over')}));z.addEventListener('drop',e=>addFs(e.dataTransfer.files))}}
 async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');msg.textContent=`${files.length}개 파일 읽는 중…`;
   const byYear={},pri={},notes=[],diffs=[];let corp=false;const INFO={};const DN={sales:'매출',profit:'당기순이익',equity:'자본총계'},r2=x=>Math.round(x*100)/100;

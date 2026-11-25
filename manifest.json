@@ -1,6 +1,6 @@
 {
  "repo": "xdrygv1-lab/4and7-next-hub",
- "built": "2026-11-25 11:59",
+ "built": "2026-11-25 12:56",
  "docs": [
   {
    "id": "da308dcb2",
@@ -1360,6 +1360,10 @@
   {
    "file": "tools/simulator.html",
    "name": "경정기 시뮬레이터"
+  },
+  {
+   "file": "tools/stw-simulator.html",
+   "name": "단기납 종신 비교 계산기"
   },
   {
    "file": "tools/ap-generator.html",

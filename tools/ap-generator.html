@@ -1229,8 +1229,8 @@ function salVsRet(S0,X,N,T20,T12){const A=X*12,R=A*N,T=Math.max(1,T20+T12);
   const rT=svRet(inR,T),xT=ex>0?svWage(S0+ex)-svWage(S0):0,need=(T20*2+T12*3)>0?R/(.1*(T20*2+T12*3)):null;
   return{A,R,N,sT,sI,sTot:(sT+sI)*N,rT,xT,rTot:rT+xT,lim,inR,ex,need,diff:(sT+sI)*N-(rT+xT)}}
 function svIn(c){const g=(id,d)=>{const e=document.getElementById(id);const v=e&&e.value!==''?+e.value:NaN;return isFinite(v)?v:d};
-  const s0=EXT&&EXT.sal>0?Math.round(EXT.sal*1e4):6000,N=g('svN',7);
-  return{S0:g('svS0',s0),X:g('svX',500),N,T20:g('svT20',N),T12:g('svT12',0)}}
+  const s0=EXT&&EXT.sal>0?Math.round(EXT.sal*1e4):6000,N=g('svN',7);let x0=500;try{const a=last&&last.top?proposeAmount(c,last.top):null;if(a&&!a.none&&a.mid>0)x0=Math.round(a.mid/1e4/10)*10}catch(e){}
+  return{S0:g('svS0',s0),X:g('svX',x0),N,T20:g('svT20',N),T12:g('svT12',0)}}
 const mw=v=>{v=Math.round(v);const s=v<0?'−':'';v=Math.abs(v);const e=Math.floor(v/10000),m=v%10000;return s+(e?e+'억'+(m?' '+m.toLocaleString('ko-KR')+'만':''):m.toLocaleString('ko-KR')+'만')};   /* 1억 6,539만 */
 function svTable(r){return[['구분',`급여로 월 ${mw(r.A/12)} 더`,`퇴직금으로 월 ${mw(r.A/12)} 적립`,'차이'],
   ['매년 세금 증가',mw(r.sT),'없음 (퇴직 때 한 번)',''],['매년 4대보험 증가 (회사+본인)',mw(r.sI),'없음',''],
@@ -1367,7 +1367,7 @@ function valuation(c){if(EXT&&EXT.whole!=null&&c.form==='법인'){const sh=EXT.s
 /* 상속세: 보고서와 같은 식 (억 단위). 일괄공제 5억, 배우자공제 5억~법정상속분(최대 30억, 자녀 수 반영), 신고세액공제 3%. 다른 개인 재산은 0, 가수금은 대표 채권이라 더함 */
 function inhTaxE(b){if(b<=0)return 0;const T=[[1,.1,0],[5,.2,.1],[10,.3,.6],[30,.4,1.6],[Infinity,.5,4.6]];const r=T.find(t=>b<=t[0]);return (b*r[1]-r[2])*.97}
 function inhEst(c,stake){if(EXT&&EXT.inh&&EXT.stake!=null&&Math.abs((stake||0)-EXT.stake)<1e-6)return EXT.inh;const kids=nz(c.kids)?Math.max(0,c.kids):0,est=(stake||0)+Math.max(0,(lastFS&&lastFS.gasu)||0);
-  const spMax=Math.min(30,Math.max(5,est*1.5/(1.5+kids)));return{est,lo:inhTaxE(est-5-spMax),hi:inhTaxE(est-5-5),spMax}}
+  const spMax=nz(c.kids)?Math.min(30,Math.max(5,est*1.5/(1.5+kids))):5;   /* 자녀 수 모르면 배우자공제 최소 (11/25) */return{est,lo:inhTaxE(est-5-spMax),hi:inhTaxE(est-5-5),spMax}}
 const LV={r:['빨강','#c0392b'],o:['주황','#d9822b'],g:['초록','#2e8b57'],x:['자료 필요','#8a949e']};
 function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,con)=>out.push({n,name,lv,line,con});
   // 1 회사 가치

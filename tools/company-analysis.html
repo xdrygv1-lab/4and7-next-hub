@@ -402,7 +402,7 @@ function calc(){
   const personal=(c.pRE||0)+(c.pFin||0)-(c.pDebt||0)+a.suspense;
   const finDed=v=>v<=0?0:v<=0.2?v:Math.min(2,Math.max(0.2,v*.2));
   function inh(stake){const est=(stake||0)+personal;
-    const spMax=hasSp?Math.min(30,Math.max(5,est*1.5/(1.5+Math.max(kids,0)))):0;
+    const spMax=hasSp?(c.kids==null?5:Math.min(30,Math.max(5,est*1.5/(1.5+Math.max(kids,0))))):0;   /* 자녀 수 모르면 최소 공제로 (11/25) */
     const spMin=hasSp?5:0, fd=finDed((c.pFin||0)), base=5;
     return{est,lo:inhTax(est-base-spMax-fd),hi:inhTax(est-base-spMin-fd),spMax}}
   if(R.stake!=null){R.inhNow=inh(R.stake);R.inh10=inh(R.proj[3].stake);R.inh5=inh(R.proj[2].stake);R.inhP=R.proj.map(p=>inh(p.stake))}
@@ -466,7 +466,7 @@ function signals(R){const S=[],c=R.c,a=R.a,add=(id,name,lv,line,ap)=>S.push({id,
    else add('sh','주주 구성','x','지분율을 넣으면 판단합니다.')}
   // 9 상속세
   if(R.inhNow&&R.corpTop&&!R.ceoHolds)add('inh','상속세 재원','x','지분 기준 주주가 법인이라 개인 상속세는 대표·개인 주주를 확인한 뒤 계산합니다.','"대표님 개인이 갖고 계신 지분은 어느 정도세요? 위 법인 주주의 지분도 갖고 계세요?"');
-  else if(R.inhNow){const t=R.inhNow.lo;add('inh','상속세 재원',t>=5||(R.age>=60&&t>0)?'r':t>0?'o':'g',`예상 상속세 ${f1(R.inhNow.lo)}~${f1(R.inhNow.hi)}, 10년 후 ${f1(R.inh10.lo)}~${f1(R.inh10.hi)}`,'"오늘 일이 생기면 가족분들이 상속세를 어떤 돈으로 내실 수 있을까요?"')}
+  else if(R.inhNow){const t=R.inhNow.lo;add('inh','상속세 재원',t>=5||(R.age>=60&&t>0)?'r':t>0?'o':'g',`예상 상속세 ${f1(R.inhNow.lo)}~${f1(R.inhNow.hi)}, 10년 후 ${f1(R.inh10.lo)}~${f1(R.inh10.hi)}${c.kids==null?' (자녀 수를 넣으면 배우자공제를 반영해 범위가 좁아짐)':''}`,'"오늘 일이 생기면 가족분들이 상속세를 어떤 돈으로 내실 수 있을까요?"')}
   else add('inh','상속세 재원','x','주식가치가 계산되면 추정합니다.');
   // 10 이익 흐름
   {const n=R.h.ni;if(n[1]!=null&&n[2]!=null&&n[1]<=0)add('flow','이익 흐름 (이동 타이밍)','x','전기 이익이 없어(첫 사업연도 등) 비교하지 않았어요');
@@ -1046,16 +1046,20 @@ function mergeInfo(info,di){const reg=!!(di.kind&&di.kind.includes('등기부'))
     else if(info._reg[k])return;
     else if(info[k]==null||newer||(k==='kind'))info[k]=v})}
 async function importFiles(files){
-  const msg=$('impMsg');msg.textContent='읽는 중…';const all={},pri={},notes=[],info={},diffs=[];const fy=num('lastYear')||2025;
-  for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name);
+  const msg=$('impMsg');msg.textContent='읽는 중…';const all={},pri={},notes=[],info={},diffs=[];
+  /* 11/25 시뮬레이션: 처음 열면 예시(B사, 당기 2024)가 떠 있어 연도 없는 재무상태표가 한 해 밀려 들어가던 것 → 문서들의 회계연도 중 가장 늦은 해를 기본으로 */
+  const RD=[];for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name);
       let rows=isPdf?await pdfRows(buf.slice(0)):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):txtRows((()=>{try{return new TextDecoder('utf-8',{fatal:true}).decode(buf)}catch(e){return new TextDecoder('euc-kr').decode(buf)}})());
+      RD.push({f,buf,isPdf,rows,di:rows.length?parseDocInfo(rows):{}})}catch(e){RD.push({f,err:e})}}
+  const fys=RD.map(x=>x.di&&x.di.fy).filter(Boolean);const fy=fys.length?Math.max(...fys):($('co').value===SAMPLE.co?null:num('lastYear'))||new Date().getFullYear()-1;
+  for(const R0 of RD){const f=R0.f;try{if(R0.err)throw R0.err;const buf=R0.buf;const isPdf=R0.isPdf;let rows=R0.rows;
       let ocr=false;
       /* 글자 층이 거의 비어 있는 PDF(쪽당 30자 미만: 스캔 위에 제목만 글자인 경우)도 스캔본으로 봄 */
       if(isPdf&&rows.length){const np=rows.filter(r=>String(r[0]).startsWith(PAGE)).length||1,nc=rows.filter(r=>!String(r[0]).startsWith(PAGE)).map(r=>r.join('')).join('').replace(/\s/g,'').length;if(nc<30*np)rows=[]}
       if(!rows.length&&isPdf){rows=ocrClean(await ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`));ocr=true}
       if(!rows.length){notes.push(`${esc(f.name)}: 글자를 찾지 못했어요.`);continue}
       if(ocr)notes.push(`${esc(f.name)}: <span class="bad">스캔본이라 글자 인식으로 읽었어요. 숫자·이름이 틀릴 수 있으니 꼭 확인하세요.</span>`);
-      const di=parseDocInfo(rows);
+      const di=ocr?parseDocInfo(rows):R0.di;
       /* 등기부는 등기부 값을, 그 밖은 비어 있는 값만 채움 */
       mergeInfo(info,di);
       const fr=fsRows(rows.filter(x=>x[0]!==SHM),ocr),sy=fr.std?(fr.stdYear||di.fy||fy):null;
@@ -1069,6 +1073,7 @@ async function importFiles(files){
   const hasInfo=Object.keys(info).some(k=>!['kind','_reg'].includes(k)), hasFS=Object.keys(all).length>0;
   /* 예시(B사)가 떠 있으면 다른 회사 값이 섞이지 않게 먼저 비움 */
   if((hasInfo||hasFS)&&$('co').value===SAMPLE.co){fill(BLANK);$('co').value=''}
+  {const nc=s=>String(s||'').replace(/\(주\)|㈜|주식회사|\s/g,''),now=nc($('co').value),nw=nc(info.co||info.coReg);if(now&&nw&&now!==nw){fill(BLANK);$('co').value='';notes.push('다른 회사 자료라 앞 업체에서 넣은 칸(자녀 수·배우자·개인 재산 등)을 비웠어요.')}}
   if(hasInfo){const inNotes=[];applyInfo(info,inNotes);
     const got=[['ind','업종'],['ceoName','대표 이름'],['founded','설립연도'],['birth','대표 출생연도'],['ceoSince','취임연도'],['shares','발행주식 수'],['execN','임원 수']].filter(([k])=>info[k]!=null).map(([,n])=>n);
     notes.push(`<b class="ok">회사 정보:</b> ${got.join(', ')||'–'}${info.sh?`, 주주명부 ${info.sh.length}명`:''}`,...inNotes)}

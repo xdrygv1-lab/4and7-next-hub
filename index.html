@@ -1032,12 +1032,12 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','
 
 let M={docs:[],tools:[]},CFG={endpoint:''},AI=null;
 const REPO='xdrygv1-lab/4and7-next-hub';
-const TOOLS={'tool-rplive':['실전 롤플레이 (음성)','tools/rp-live.html'],'tool-rplive-admin':['실전 롤플레이 기록 (지점장)','tools/rp-live-admin.html'],'tool-jm':['직무발명 보상금 계산기','tools/jm-calc.html'],'tool-emp':['고용장려금 찾기','tools/emp-subsidy.html'],'tool-labor':['사근복 진단·출연 한도 계산기','tools/laborhub/index.html'],'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-ca':['업체 분석 보고서','tools/company-analysis.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
+const TOOLS={'tool-rplive':['실전 롤플레이 (음성)','tools/rp-live.html'],'tool-rplive-admin':['실전 롤플레이 기록 (지점장)','tools/rp-live-admin.html'],'tool-jm':['직무발명 보상금 계산기','tools/jm-calc.html'],'tool-emp':['고용장려금 찾기','tools/emp-subsidy.html'],'tool-labor':['사근복 진단·출연 한도 계산기','tools/laborhub/index.html'],'tool-ap':['업체 분석 → 제안 준비','tools/ap-generator.html'],'tool-ca':['업체 분석 보고서','tools/company-analysis.html'],'tool-rp':['AP 롤플레이','tools/roleplay.html'],'tool-mbti':['보험 MBTI','tools/mbti.html'],'tool-sim':['경정기 비교 계산기','tools/simulator.html'],'tool-stw':['단기납 종신 비교 계산기','tools/stw-simulator.html'],'tool-uw':['재정심사 계산기','tools/uw-calc.html'],'tool-check':['청약 체크리스트','tools/checklist.html'],'tool-lib':['상품 자료실','tools/library.html'],'tool-dl':['상품 자료 받기','tools/downloads.html']};
 const GUIDE=[{h:'manual',label:'사용법'},{h:'data',label:'무엇을 넣나'}];
 /* 관리자 링크(?admin)에서만 보이는 메뉴 (11/23 상권: 업데이트 기록·사이트 이야기·보완 필요 목록은 관리자 링크에만) */
 const GUIDE_ADM=[{h:'manage',ic:'tool',label:'관리자 홈'},{h:'branch',ic:'file',label:'지점원 기록'},{h:'updates',ic:'file',label:'최근 업데이트'},{h:'about',ic:'book',label:'사이트 이야기'},{h:'todo',ic:'help',label:'보완 필요 목록'},{h:'demo',ic:'compass',label:'3분 시연'},{h:'how',ic:'compass',label:'만든 구조'}];
 const ADMONLY=['manage','updates','about','todo','demo','how'];
-const TOOLHINT={'tool-ap':'예시 또는 재무제표 넣기 → 분석 시작 → 보고서·컨셉·스크립트·PC 순서로','tool-ca':'세무조정계산서·감사보고서를 넣으면 한 장 보고서','tool-rplive':'노트북 크롬·엣지, 이어폰 끼고 «시작»','tool-rp':'AI 대표님과 15단계 연습, 끝나면 채점','tool-mbti':'52문항 9분, 끝나면 «팀 기록에 저장»','tool-uw':'나이·소득·지분율·순이익 → 원수사별 한도','tool-check':'원수사·상품·계약 형태를 고르면 해당 항목만','tool-sim':'나이·금액별 보험료와 환급률','tool-jm':'슬라이드법·실시료법 범위를 먼저 보고 목표 금액부터 정하지 않기','tool-emp':'상황을 고르면 받을 수 있는 장려금','tool-labor':'사근복 적합도와 출연 한도'};
+const TOOLHINT={'tool-stw':'가입금액·납입기간·심사를 고르면 환급률 순위, 행을 누르면 상품 개요','tool-ap':'예시 또는 재무제표 넣기 → 분석 시작 → 보고서·컨셉·스크립트·PC 순서로','tool-ca':'세무조정계산서·감사보고서를 넣으면 한 장 보고서','tool-rplive':'노트북 크롬·엣지, 이어폰 끼고 «시작»','tool-rp':'AI 대표님과 15단계 연습, 끝나면 채점','tool-mbti':'52문항 9분, 끝나면 «팀 기록에 저장»','tool-uw':'나이·소득·지분율·순이익 → 원수사별 한도','tool-check':'원수사·상품·계약 형태를 고르면 해당 항목만','tool-sim':'나이·금액별 보험료와 환급률','tool-jm':'슬라이드법·실시료법 범위를 먼저 보고 목표 금액부터 정하지 않기','tool-emp':'상황을 고르면 받을 수 있는 장려금','tool-labor':'사근복 적합도와 출연 한도'};
 const UWNAV=[{h:'uw',label:'한눈에 보기'},{h:'tool-uw',label:'재정심사 계산기'},{h:'tool-check',label:'청약 체크리스트'},{h:'tool-lib',label:'상품 자료실'}];
 const ALIAS={improve:'review',contribute:'review',together:'review',concept:'concepts',practice:'tool-rplive',guide:'manual',start:'manual'};
 const ADM=()=>document.documentElement.classList.contains('admin');
@@ -1146,7 +1146,7 @@ function familyOf(h){
   if(/^tool-(rplive|rplive-admin|rp)$/.test(h))return 'ap';
   if(GUIDE.some(x=>x.h===h)||h==='rules')return 'start';
   if(h==='tool-ap'||h==='tool-ca')return 'go';
-  if(h==='calcs'||h==='tool-sim'||h==='tool-jm'||h==='tool-emp'||h==='tool-labor')return 'learn';
+  if(h==='calcs'||h==='tool-sim'||h==='tool-stw'||h==='tool-jm'||h==='tool-emp'||h==='tool-labor')return 'learn';
   if(NAVDEF.some(x=>x.h===h))return h;
   if(h==='learn'||catByHash(h))return 'learn';
   const d=M.docs.find(x=>x.id===h);if(d)return 'learn';
@@ -1241,7 +1241,7 @@ async function show(){
   if(h==='data'){tpl('tpl-data');{const el=$('#dataBody');el.innerHTML=md(DATA_MD);el.querySelectorAll('table').forEach(tb=>{const w=document.createElement('div');w.className='tw';tb.parentNode.insertBefore(w,tb);w.appendChild(tb)})}return}
   if(h==='branch'){tpl('tpl-branch');showBranch();return}
   if(h==='review'){tpl('tpl-review');const rec=$('#recent');$('#rform').appendChild(contribBox('검토 요청',{kind:'검토 요청',review:true,onSent:()=>loadContribs(rec,'검토 요청')}));loadContribs(rec,'검토 요청','아직 올라온 검토가 없습니다. 첫 번째로 올려 보세요.');return}
-  if(h==='calcs'){tpl('tpl-rules');$('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › 계산기 모음</div><h1>계산기 모음</h1><p class="lede">숫자를 넣어 바로 확인하는 도구들입니다. 결과는 참고 범위이고, 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확정합니다.</p><div class="cards">${[['tool-sim','경정기 비교 계산기','나이·성별·금액별 보험료와 환급률. 파란 글씨는 추정값'],['tool-uw','재정심사 계산기','원수사별 가능 금액과 먼저 걸리는 쪽'],['tool-jm','직무발명 보상금 계산기','슬라이드법·실시료법, 받는 사람별 효과, 역산'],['tool-emp','고용장려금 찾기','우선지원대상기업 판별, 상황별 장려금, 육아휴직 계산'],['tool-labor','사근복 진단·출연 한도','적합도 진단과 출연·사용 한도']].map(([k,t,s])=>`<a class="card" href="#${k}"><b>${t}</b><span>${s}</span></a>`).join('')}</div>`;return}
+  if(h==='calcs'){tpl('tpl-rules');$('#view').innerHTML=`<div class="crumb"><a href="#learn">공부하기</a> › 계산기 모음</div><h1>계산기 모음</h1><p class="lede">숫자를 넣어 바로 확인하는 도구들입니다. 결과는 참고 범위이고, 세무 처리는 세무사 검토, 금액은 가입설계서·재정심사로 확정합니다.</p><div class="cards">${[['tool-sim','경정기 비교 계산기','나이·성별·금액별 보험료와 환급률. 파란 글씨는 추정값'],['tool-stw','단기납 종신 비교 계산기','3천만·5천만, 5·7·10년납별 월 보험료·환급률·손익. 40세 남 원자료'],['tool-uw','재정심사 계산기','원수사별 가능 금액과 먼저 걸리는 쪽'],['tool-jm','직무발명 보상금 계산기','슬라이드법·실시료법, 받는 사람별 효과, 역산'],['tool-emp','고용장려금 찾기','우선지원대상기업 판별, 상황별 장려금, 육아휴직 계산'],['tool-labor','사근복 진단·출연 한도','적합도 진단과 출연·사용 한도']].map(([k,t,s])=>`<a class="card" href="#${k}"><b>${t}</b><span>${s}</span></a>`).join('')}</div>`;return}
   if(h==='uw'){tpl('tpl-uw');renderUw();return}
   if(h==='manual'){tpl('tpl-manual');return}
   if(h==='how'){tpl('tpl-how');return}
@@ -1566,7 +1566,8 @@ function apinGuess(D){D=D||{};let R=D.ar;if(!R){try{const co=((D.ap||{}).co||'')
 function rpBrief(w){try{const L=w.eval('last');if(!L||!L.c)return null;const c=L.c,d=w.document,co=String(c.co||'').trim(),nm=String(c.name||'').trim();
   const clean=s=>{s=String(s||'');[[co,'회사'],[nm,'대표님']].forEach(([x,y])=>{if(x&&x.length>1)s=s.split(x).join(y)});return s.replace(/\s+/g,' ').trim()};
   const n=(v,u)=>v===null||v===undefined||v===''?'':v+u;
-  const facts=[c.ind,c.form,n(c.years,'년 업력'),c.age?'대표 '+c.age+'세':'',n(c.sales,'억 매출'),n(c.profit,'억 순이익'),c.kids!=null&&c.kids!==''?'자녀 '+c.kids+'명':''].filter(Boolean).join(' · ');
+  let ind=c.ind;try{const ex=w.eval('typeof EXT!=="undefined"&&EXT');ind=(ex&&ex.ind)||w.__indText||c.ind}catch(e){}
+  const facts=[ind,c.form,n(c.years,'년 업력'),c.age?'대표 '+c.age+'세':'',n(c.sales,'억 매출'),n(c.profit,'억 순이익'),c.kids!=null&&c.kids!==''?'자녀 '+c.kids+'명':''].filter(Boolean).join(' · ');
   let IS=[];try{IS=w.issues(c)||[]}catch(e){}
   const hot=IS.filter(i=>i.lv==='r').concat(IS.filter(i=>i.lv==='o'));
   const dx=(L.dx||[]).slice(0,3).map((k,i)=>`${i+1}. ${k.name}`).join(' / ');

@@ -349,7 +349,7 @@ function calc(){
   R.subj=R.sh.length&&!R.ceoHolds&&R.shTop?`최대주주(${R.shTop.name})`:'대표';
   R.ceoHolds=R.sh.some(s=>s.isCeo);
   R.age=c.birth?now-c.birth:null;
-  R.years=c.founded?Y-c.founded:null;
+  R.years=c.founded?now-c.founded:null;   /* 11/25 업력은 오늘 기준 (제안 준비와 같게) */
   const eqBook=last('eq'), ni=h.ni;
   /* 배당 추정: 이익준비금 증가분 × 10 */
   R.div=[null,...[1,2].map(i=>h.lr[i]!=null&&h.lr[i-1]!=null?Math.max(0,(h.lr[i]-h.lr[i-1])*10):null)];
@@ -420,7 +420,7 @@ function calc(){
   }
   /* 유고 자금 */
   R.need=a.ap+a.stb+a.ltb-a.cash;
-  R.retained=last('re');
+  R.retained=last('re');R.loanKnown=h.loan.some(x=>x!=null)||a.assets>0;
   return R;
 }
 

@@ -159,7 +159,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
       <div class="nav">
         <a class="chip" href="checklist.html" id="toChecklist">청약 체크리스트</a>
         <a class="chip" href="library.html">상품 자료실</a>
-        <a class="chip" href="../index.html#tool-ap">업체 분석 → 제안 준비</a>
+        <a class="chip" href="../index.html#go" onclick="try{localStorage.setItem('go-resume',String(Date.now()))}catch(e){}try{if(window.top!==window&&window.top.location.pathname){event.preventDefault();window.top.location.hash='#go'}}catch(e){}">← 지금 업체 분석으로</a>
         <button class="chip" type="button" onclick="window.print()">인쇄 · PDF</button>
       </div>
     </div>

@@ -102,6 +102,7 @@ fieldset.tp.shut>:not(legend){display:none!important}fieldset.tp.shut{margin-bot
 details.more{margin-top:6px}details.more>summary{cursor:pointer;font-size:13px;color:var(--acc);padding:4px 0}
 .qchips{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 6px}.qc{border:1px solid var(--line,#dfe3e1);background:transparent;color:inherit;border-radius:999px;padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer}.qc:hover{border-color:var(--acc);color:var(--acc)}
 .relaxbox{margin:10px 0 14px;padding:12px 14px;border-radius:12px;background:rgba(0,82,255,.06);border:1px solid rgba(0,82,255,.18)}.relaxbox ol{margin:6px 0 6px 20px;padding:0}.relaxbox li{margin:3px 0}
+.scv{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px}.scv button{border:1px solid #d5dbe3;background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer;color:inherit}.scv button.on{background:#1f3a5f;border-color:#1f3a5f;color:#fff}.scv button.on .muted{color:#dbe4ef}
 </style>
 </head>
 <body>
@@ -739,7 +740,7 @@ function build(c){
   // 11 대안제시
   add('전환','11','대안제시 (그릇만, 상품명 금지)',`"${top?top.alt:'방법이 있습니다. 구조를 바꾸면 달라집니다.'}"\n"구체적인 숫자는 다음에 정리해서 설명드리겠습니다."`,'상품이 아니라 기대감만 남겼는가','상품명·구조 직접 언급 −5, PC 내용 미리 말하기 −5. "구조가 있습니다"까지가 한계선');
   // 14 F.F
-  const ff=['(명분) "무료로 회사 가치(영업권) 평가를 해 드릴게요" → 사업자등록증과 최근 3년 재무제표 받기','가족 현황, 사업에 관심 있는 자녀',...(top&&top.ff.some(x=>x.includes('생활비'))?[]:['매달 생활비']),'기존에 가입한 보험 (금액보다 어떻게 가입하셨는지 스토리)','사업장 외 재산 현황','단기·중장기 지출 계획',...(top?top.ff:[]),...(sec?sec.ff.slice(0,1):[])];
+  const ff=['(명분) "무료로 회사 가치(영업권) 평가를 해 드릴게요" → 사업자등록증과 최근 3년 재무제표 받기','가족 현황, 사업에 관심 있는 자녀',...(top&&top.ff.some(x=>x.includes('생활비'))?[]:['매달 생활비']),'기존에 가입한 보험 (금액보다 어떻게 가입하셨는지 스토리)','사업장 외 재산 현황','단기·중장기 지출 계획',...(top?top.ff:[]),...(sec?sec.ff.slice(0,1):[]),...healthQs(c).slice(1)];
   add('정보수집','14','F.F (정보수집)',`"이게 되는지 보려면 몇 가지 여쭤봐야 합니다."\n`+[...new Set(ff)].map(x=>'· '+x).join('\n'),'재무·가족·목표 정보를 실제로 받아냈는가','대안제시 뒤에 해야 취조가 아니라 명분 있는 질문이 됩니다');
   // 12 일반적 예화
   const assets=c.f_ownerAsset||c.ind==='제조'?'공장, 재고, 외상대':T==='B'?'회사 주식':T==='C'?'부동산':'사업장과 거래처';
@@ -1092,7 +1093,7 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   if(info.co||info.coReg){set('co',info.co||info.coReg);got.push('회사명')}
   window.__ceoFull=info.ceoName||'';
   if(info.ceoName){const nm=info.ceoName.split(/\s*[,·]\s*/)[0];set('name',nm.slice(0,1)+' 대표님');got.push('대표')}
-  if(info.ind){const m=IND_MAP.find(([r])=>r.test(info.ind));set('ind',m?m[1]:'기타');got.push(`업종(«${esc(info.ind)}» → ${m?m[1]:'기타'})`)}
+  if(info.ind){window.__indText=info.ind;const m=IND_MAP.find(([r])=>r.test(info.ind));set('ind',m?m[1]:'기타');got.push(`업종(«${esc(info.ind)}» → ${m?m[1]:'기타'})`)}
   const fd=info.founded??info.foundedEst;if(fd){set('years',Math.max(0,new Date().getFullYear()-fd));got.push('업력')}
   if(info.kind&&/세무조정|감사|등기/.test(info.kind))set('form_','법인');
   if(!info.birthDate&&info.sh&&info.sh.length){const cn=String(info.ceoName||'').split(/\s*[,·]\s*/).filter(Boolean);const s=info.sh.find(x=>cn.includes(x.name)&&x.bd)||info.sh.find(x=>x.code==='00'&&x.bd);
@@ -1238,6 +1239,8 @@ function inhBlock(c,a){const sv=stockVal(c);if(!sv)return '';const I=inhEst(c,sv
 
 /* ---------- 보고서 ---------- */
 let lastFS={};
+/* 11/25 강사 의견: 허브에서는 «업체 분석 보고서» 계산 엔진의 값을 그대로 씀 (숫자 하나로). 혼자 열면 EXT 없음 → 이 도구 계산 */
+let EXT=null;window.setExt=x=>{EXT=x&&typeof x==='object'?x:null};
 /* 인터넷 조사 결과("회사 공개 정보"의 [인터넷 조사] 묶음)를 항목과 AP 질문으로 나눔 */
 function resParse(){const t=($('#bizinfo')||{}).value||'';const i=t.indexOf('[인터넷 조사');if(i<0)return null;
   const items=[],qs=[];let inQ=false;
@@ -1305,7 +1308,9 @@ function wavg(a){if(!a.length)return 0;const w=a.map((_,i)=>i+1);return a.reduce
 function ptSeries(c){const h=lastFS&&lastFS.hist,Y=(lastFS&&lastFS.ptY)||{};
   if(h&&h.ni){const out=[];h.ni.forEach((n,i)=>{const y=(h.years||[])[i];const p=y&&Y[y]!=null?Y[y]:n;if(p!=null)out.push(p)});if(out.length)return out.slice(-3)}
   if(lastFS&&lastFS.pretax!=null)return[lastFS.pretax];return nz(c.profit)?[c.profit]:[]}
-function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,sh=(nz(c.share)?c.share:100)/100,f=lastFS||{};
+function valuation(c){if(EXT&&EXT.whole!=null&&c.form==='법인'){const sh=EXT.share!=null?EXT.share/100:(nz(c.share)?c.share:100)/100;
+    return{now:EXT.whole*sh,proj:EXT.projW.map(([k,w])=>[k,w*sh]),re:EXT.re,young:EXT.young,netOnly:EXT.mode==='nav',base:EXT.base,yrs:EXT.yrs,whole:EXT.whole,mode:EXT.mode,gwOff:EXT.gwOff,src:'ca'}}
+  if(c.form!=='법인'||!nz(c.equity))return null;const eq=c.equity,sh=(nz(c.share)?c.share:100)/100,f=lastFS||{};
   const young=nz(c.years)&&c.years<3;
   const reRatio=f.assets>0&&(f.land!=null||f.bldg!=null)?((f.land||0)+(f.bldg||0))/f.assets:(c.f_realEstate?0.5:0);
   const ps=ptSeries(c),ns=niSeries(c),yrs=ps.length;if(!yrs)ps.push(0);
@@ -1321,15 +1326,15 @@ function valuation(c){if(c.form!=='법인'||!nz(c.equity))return null;const eq=c
   return{now:whole*sh,proj,re:re80||reRatio>=.5,young,netOnly:mode==='nav',base:baseNI,yrs,whole,mode,gwOff}}
 /* 상속세: 보고서와 같은 식 (억 단위). 일괄공제 5억, 배우자공제 5억~법정상속분(최대 30억, 자녀 수 반영), 신고세액공제 3%. 다른 개인 재산은 0, 가수금은 대표 채권이라 더함 */
 function inhTaxE(b){if(b<=0)return 0;const T=[[1,.1,0],[5,.2,.1],[10,.3,.6],[30,.4,1.6],[Infinity,.5,4.6]];const r=T.find(t=>b<=t[0]);return (b*r[1]-r[2])*.97}
-function inhEst(c,stake){const kids=nz(c.kids)?Math.max(0,c.kids):0,est=(stake||0)+Math.max(0,(lastFS&&lastFS.gasu)||0);
+function inhEst(c,stake){if(EXT&&EXT.inh&&EXT.stake!=null&&Math.abs((stake||0)-EXT.stake)<1e-6)return EXT.inh;const kids=nz(c.kids)?Math.max(0,c.kids):0,est=(stake||0)+Math.max(0,(lastFS&&lastFS.gasu)||0);
   const spMax=Math.min(30,Math.max(5,est*1.5/(1.5+kids)));return{est,lo:inhTaxE(est-5-spMax),hi:inhTaxE(est-5-5),spMax}}
 const LV={r:['빨강','#c0392b'],o:['주황','#d9822b'],g:['초록','#2e8b57'],x:['자료 필요','#8a949e']};
 function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,con)=>out.push({n,name,lv,line,con});
   // 1 회사 가치
-  if(v){const v10=v.proj[3][1];add(1,'회사 가치',v.now>=10?'r':v.now>=5?'o':'g',`대표님 지분 가치는 약 ${eok1(v.now)}로 추정되며, 이대로면 10년 후 약 ${eok1(v10)}입니다.`,['inherit','policy','estate'])}
+  if(v){const v10=v.proj[3][1];add(1,'회사 가치',v.now>=10?'r':v.now>=5?'o':'g',`대표님 지분 가치는 약 ${eok1(v.now)}으로 추정되며, 이대로면 10년 후 약 ${eok1(v10)}입니다.`,['inherit','policy','estate'])}
   else add(1,'회사 가치','x','법인 순자산·순이익이 있으면 주식가치를 추정합니다.',[]);
   // 2 잉여금
-  if(f.retained!=null){const R=f.retained,p=Math.max(0,wavg(niSeries(c)));let R10=R,q=p;for(let i=0;i<10;i++){q*=1+GROW;R10+=q}
+  if(EXT&&EXT.retained!=null||f.retained!=null){let R,R10;if(EXT&&EXT.retained!=null){R=EXT.retained;R10=EXT.re10}else{const ns=niSeries(c);R=f.retained;R10=R;const p=Math.max(0,ns.length?ns.reduce((t,x)=>t+x,0)/ns.length:0);for(let i=1;i<=10;i++)R10+=p*Math.pow(1+GROW,i)}
     add(2,'잉여금 누적',R>=10||R10>=20?'r':R>=3?'o':'g',`회사에 쌓인 잉여금은 ${eok1(R)}이고, 이대로면 10년 후 약 ${eok1(R10)}이 됩니다.`,['exitRet','cashBld'])}
   else if(c.f_retained)add(2,'잉여금 누적','o','잉여금이 수억 쌓였고 꺼내는 구조가 아직 없습니다.',['exitRet','cashBld']);
   else add(2,'잉여금 누적','x','이익잉여금 숫자가 있으면 판단합니다.',[]);
@@ -1341,12 +1346,13 @@ function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,
   else if(c.f_hasCEO)add(4,'대표 퇴직금','g','퇴직 재원 준비가 일부 되어 있습니다. 규정과 금액을 확인합니다.',['ceo']);
   else add(4,'대표 퇴직금','x','정관 퇴직금 규정과 준비 재원을 확인합니다.',[]);
   // 5 가지급금
-  if(f.loan!=null){const L=f.loan;add(5,'가지급금',L>=2?'r':L>=0.5?'o':'g',L>0?`가지급금이 ${eok1(L)} 있어 정리 방법을 정해야 합니다.`:'가지급금이 거의 없습니다.',['loanClear'])}
+  const L5=EXT&&EXT.loan!=null?EXT.loan:f.loan!=null?f.loan:(f.assets!=null?0:null);   /* 재무상태표를 읽었는데 가지급금 줄이 없으면 0 */
+  if(L5!=null){const L=L5;add(5,'가지급금',L>=2?'r':L>=0.5?'o':'g',L>0?`가지급금이 ${eok1(L)} 있어 정리 방법을 정해야 합니다.`:'재무상태표에 가지급금이 없습니다.',L>0?['loanClear']:[])}
   else if(c.f_loan)add(5,'가지급금','o','가지급금이 있습니다. 금액과 발생 원인을 확인합니다.',['loanClear']);
   else add(5,'가지급금','x','재무상태표의 가지급금을 확인합니다.',[]);
   // 6 CEO 유고 필요자금 (부채총계 기준 대략)
   const owe=['apay','stb','ltb'].filter(k=>f[k]!=null);
-  if(owe.length&&nz(c.cash)){const need=owe.reduce((t,k)=>t+f[k],0)-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (매입채무+차입금−현금).`:'현금이 갚을 돈(매입채무·차입금)보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
+  if(EXT&&EXT.need!=null||owe.length&&nz(c.cash)){const need=EXT&&EXT.need!=null?EXT.need:owe.reduce((t,k)=>t+f[k],0)-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (매입채무+차입금−현금).`:'현금이 갚을 돈(매입채무·차입금)보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
   else if(f.debt!=null&&nz(c.cash)){const need=f.debt-c.cash;add(6,'CEO 유고 자금',need>=10||(nz(c.profit)&&c.profit>0&&need>=3*c.profit)?'r':need>0?'o':'g',need>0?`대표님 유고 시 회사가 버티려면 최소 ${eok1(need)}의 유동자금이 필요합니다 (부채총계 기준 대략. 매입채무·차입금이 든 재무상태표를 넣으면 더 정확합니다).`:'현금이 부채보다 많아 당장 유동성 위험은 낮습니다.',['ceo','protect'])}
   else if(c.f_familyLoss)add(6,'CEO 유고 자금','o','대표님 유고 시 가족과 회사가 버틸 자금을 확인해야 합니다.',['protect']);
   else add(6,'CEO 유고 자금','x','부채와 현금성자산이 있으면 필요자금을 계산합니다.',[]);
@@ -1365,7 +1371,7 @@ function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,notes}=r
   if(!top&&!nz(c.sales)&&!nz(c.equity)){$('#report').innerHTML='<div class="muted">업체 정보를 넣거나 공시 자료를 불러오면 보고서가 만들어집니다.</div>';return}
   const IS=issues(c),red=IS.filter(i=>i.lv==='r'),org=IS.filter(i=>i.lv==='o'),v=valuation(c),int=mode==='int';
   const pick=[...red,...org].slice(0,4);
-  $('#report').innerHTML=`<div class="muted">${today} · 업체 분석 보고서 (초안)</div><h1>${esc(c.co||'우리 회사')} 업체 분석</h1><div class="muted">${esc(c.ind)} · ${c.form}${nz(c.years)?' · 업력 '+c.years+'년':''}${nz(c.emp)?' · 직원 '+c.emp+'명':''}</div>
+  $('#report').innerHTML=`<div class="muted">${today} · 업체 분석 보고서 (초안)</div><h1>${esc(c.co||'우리 회사')} 업체 분석</h1><div class="muted">${esc((EXT&&EXT.ind)||window.__indText||c.ind)} · ${c.form}${nz(c.years)?' · 업력 '+c.years+'년':''}${nz(c.emp)?' · 직원 '+c.emp+'명':''}</div>
    <h2>한눈에 보는 진단 <span class="muted" style="font-size:13px">빨강 ${red.length} · 주황 ${org.length}</span></h2>${sigGrid(IS)}
    ${int&&LASTMET?metBox():''}<h2>재무 현황</h2>${histTable()}<div class="kv">${kv.map(([k,val])=>`<div><span class="muted">${k}</span><b>${val}</b></div>`).join('')}</div><div class="muted" style="margin-top:6px">제공받은 자료 기준의 대략값입니다.</div>
    ${(()=>{if(!c.bizinfo)return'';const rp=resParse(),base=c.bizinfo.split('[인터넷 조사')[0].trim();
@@ -1429,6 +1435,23 @@ $('#rpMode').onchange=renderReport;$('#rpPrint').onclick=()=>window.print();
 $('#rpCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#report').innerText);$('#rpCopy').textContent='복사했습니다'}catch(e){$('#rpCopy').textContent='복사 실패'}};
 
 /* ---------- PPT ---------- */
+/* 11/25 실제로 계약까지 간 클로징 덱(상속세 흐름 → 가족법인 그릇 → 법인 이익 꺼내는 지도 → 퇴직금)에서 배운 설명 장표. 이 업체에 맞을 때만 넣음 */
+function closeMods(c,dx,IS){const ids=dx.slice(0,3).map(d=>d.id),lv=n=>(IS.find(i=>i.n===n)||{}).lv,hot=n=>['r','o'].includes(lv(n)),corp=c.form==='법인',O=[],i8=IS.find(i=>i.n===8),i2=IS.find(i=>i.n===2);
+  if(corp&&(hot(8)||ids.some(x=>['inherit','policy','estate','family','succession'].includes(x))))O.push({type:'steps',label:'상속세 계산 흐름',kick:'TAX · 상속세는 이렇게 계산됩니다',h:['상속세는','<em>세 단계로 계산됩니다</em>'],sub:i8&&i8.lv!=='x'?i8.line:'회사 주식도 상속재산에 들어갑니다.',
+    steps:[['모으기','회사 주식 · 부동산 · 금융자산 · 10년 안에 자녀에게 준 재산'],['빼기','채무 · 장례비 · 상속공제 (일괄 5억, 배우자 공제 등)'],['곱하기','과세표준 1억까지 10% · 5억 20% · 10억 30% · 30억 40% · 넘으면 50%']],src:'현행 상속세 및 증여세법 세율 기준 · 실제 세액은 세무사 검토',
+    say:`상속세는 세 단계로 계산됩니다. 재산을 모으고, 빚과 공제를 빼고, 세율을 곱합니다. 회사 주식도 재산에 들어갑니다. ${i8&&i8.lv!=='x'?i8.line:''}`});
+  if(corp&&nz(c.kids)&&c.kids>0&&(ids.includes('family')||hot(2)&&hot(8)))O.push({type:'issue',label:'그릇 바꾸기',kick:'FAMILY · 이익이 쌓이는 그릇',lv:'o',h:['세금을 없애는 것이 아니라, 이익이 쌓이는 그릇을 바꾸는 것'],
+    left:'앞으로 버는 이익이 계속 지금 회사에 쌓여, 주식가치와 상속세가 해마다 같이 커집니다.',right:'앞으로 생길 이익이 쌓이는 그릇을 자녀 세대 쪽에 따로 둡니다. 경영과 돈의 열쇠는 대표님이 그대로 가집니다.',
+    need:'자녀 나이·소득, 가족 지분 계획, 거래 구조의 증여 해당 여부 (세무사 검토)',faq:['자녀 버릇이 나빠지지 않을까요?','소유는 자녀, 경영은 부모로 나눕니다. 대표이사와 돈을 쓰는 결정은 대표님이 그대로 가지고, 자녀는 주주로 이익만 쌓입니다.'],
+    say:'세금을 없애자는 게 아닙니다. 앞으로 버는 이익이 쌓이는 그릇을 자녀 세대 쪽으로 바꾸자는 겁니다. 경영과 돈의 열쇠는 대표님이 그대로 가지십니다.'});
+  if(corp&&(hot(2)||ids.some(x=>['exitRet','cashBld','ceo','loanClear'].includes(x))))O.push({type:'steps',label:'회사 돈 꺼내는 지도',kick:'CASH OUT · 법인 이익 꺼내는 길',h:['회사에 쌓인 돈은','<em>시기별로 꺼내는 길이 다릅니다</em>'],sub:i2&&i2.lv!=='x'?i2.line:'잉여금은 결국 배당·퇴직·상속 때 세금으로 나갑니다.',
+    steps:[['바로','법인카드 · 회사와 대표 사이 돈 거래 정리'],['단기','급여 · 배당 (이자·배당 합쳐 연 2천만 원 넘으면 종합과세)'],['중기','자기주식 · 직무발명 보상 · 무형자산 (세무사 검토)'],['장기','퇴직금 · 상속 뒤 감자 (규정이 먼저)']],src:'방법마다 요건과 세금이 다릅니다 · 세무사 검토 사항',
+    say:'회사에 쌓인 돈은 꺼내는 시기에 따라 길이 다릅니다. 지금 바로, 몇 년 안에, 은퇴할 때로 나눠서 같이 정하겠습니다.'});
+  if(corp&&(hot(4)||ids.some(x=>['ceo','exitRet','retire'].includes(x))))O.push({type:'cards',label:'퇴직금이 유리한 이유',kick:'RETIREMENT · 급여보다 퇴직금',h:['같은 돈이라도','<em>퇴직금으로 받으면 덜 냅니다</em>'],
+    items:[['4대보험이 붙지 않음','급여에는 건강보험료·국민연금이 붙지만 퇴직금에는 붙지 않습니다.'],['따로 계산','다른 소득과 합치지 않고 따로 세금을 계산합니다.'],['공제가 큼','근속연수공제·환산급여공제로 세 부담이 낮아집니다.'],['규정이 먼저','정관과 임원 퇴직금 규정이 있어야 회사 비용으로 인정됩니다.']],
+    src:'임원 퇴직금 한도는 정관·규정과 세법 한도로 정해집니다 · 세무사 검토',say:'같은 돈이라도 급여로 더 받는 것보다 퇴직금으로 받는 쪽이 4대보험이 없고 세금도 따로 계산돼 덜 냅니다. 다만 규정이 먼저 있어야 합니다.'});
+  return O}
+function cmBullets(o){return[...(o.sub?[o.sub]:[]),...(o.steps||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.items||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.left?['그대로 두면: '+o.left,'준비하면: '+o.right]:[]),...(o.src?[o.src]:[])]}
 function slideData(mode){const{c,dx,top,kv,notes}=reportData();if(!top)return[];const a=last.amount||proposeAmount(c,top);const S=[];const int=mode==='int';
   const who=(c.name||'대표님').replace(/\s+/g,' ');const kv1=kv.filter(x=>x[1]!=='–');const IS=issues(c),v=valuation(c),m=PCMOD[top.id]||null;
   const sigItems=IS.map(i=>({t:`${LV[i.lv][0]} · ${i.name}: ${i.line}`,color:LV[i.lv][1].slice(1)}));
@@ -1438,9 +1461,10 @@ function slideData(mode){const{c,dx,top,kv,notes}=reportData();if(!top)return[];
   const H=histRows();S.push({t:'회사의 현재 모습',b:kv1.map(x=>`${x[0]}: ${x[1]}`),chart:H?{title:'최근 재무 흐름 (억원)',labels:H.years.map(y=>y+'년'),series:H.rows.filter(([k])=>k==='매출'||k==='순이익').map(([k,a])=>({name:k,values:a.map(x=>x==null?0:Math.round(x*10)/10)}))}:null,say:`숫자로 보면 ${kv1.slice(0,3).map(x=>x[0]+'이 '+x[1]).join(', ')}입니다. 주신 자료 기준의 대략값입니다.`});
   if(v)S.push({t:'회사 가치와 앞으로',chart:{title:'대표 지분 가치 추정 (억원)',labels:['지금',...v.proj.map(([k])=>k+'년 후')],series:[{name:'지분 가치',values:[v.now,...v.proj.map(([,x])=>x)].map(x=>Math.round(x*10)/10)}]},b:[`대표 지분 가치 (추정): 지금 ${eok1(v.now)}`,...v.proj.map(([k,x])=>`${k}년 후: ${eok1(x)}`),`가정: 최근 순이익 가중평균 기준, 매년 ${GROW*100}% 증가, 약식 추정 (정식 평가 아님)`],say:`회사가 지금처럼 이익을 내면 대표님 지분 가치는 10년 뒤 약 ${eok1(v.proj[3][1])}이 됩니다. 가치가 오르기 전에 준비할수록 선택지가 많습니다.`});
   IS.filter(i=>i.lv==='r'||i.lv==='o').slice(0,3).forEach(i=>{const k=dx.find(d=>i.con.includes(d.id));S.push({t:`${i.name}`,b:[i.line,...(k?['검토 방향: '+k.alt]:[]),...(int&&k?['PC 방향: '+k.pc]:[])],say:`${i.line} ${k?k.alt:''} 가만히 두면 어떻게 되는지, 준비하면 무엇이 달라지는지 같이 보시죠.`})});
+  const CM=closeMods(c,dx,IS);CM.forEach(o=>S.push({t:o.label,b:cmBullets(o),say:o.say}));
   S.push({t:'해결 구조',b:['① 규정 정비 (정관·규정·의사록)','② 재원 마련 (회사 이익의 일부를 목적에 맞게)','③ 사후 관리 (매년 점검, 세무사 검토)',...(int&&m?['상품 후보: '+pcProds(m).join(', ')]:[])],say:'해결은 세 단계입니다. 먼저 규정을 정비하고, 그다음 재원을 나눠서 만들고, 매년 함께 점검합니다.'});
   if(int&&a&&!a.none)S.push({t:'기본 제안 (세 가지 안)',b:[`A안 (부담 완화): 월 ${man(a.low)}`,`기준안: 월 ${man(a.mid)}`,`B안 (여유): 월 ${man(a.high)}`,'재정심사 확인 후 확정'],say:`(내부용 장) 세 가지 안을 준비했습니다. "어느 안이 대표님 현금 흐름에 맞으세요?" 재정심사 전에는 금액을 확정하지 않습니다.`});
-  if(m)S.push({t:'자주 묻는 질문',b:m.objections.map(([q,r])=>`${q} → ${r}`),say:'다른 대표님들이 이 단계에서 많이 물어보시는 것을 미리 정리했습니다.'});
+  if(m||CM.some(o=>o.faq))S.push({t:'자주 묻는 질문',b:[...CM.filter(o=>o.faq).map(o=>o.faq),...((m&&m.objections)||[])].map(([q,r])=>`${q} → ${r}`),say:'다른 대표님들이 이 단계에서 많이 물어보시는 것을 미리 정리했습니다.'});
   S.push({t:'진행 일정과 준비 서류',b:[...(m?m.bring.slice(0,3):[top.bring]),`다음 일정: ${c.day} ${c.time||''}`],say:m?`${m.close}`:`오늘 정할 것은 다음 일정 하나입니다.`});
   S.push({t:'확인 사항',b:['이 자료는 검토용 초안입니다.','세무 처리는 세무사 검토 사항입니다.','상품 조건과 금액은 가입설계서·재정심사로 확정합니다.'],say:`마지막으로, 주변에 비슷한 고민을 하시는 대표님이 계시면 ${c.introN||'두'} 분만 소개해 주세요. 같은 방식으로 정리해 드리겠습니다.`});
   return S}
@@ -1531,12 +1555,13 @@ function deckData(mode){const{c,dx,top,kv}=reportData();if(!top)return null;cons
   focus.forEach((i,n)=>{const k=dx.find(d=>i.con.includes(d.id)),X=ISSUE_X[i.n]||['',''];
     S.push({type:'issue',label:i.name,kick:`ISSUE 0${n+1} · ${i.name}`,lv:i.lv,h:[i.line],left:X[0],right:k?k.alt:'방법은 같이 숫자를 맞춰 보며 정합니다.',need:X[1],pc:int&&k?k.pc:'',
       say:`${i.line} 가만히 두면 ${X[0].replace(/\.$/,'')}. ${k?k.alt:''}`})});
+  const CM=closeMods(c,dx,IS);CM.forEach(o=>S.push(o));
   S.push({type:'steps',label:'해결 구조',kick:'THE SOLUTION · 해결 구조',h:['규정 → 재원 → 관리,','<em>세 단계로 준비합니다</em>'],
     steps:[['규정 정비','정관 · 규정 · 의사록'],['재원 마련','회사 이익의 일부를 목적에 맞게'],['사후 관리','매년 점검 · 세무사 검토']],prods:int&&m?pcProds(m):null,
     say:'해결은 세 단계입니다. 먼저 규정을 정비하고, 그다음 재원을 나눠서 만들고, 매년 함께 점검합니다.'});
   if(int&&a&&!a.none)S.push({type:'amount',label:'세 가지 안 (내부)',kick:'INTERNAL · 내부 검토판',h:[`기준안 <em>월 ${man(a.mid)}</em>`],sub:'재정심사를 먼저 확인한 뒤 금액을 정합니다.',tiles:[['A안 · 부담 완화',man(a.low)],['기준안',man(a.mid)],['B안 · 여유',man(a.high)]],src:'내부용 장 · 고객에게 보여 주지 않음',
     say:'(내부용) 세 가지 안을 준비했습니다. "어느 안이 대표님 현금 흐름에 맞으세요?" 재정심사 전에는 금액을 확정하지 않습니다.'});
-  if(m&&m.objections&&m.objections.length)S.push({type:'faq',label:'자주 묻는 질문',kick:'Q&A · 자주 묻는 질문',h:['다른 대표님들이','<em>이 단계에서 물으신 것</em>'],items:m.objections.slice(0,4),say:'다른 대표님들이 이 단계에서 많이 물어보시는 것을 미리 정리했습니다.'});
+  {const fq=[...CM.filter(o=>o.faq).map(o=>o.faq),...((m&&m.objections)||[])].slice(0,4);if(fq.length)S.push({type:'faq',label:'자주 묻는 질문',kick:'Q&A · 자주 묻는 질문',h:['다른 대표님들이','<em>이 단계에서 물으신 것</em>'],items:fq,say:'다른 대표님들이 이 단계에서 많이 물어보시는 것을 미리 정리했습니다.'})}
   S.push({type:'next',label:'다음 일정',kick:'NEXT STEP · 다음 일정',h:[`${dkE(c.day||'다음 주')} ${dkE(c.time||'')}`,'<em>다음 만남에서 정할 것</em>'],items:(m?m.bring.slice(0,4):[top.bring]).filter(Boolean),
     say:m?m.close:'오늘 정할 것은 다음 일정 하나입니다.'});
   S.push({type:'close',label:'마무리',kick:'THANK YOU',h:['감사합니다'],sub:`주변에 비슷한 고민을 하시는 대표님이 계시면 ${dkE(c.introN||'두')} 분만 소개해 주세요. 같은 방식으로 정리해 드리겠습니다.`,src:'이 자료는 검토용 초안입니다 · 세무 처리는 세무사 검토 사항 · 상품 조건과 금액은 가입설계서·재정심사로 확정',
@@ -1557,6 +1582,7 @@ function dkSlide(s,i,n,notes){const say=notes&&s.say?`<aside class="say">${dkE(s
   if(s.type==='issue')b=`<div class="two eq"><div class="card warnc" data-a="up" style="--d:.22s"><span class="lab">그대로 두면</span><p>${dkE(s.left)}</p></div><div class="card bluec glow" data-a="up" style="--d:.34s"><span class="lab">준비하면</span><p>${dkE(s.right)}</p></div></div><div class="need" data-a="up" style="--d:.44s"><span>필요한 자료</span>${dkE(s.need)}</div>${s.pc?`<div class="need int" data-a="up" style="--d:.5s"><span>PC 방향 (내부)</span>${dkE(s.pc)}</div>`:''}`;
   if(s.type==='steps')b=`<div class="steps">${s.steps.map((x,k)=>`<div class="card stp" data-a="up" style="--d:${.22+k*.12}s"><i>${k+1}</i><div><b>${dkE(x[0])}</b><p>${dkE(x[1])}</p></div></div>`).join('<span class="arr" data-a="up" style="--d:.3s">→</span>')}</div>${s.prods?`<div class="need int" data-a="up" style="--d:.6s"><span>상품 후보 (내부)</span>${dkE(s.prods.join(' · '))}</div>`:''}`;
   if(s.type==='amount')b=`<div class="tiles">${s.tiles.map((x,k)=>`<div class="card tile${k===1?' bluec glow':''}" data-a="up" style="--d:${.2+k*.1}s"><span>${dkE(x[0])}</span><b>월 ${dkE(x[1])}</b></div>`).join('')}</div>`;
+  if(s.type==='cards')b=`<div class="faq">${s.items.map(([q,r],k)=>`<div class="card" data-a="up" style="--d:${.2+k*.08}s"><b>${dkE(q)}</b><p>${dkE(r)}</p></div>`).join('')}</div>`;
   if(s.type==='faq')b=`<div class="faq">${s.items.map(([q,r],k)=>`<div class="card" data-a="up" style="--d:${.2+k*.08}s"><b>Q. ${dkE(q)}</b><p>${dkE(r)}</p></div>`).join('')}</div>`;
   if(s.type==='next')b=`<ul class="chk">${s.items.map((x,k)=>`<li data-a="up" style="--d:${.2+k*.08}s"><i>✓</i>${dkE(x)}</li>`).join('')}</ul>`;
   const lvCls=s.type==='issue'?` lv-${s.lv}`:'';
@@ -1687,11 +1713,45 @@ function renderDx(){const{c,dx,top,T}=last;
      <div><b>AP에서 확인할 니즈:</b> ${k.need}</div>${k.angle?`<div><b>접근명분:</b> ${k.angle}</div>`:''}<div><b>PC 방향 (머릿속에만):</b> ${k.pc}</div>${k.ps&&k.ps.length?`<div class="muted" style="margin-top:4px">유사 사례</div><ul class="t">${k.ps.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div>`).join('')+
    `<h3>PC 상품 힌트 (AP에서는 절대 말하지 않음)</h3><ul class="t">${productHint(c,top).map(x=>`<li>${x}</li>`).join('')}</ul>
     <h3>오늘 AP 목표</h3><div>${c.goal||(top?top.need:'')}${dx[1]?' · 보조: '+dx[1].need:''}</div>`}
+
+/* ===== 간소화 6단계 (11/25 강사 의견): 실제 미팅은 15단계대로 안 흐름 → 꼭 챙길 포인트만.
+   PC에서 거꾸로: 컨셉이 정해지면 다음 PT에 필요한 질문이 정해지고, 대표 나이로 건강·기존 보험 질문이 바뀜 ===== */
+function healthQs(c){const a=nz(c.age)?c.age:null,q=['기존에 가입한 보험: 개인·회사 계약, 매달 내는 금액, 언제 어떻게 가입하셨는지'];
+  if(a==null){q.push('건강: 최근 건강검진에서 다시 보라고 한 것, 드시는 약 (대표 나이를 넣으면 질문이 나이에 맞춰져요)');return q}
+  if(a<45)q.push('건강검진에서 재검·추가 검사를 받은 것이 있는지');
+  else if(a<55)q.push('최근 5년 안에 입원·수술, 7일 이상 치료, 30일 이상 드신 약이 있는지','건강검진에서 혈압·혈당·간 수치 이야기를 들으셨는지');
+  else if(a<63)q.push('혈압·당뇨·고지혈 약을 드시는지, 언제부터인지','최근 5년 안에 입원·수술이 있었는지','배우자분 건강은 괜찮으신지');
+  else q.push('최근 3개월 안에 입원·수술·추가 검사 권유를 받으셨는지','최근 몇 년 안에 입원·수술, 드시는 약','자녀분 중 함께 의논할 분이 있는지');
+  return q}
+function simpleSteps(c){const b=last||{},top=b.top,sec=b.sec,S=b.S||[],nm=c.name||'대표님',co=c.co||'회사',st=no=>(S.find(s=>s.no===no)||{}).say||'';
+  const L=[],add=(no,tt,say,pt)=>L.push({no,tt,say,pt});let R=[];try{R=relaxIdeas(c)}catch(e){}
+  add('①','릴렉스',R.length?R.slice(0,2).map(x=>`"${x}"`).join('\n'):`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'날씨·교통 말고 이 회사에서 본 것으로');
+  add('②','자기소개 · 나의 위치 다시 세우기',`(명함을 드리며) ${P('회사와 내 역할 한 줄 소개')}\n`+st('03'),'명함 + 회사 소개 + 왜 이제 이런 이야기를 하는지(명분)');
+  /* 문제 제기: 분석에서 빨강·주황 나온 것 + 1순위 컨셉 근거. 숫자는 위 진단과 같은 값 */
+  const IS=issues(c).filter(i=>i.lv==='r'||i.lv==='o').sort((x,y)=>(x.lv==='r'?0:1)-(y.lv==='r'?0:1)).slice(0,4);
+  const tax=c.form!=='법인'&&nz(c.profit)&&c.profit>0?[`올해 이익 ${eok(c.profit)} 기준이면 종합소득세가 ${itBracket(c.profit)}% 구간입니다. 건강보험료도 같이 오릅니다.`]:[];
+  const sig=top?top.sig.map(x=>x[1]).filter(x=>!/^(개인|법인)사업자:/.test(x)).slice(0,2):[];
+  const base0=[...tax,...IS.map(i=>i.line)];const probs=[...base0,...(base0.length<2?sig.filter(s=>!/^대표 \d+세|업력|지분 가치/.test(s)):[])].slice(0,5);
+  add('③','문제 제기',(probs.length?`"오늘은 ${co} 숫자에서 보이는 것 몇 가지만 짚어 드리겠습니다."\n`+probs.map(x=>'· '+x).join('\n'):`"오늘은 ${co} 숫자에서 보이는 것 몇 가지만 짚어 드리겠습니다." ${P('예상 세액, 상속세, 잉여금 출구, 차명주식, 법인전환, 비용 부족 중 이 회사에 맞는 것')}`),'숫자로 담담하게. 해결책은 아직 말하지 않음');
+  add('④','쉽게 풀고, 다음 PT 예고',`"${top?top.alt:'방법이 있습니다. 구조를 바꾸면 달라집니다.'}"\n"오늘은 문제만 짚어 드리고, 다음에 ${nm} 맞춤 해결책을 ${top?top.bring:'정리한 자료'}로 PT 해 드리겠습니다."`,'상품명·구조 이름은 말하지 않음. 기대감만');
+  const base=['소득: 대표님 급여·배당·다른 소득','지출: 매달 생활비, 앞으로 큰 지출 계획(자녀 학비·결혼·차·사업 투자)','자산: 사업장 밖 부동산·금융자산','부채: 대출과 매달 갚는 금액','가족: 배우자, 자녀 나이와 결혼 여부','집: 자가인지 전세·월세인지, 이사 계획',...(c.form==='법인'||nz(c.age)&&c.age>=50?['승계: 회사를 나중에 누가 맡을지']:[])];
+  const cq=[...new Set([...(top?top.ff:[]),...(sec?sec.ff.slice(0,2):[])])];
+  const m=top?PCMOD[top.id]:null;
+  add('⑤','좋은 PT를 위한 질문',`"다음 PT를 ${nm}께 딱 맞게 만들려면 몇 가지만 여쭤볼게요."\n`+
+    (cq.length?`[이 업체 컨셉${top?` «${top.name}»`:''} PT에 꼭 필요한 것]\n`+cq.map(x=>'· '+x).join('\n')+'\n':'')+
+    `[기본]\n`+base.map(x=>'· '+x).join('\n')+`\n[건강·기존 보험${nz(c.age)?` (${c.age}세 기준)`:''}]\n`+healthQs(c).map(x=>'· '+x).join('\n'),
+    (m&&m.slides?`PC에서 거꾸로: 다음 PT 장표(${m.slides.slice(0,4).join(' · ')})를 만들려면 위 답이 있어야 합니다`:'PC 장표에 들어갈 숫자를 오늘 받아 갑니다')+(nz(c.age)&&c.age>=63?' · 63세 이상: 심사 방식이 갈리니 건강 질문을 꼭':''));
+  add('⑥','다음 약속 확정',st('15'),'일자 + 시각 + 걸리는 시간까지. "연락드리겠습니다"는 0점');
+  return L}
+function simpleHtml(){const c=last.c;return simpleSteps(c).map(s=>`<div class="step"><div class="sh"><span class="no">${s.no}</span><span class="tt">${esc(s.tt)}</span></div><div class="say">${esc(s.say).replace(/\[([^\]]*)\]/g,(m,a)=>/^(이 업체|기본|건강)/.test(a)?`<b>[${a}]</b>`:`<span class="ph">[${a}]</span>`)}</div><div class="pt">✓ ${esc(s.pt)}</div></div>`).join('')}
+let SCV=(()=>{try{return localStorage.getItem('ap-scv')||'full'}catch(e){return 'full'}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.scv [data-v]');if(!b)return;SCV=b.dataset.v;try{localStorage.setItem('ap-scv',SCV)}catch(x){}
+  document.querySelectorAll('.scv [data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===SCV));const f=document.getElementById('scFull'),s=document.getElementById('scSimple');if(f)f.hidden=SCV!=='full';if(s)s.hidden=SCV!=='simple'});
 function renderSc(){const{S}=last;let html='',cur='';const tm={진입:'5분',전개:'7분',전환:'3분',정보수집:'3분 30초',클로징:'1분 30초'};
   S.forEach(s=>{if(s.blk!==cur){cur=s.blk;html+=`<div class="blk"><b>${cur}</b><span class="muted">${tm[cur]} (20분 기준)</span></div>`}
     html+=`<div class="step"><div class="sh"><span class="no">${s.no}</span><span class="tt">${s.tt}</span></div><div class="say">${esc(s.say).replace(/\[([^\]]*)\]/g,(m,a)=>a==='저항'?'<b>[저항]</b>':`<span class="ph">[${a}]</span>`)}</div><div class="pt">✓ ${s.pt}${s.warn?' · '+s.warn:''}</div></div>`});
   const hits=check(S.map(s=>s.say).join('\n'));
-  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><span><a class="b" href="roleplay.html" onclick="if(window.top!==window){event.preventDefault();window.top.location.hash='#tool-rp'}" target="_blank">이 업체로 AP 롤플레이 연습</a> <button class="b" onclick="window.print()">인쇄</button></span></div>`+styleBox(last.c,false)+relaxBox(last.c)+html}
+  $('#t-sc').innerHTML=`<div class="btns" style="justify-content:space-between;align-items:center"><span>${hits.filter(h=>h.lv==='bad').length?'<span class="badge bad">상품명 포함, 편집 탭 확인</span>':'<span class="badge ok">상품명·구조 언급 없음</span>'}</span><span><a class="b" href="roleplay.html" onclick="if(window.top!==window){event.preventDefault();window.top.location.hash='#tool-rp'}" target="_blank">이 업체로 AP 롤플레이 연습</a> <button class="b" onclick="window.print()">인쇄</button></span></div>`+`<div class="scv" role="tablist"><button type="button" data-v="full" class="${SCV==='full'?'on':''}">AP 15단계 (기본)</button><button type="button" data-v="simple" class="${SCV==='simple'?'on':''}">간소화 6단계 <span class="muted">실제 미팅용</span></button></div>`+`<div id="scFull"${SCV==='full'?'':' hidden'}>`+styleBox(last.c,false)+relaxBox(last.c)+html+`</div><div id="scSimple"${SCV==='simple'?'':' hidden'}><p class="muted" style="margin:4px 0 10px">실제 미팅은 15단계대로 흐르지 않아요. 꼭 챙길 여섯 가지만. 문제 제기 숫자는 업체 분석과 같은 값, 질문은 이 업체 컨셉(PC)과 대표 나이에 맞춰 바뀝니다.</p>`+simpleHtml()+`</div>`}
 function plain(){const{S}=last;return S.map(s=>`[${s.no}] ${s.tt}\n${s.say}\n`).join('\n')}
 function fillEdit(){$('#edit').value=plain();runCheck()}
 function runCheck(){const t=$('#edit').value;const h=check(t);const b=h.filter(x=>x.lv==='bad'),w=h.filter(x=>x.lv==='warn');

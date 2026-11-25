@@ -175,6 +175,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 
     <section class="panel">
       <h2 class="row" style="justify-content:space-between">만날 대표님 <button type="button" class="btn" id="fromAp" style="font-size:13px;padding:6px 12px">업체 분석에 넣은 업체 불러오기</button></h2>
+      <div id="briefBox" hidden style="border:1px solid rgba(127,127,127,.35);border-radius:10px;padding:8px 10px;margin:0 0 10px;font-size:12.5px;line-height:1.5;background:rgba(127,127,127,.07)"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>AI 대표님이 알고 나오는 업체 분석</b><button type="button" class="btn" id="briefX" style="font-size:12px;padding:3px 10px">빼기</button></div><pre id="briefTx" style="white-space:pre-wrap;margin:4px 0 0;font:inherit"></pre></div>
       <div class="g3" style="grid-template-columns:repeat(4,minmax(0,1fr))" id="castGrid">
         <label class="f">만나는 사람<select id="cast"><option value="m">남자 대표</option><option value="f">여자 대표</option><option value="mf" disabled>부부 (남편 대표 + 아내) — 두 목소리 준비 중</option><option value="fm" disabled>부부 (아내 대표 + 남편) — 두 목소리 준비 중</option></select></label>
         <label class="f">업종<input id="ind" placeholder="예: 제조"></label>
@@ -247,6 +248,9 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const KEY = 'rp-live-v2';
+let BRIEF = '';   /* 11/25: AP 단계에서 열면 업체 분석 요약(숫자·꺼낼 이슈 순서·예상 반론)을 AI 대표에게 같이 보냄 */
+function showBrief(){ const b = $('briefBox'); if (!b) return; b.hidden = !BRIEF; $('briefTx').textContent = BRIEF; }
+function pickBrief(card){ try { const br = JSON.parse(localStorage.getItem('ap-brief-v0') || 'null'); BRIEF = br && br.text && (!br.co || !card.co || br.co === card.co) ? String(br.text).slice(0, 1500) : ''; } catch (e) { BRIEF = ''; } showBrief(); }
 const FIELDS = ['preset','dur','cast','rel','level','style','ind','form','sales','profit','age','kids','notes','who','branch','cRate','cWait'];
 const CHECKS = ['cEar','cFill','cRec'];
 let EP = 'https://script.google.com/macros/s/AKfycbyIF7r-0sSli3iIURIsnNQRefQU1lBbLo0iGA7lcraRYIlM-atbwNc-skKfC9dgU3nM2Q/exec', stage = 'AP', hist = [];
@@ -271,11 +275,11 @@ const CAST = {
 const cast = () => CAST[$('cast').value] || CAST.m;
 const TALK = '[말하는 방식] 실제로 마주 앉아 말하듯 한 번에 한두 문장만 짧게 말한다. 괄호 설명, 글머리표, 번호 목록은 쓰지 않는다.';
 
-function save(){ try { const o = { stage }; FIELDS.forEach(k => o[k] = $(k).value); CHECKS.forEach(k => o[k] = $(k).checked); o.voice = $('cVoice').value; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
-function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return {}; FIELDS.forEach(k => { if (o[k] != null && o[k] !== '') $(k).value = o[k]; }); CHECKS.forEach(k => { if (o[k] != null) $(k).checked = o[k]; }); if (o.stage && STAGE[o.stage]) stage = o.stage; return o; } catch (e) { return {}; } }
+function save(){ try { const o = { stage }; FIELDS.forEach(k => o[k] = $(k).value); CHECKS.forEach(k => o[k] = $(k).checked); o.voice = $('cVoice').value; o.brief = BRIEF; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return {}; FIELDS.forEach(k => { if (o[k] != null && o[k] !== '') $(k).value = o[k]; }); CHECKS.forEach(k => { if (o[k] != null) $(k).checked = o[k]; }); if (o.stage && STAGE[o.stage]) stage = o.stage; BRIEF = String(o.brief || ''); showBrief(); return o; } catch (e) { return {}; } }
 function setStage(v){ stage = v; document.querySelectorAll('#stages button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); $('stageTip').textContent = STAGE[v].tip; save(); }
 function showRanges(){ $('cRateV').textContent = (+$('cRate').value).toFixed(2) + '배'; $('cWaitV').textContent = (+$('cWait').value).toFixed(1) + '초'; }
-function caseObj(){ return { ind: $('ind').value, form: $('form').value, sales: $('sales').value, profit: $('profit').value, age: $('age').value, kids: $('kids').value, notes: [STAGE[stage].note, cast().note, TALK, $('notes').value].filter(Boolean).join('\n') }; }
+function caseObj(){ return { ind: $('ind').value, form: $('form').value, sales: $('sales').value, profit: $('profit').value, age: $('age').value, kids: $('kids').value, notes: [STAGE[stage].note, cast().note, TALK, $('notes').value].filter(Boolean).join('\n'), brief: BRIEF }; }
 function post(o){ return fetch(EP, { method: 'POST', body: JSON.stringify(Object.assign({ action: 'rp2', sub: 'end', usage: L.usage, preset: $('preset').value, pass: TP(), mode: 'ceo', stage, cast: $('cast').value, rel: $('rel').value, level: $('level').value, style: $('style').value, case: caseObj(), who: $('who').value.trim(), branch: $('branch').value.trim() }, o)) }).then(r => r.json()); }
 const wire = () => hist.filter(m => !m.local).map(m => ({ role: m.role, text: m.text }));
 function ready(){
@@ -665,13 +669,14 @@ $('fromAp').onclick = () => {   /* 업체 분석에 넣어 둔 업체. 상호·�
     Object.entries(map).forEach(([k, v]) => { if (v !== undefined && v !== null && v !== '') $(k).value = v; });
     if (a.rel) $('rel').value = a.rel; if (a.style) $('style').value = a.style;
     const bits = [a.notes, a.k1, a.k2, a.k3].filter(Boolean).join(' / '); if (bits) $('notes').value = bits.slice(0, 600);
-    save(); $('state').textContent = '업체 분석의 업종·숫자·상황을 불러왔어요. 상황 칸에 상호·실명이 있으면 지워 주세요.';
+    pickBrief(a); save(); $('state').textContent = BRIEF ? '업체 분석의 숫자·진단·꺼낼 이슈 순서를 AI 대표님이 알고 나와요. 상황 칸에 상호·실명이 있으면 지워 주세요.' : '업체 분석의 업종·숫자·상황을 불러왔어요. 상황 칸에 상호·실명이 있으면 지워 주세요.';
   } catch (e) { $('state').textContent = '불러오지 못했어요.'; }
 };
 document.querySelectorAll('#stages button').forEach(b => b.onclick = () => setStage(b.dataset.v));
 FIELDS.concat(CHECKS, ['cVoice']).forEach(k => $(k).addEventListener('input', () => { showRanges(); save(); }));
 ['cast', 'age'].forEach(k => $(k).addEventListener('input', () => { fitVoice(true); save(); }));
 $('cTest').onclick = () => { hush(); const t = talker(() => {}); ['안녕하세요.', '오늘 무슨 일로 오셨어요?', '제가 시간이 많지는 않아서요.'].forEach(x => t.push(x)); t.end(); };
+$('briefX').onclick = () => { BRIEF = ''; showBrief(); save(); };
 $('go').onclick = start; $('cEnd').onclick = end; $('cCut').onclick = cut;
 $('cCapBtn').onclick = () => { c.cap = !c.cap; $('cCap').classList.toggle('off', !c.cap); $('cCapBtn').classList.toggle('on', c.cap); $('cCapBtn').textContent = c.cap ? '자막 끄기' : '자막 켜기'; };
 $('again').onclick = () => { $('result').hidden = true; $('setup').hidden = false; start(); };

@@ -29,6 +29,7 @@ select,input[type=number]{width:100%;padding:9px 10px;border:1px solid var(--lin
 .seg button.on{background:var(--acc);color:var(--onacc)}
 .seg button:disabled{opacity:.4;cursor:not-allowed}
 .inrow{display:flex;gap:6px;align-items:center}.inrow span{color:var(--sub);white-space:nowrap}
+.pdet>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--acc);padding:7px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);list-style-position:inside;display:inline-block}.pdet[open]>summary{margin-bottom:8px}.pbtns{display:flex;gap:6px;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .chip.on{background:var(--chip);color:var(--acc);border-color:var(--acc2)}
@@ -126,7 +127,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <div><label>통화</label><div class="seg" id="curSeg"><button data-v="all" class="on">전체</button><button data-v="KRW">원화</button><button data-v="USD">달러</button></div></div>
   </div>
   <div class="row2">
-    <div><span class="lbl">비교 상품</span><div class="chips" id="pchips"></div></div>
+    <div><span class="lbl">비교 상품</span><details class="pdet"><summary id="psum">전체 보는 중 · 고르기</summary><div class="pbtns"><button type="button" class="chip" id="pAll">모두 켜기</button><button type="button" class="chip" id="pNone">모두 끄기</button></div><div class="chips" id="pchips"></div></details></div>
     <div><span class="lbl">표시할 경과년수</span><div class="chips" id="ychips"></div></div>
     <div><span class="lbl">재정심사 참고</span><div class="seg" id="uwOn"><button data-v="off" class="on">끄기</button><button data-v="on">켜기</button></div></div>
   </div>
@@ -234,8 +235,11 @@ $('#uwAge').oninput=e=>{st.uwAge=+e.target.value||40;render()};$('#inc').oninput
 $('#nMetric').onchange=e=>{st.nMetric=e.target.value;render()};
 $$('.tab').forEach(t=>t.onclick=()=>{st.tab=t.dataset.t;$$('.tab').forEach(x=>x.classList.toggle('on',x===t));['cmp','byn','dsg'].forEach(k=>$('#t-'+k).hidden=k!==st.tab)});
 const short=p=>p.co.replace(/생명|라이프/,'')+(p.cur==='USD'?'(USD)':'');
-$('#pchips').innerHTML=[...st.prods].map(id=>{const p=D.prods[id];return`<button class="chip on" data-id="${id}" title="${p.name}">${short(p)} ${p.name.replace(/종신보험|종신|보험/g,'').slice(0,10)}</button>`}).join('');
+$('#pchips').innerHTML=[...st.prods].map(id=>{const p=D.prods[id];return`<button class="chip on" data-id="${id}" title="${p.name}">${short(p)} ${p.name.replace(/종신보험|종신|보험/g,'').slice(0,18)}</button>`}).join('');
 $$('#pchips .chip').forEach(c=>c.onclick=()=>{const id=c.dataset.id;st.prods.has(id)?st.prods.delete(id):st.prods.add(id);c.classList.toggle('on');render()});
+/* 11/25 상권 «비교 상품 지저분해, 아래 표에 상품명 다 나오니까» → 칩은 접어 두고 요약 한 줄만 */
+(function(){const all=[...document.querySelectorAll('#pchips .chip')].map(c=>c.dataset.id),sum=()=>{const n=all.filter(id=>st.prods.has(id)).length;document.getElementById('psum').textContent=n===all.length?`전체 ${all.length}개 보는 중 · 고르기`:`${n} / ${all.length}개 보는 중 · 고르기`};document.getElementById('pchips').addEventListener('click',()=>setTimeout(sum,0));const setAll=on=>{all.forEach(id=>on?st.prods.add(id):st.prods.delete(id));document.querySelectorAll('#pchips .chip').forEach(c=>c.classList.toggle('on',on));sum();render()};document.getElementById('pAll').onclick=()=>setAll(true);document.getElementById('pNone').onclick=()=>setAll(false);sum()})();
+
 function chipsY(){$('#ychips').innerHTML=YS().map(y=>`<button class="chip ${st.hideY.has(y)?'':'on'}" data-y="${y}">${ylab(y)}</button>`).join('');
   $$('#ychips .chip').forEach(c=>c.onclick=()=>{const y=+c.dataset.y;st.hideY.has(y)?st.hideY.delete(y):st.hideY.add(y);c.classList.toggle('on');render()})}
 

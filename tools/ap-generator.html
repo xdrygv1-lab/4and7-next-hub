@@ -103,6 +103,7 @@ details.more{margin-top:6px}details.more>summary{cursor:pointer;font-size:13px;c
 .qchips{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 6px}.qc{border:1px solid var(--line,#dfe3e1);background:transparent;color:inherit;border-radius:999px;padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer}.qc:hover{border-color:var(--acc);color:var(--acc)}
 .relaxbox{margin:10px 0 14px;padding:12px 14px;border-radius:12px;background:rgba(0,82,255,.06);border:1px solid rgba(0,82,255,.18)}.relaxbox ol{margin:6px 0 6px 20px;padding:0}.relaxbox li{margin:3px 0}
 .scv{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px}.scv button{border:1px solid #d5dbe3;background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer;color:inherit}.scv button.on{background:#1f3a5f;border-color:#1f3a5f;color:#fff}.scv button.on .muted{color:#dbe4ef}
+.svb{margin-top:22px;border-top:1px solid #e3e8ef;padding-top:14px}.svin{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 12px}.svin label{font-size:14px}.svin input{width:86px;margin:0 4px}.layout>*,#out{min-width:0}.svb{min-width:0;max-width:100%}.svtw{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:min(100%,calc(100vw - 32px))}.svt{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}.svt th,.svt td{border:1px solid #e3e8ef;padding:7px 9px;text-align:left;vertical-align:top}.svt th{background:#f3f6fa}.svt tr:last-child td{font-weight:700}.svwarn{color:#b4471b;font-weight:600}
 </style>
 </head>
 <body>
@@ -1205,6 +1206,45 @@ function uwQS(c,a){const q=new URLSearchParams({from:'ap',kind:'ceo',contractor:
   if(a&&a.mid)put('wantPrem',Math.round(a.mid/1e4));return q.toString()}
 /* 업체 분석에 숫자가 들어올 때마다 재정심사 계산기가 읽을 자리에 남김 (같은 브라우저 안에서만) */
 function shareUw(c,a){try{if(!(c.form==='법인'||nz(c.profit)))return;const qs=uwQS(c,a),o=JSON.parse(localStorage.getItem('nx-ap-uw')||'null');if(!o||o.qs!==qs)localStorage.setItem('nx-ap-uw',JSON.stringify({t:Date.now(),qs}))}catch(e){}}
+
+/* ===== 급여 vs 퇴직금 (11/25, 실제 클로징 덱의 비교표를 세금계산 도구로 검산한 식) — 단위 만원 =====
+   근로소득세: 총급여 − 근로소득공제(소득세법 47조) − 본인공제 150만 − 본인 4대보험 → 기본세율(55조) − 근로소득세액공제(59조, 한도 포함) → ×1.1(지방세)
+     검산(korean-tax-calc wage_income_tax 2026): 총급여 6,000만 → 4,148,940원, 1.2억 → 17,253,370원 (지방세 전)
+   퇴직소득세: 근속연수공제·환산급여공제(48조·55조②), 검산: 8,400만·7년 → 4,202,000원, 4.2억·7년 → 80,831,666원 (지방세 전)
+   임원 퇴직소득 한도(22조③): 퇴직 전 3년 평균 총급여 × 10% × 근속연수 × 배수(2012~2019년 3배, 2020년 이후 2배). 넘는 금액은 근로소득
+   4대보험 요율(2026, 회사+본인): 국민연금 9.5%(상한 월 637만), 건강 7.19%, 장기요양 = 건강의 13.14% [확인필요: 해마다 바뀜] */
+const SV4={nps:.095,cap:637,hi:.0719,ltc:.1314};
+function svProg(b){if(b<=0)return 0;const T=[[1400,.06,0],[5000,.15,126],[8800,.24,576],[15000,.35,1544],[30000,.38,1994],[50000,.40,2594],[100000,.42,3594],[Infinity,.45,6594]];const r=T.find(x=>b<=x[0]);return b*r[1]-r[2]}
+function svDed(S){return Math.min(2000,S<=500?S*.7:S<=1500?350+(S-500)*.4:S<=4500?750+(S-1500)*.15:S<=10000?1200+(S-4500)*.05:1475+(S-10000)*.02)}
+function svIns(S,all){const v=Math.min(S,SV4.cap*12)*SV4.nps+S*SV4.hi*(1+SV4.ltc);return all?v:v/2}
+function svWage(S){if(S<=0)return 0;const calc=svProg(S-svDed(S)-150-svIns(S));let cr=calc<=130?calc*.55:71.5+(calc-130)*.3;
+  const lim=S<=3300?74:S<=7000?Math.max(66,74-(S-3300)*.008):S<=12000?Math.max(50,66-(S-7000)*.5):Math.max(20,50-(S-12000)*.5);return Math.max(0,calc-Math.min(cr,lim))*1.1}
+function svRet(R,y){if(y<=0||R<=0)return 0;const cy=y<=5?100*y:y<=10?500+200*(y-5):y<=20?1500+250*(y-10):4000+300*(y-20);
+  const conv=Math.max(0,R-cy)*12/y;const cd=conv<=800?conv:conv<=7000?800+(conv-800)*.6:conv<=10000?4520+(conv-7000)*.55:conv<=30000?6170+(conv-10000)*.45:15170+(conv-30000)*.35;
+  return svProg(conv-cd)*y/12*1.1}
+/* S0 지금 연봉, X 더 가져갈 월액, N 기간(년), T20 2020년 이후 근속(퇴직 때까지), T12 2012~2019년 근속 */
+function salVsRet(S0,X,N,T20,T12){const A=X*12,R=A*N,T=Math.max(1,T20+T12);
+  const sT=svWage(S0+A)-svWage(S0),sI=svIns(S0+A,true)-svIns(S0,true);
+  const lim=S0*.1*(T20*2+T12*3),inR=Math.min(R,lim),ex=Math.max(0,R-inR);
+  const rT=svRet(inR,T),xT=ex>0?svWage(S0+ex)-svWage(S0):0,need=(T20*2+T12*3)>0?R/(.1*(T20*2+T12*3)):null;
+  return{A,R,N,sT,sI,sTot:(sT+sI)*N,rT,xT,rTot:rT+xT,lim,inR,ex,need,diff:(sT+sI)*N-(rT+xT)}}
+function svIn(c){const g=(id,d)=>{const e=document.getElementById(id);const v=e&&e.value!==''?+e.value:NaN;return isFinite(v)?v:d};
+  const s0=EXT&&EXT.sal>0?Math.round(EXT.sal*1e4):6000,N=g('svN',7);
+  return{S0:g('svS0',s0),X:g('svX',500),N,T20:g('svT20',N),T12:g('svT12',0)}}
+const mw=v=>{v=Math.round(v);const s=v<0?'−':'';v=Math.abs(v);const e=Math.floor(v/10000),m=v%10000;return s+(e?e+'억'+(m?' '+m.toLocaleString('ko-KR')+'만':''):m.toLocaleString('ko-KR')+'만')};   /* 1억 6,539만 */
+function svTable(r){return[['구분',`급여로 월 ${mw(r.A/12)} 더`,`퇴직금으로 월 ${mw(r.A/12)} 적립`,'차이'],
+  ['매년 세금 증가',mw(r.sT),'없음 (퇴직 때 한 번)',''],['매년 4대보험 증가 (회사+본인)',mw(r.sI),'없음',''],
+  [`${r.N}년 동안 세금`,mw(r.sT*r.N),mw(r.rT)+(r.ex>0?` + 한도 넘는 ${mw(r.ex)}의 근로소득세 ${mw(r.xT)}`:''),''],
+  [`${r.N}년 합계`,mw(r.sTot),mw(r.rTot),(r.diff>=0?'퇴직금이 ':'급여가 ')+mw(Math.abs(r.diff))+' 적음']]}
+function renderSV(){const box=document.getElementById('t-am');if(!box||!last||!last.c)return;const c=last.c;const old=document.getElementById('svBox');const keep=old?svIn(c):null;if(old)old.remove();
+  if(c.form!=='법인'){box.insertAdjacentHTML('beforeend','<div id="svBox" class="muted" style="margin-top:18px">급여 vs 퇴직금 비교는 법인 대표 기준이라 법인일 때 나옵니다.</div>');return}
+  const v=keep||svIn(c),r=salVsRet(v.S0,v.X,v.N,v.T20,v.T12);
+  box.insertAdjacentHTML('beforeend',`<div id="svBox" class="svb"><h2>급여 vs 퇴직금 계산기 <span class="badge ok">세금계산 도구로 검산한 식</span></h2>
+   <div class="svin"><label>지금 대표 연봉 <input id="svS0" type="number" value="${v.S0}"> 만원</label><label>더 가져갈 돈 월 <input id="svX" type="number" value="${v.X}"> 만원</label><label>기간 <input id="svN" type="number" value="${v.N}"> 년</label><label>근속 2020년 이후 <input id="svT20" type="number" value="${v.T20}"> 년</label><label>2012~2019년 <input id="svT12" type="number" value="${v.T12}"> 년</label></div>
+   <div class="svtw"><table class="svt">${svTable(r).map((row,i)=>`<tr>${row.map(x=>i?`<td>${esc(x)}</td>`:`<th>${esc(x)}</th>`).join('')}</tr>`).join('')}</table></div>
+   <p class="${r.ex>0?'svwarn':'muted'}">${r.ex>0?`임원 퇴직소득 한도 ${mw(r.lim)}를 ${mw(r.ex)} 넘습니다. 넘는 돈은 퇴직금이 아니라 근로소득으로 세금을 냅니다. 한도 안에 다 들어가려면 연봉이 약 ${mw(r.need)} 이상이거나 근속이 더 길어야 합니다.`:`임원 퇴직소득 한도 ${mw(r.lim)} 안에 들어갑니다.`}</p>
+   <p class="muted">근거: 소득세법 47·48·55·59조, 22조③(임원 퇴직소득 한도). 기본공제는 본인만, 다른 공제는 빼고 계산. 4대보험은 2026년 요율 (해마다 확인). 법인 비용처리와 정관 규정은 세무사 검토. 이 표는 PC 제안자료에도 들어갑니다.</p></div>`)}
+document.addEventListener('input',e=>{if(e.target&&/^sv(S0|X|N|T20|T12)$/.test(e.target.id)){clearTimeout(window.__svT);window.__svT=setTimeout(()=>{const id=e.target.id,pos=e.target.selectionStart;renderSV();const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(x){}}},350)}});
 function renderAmount(){const{c,top,dx}=last;loadCL();const a=proposeAmount(c,top);const prods=productsFor(c,top);
   const items=[...CL.common.map(t=>['공통',t]),...(top&&CL[top.id]||[]).map(t=>[top.name,t]),...(dx[1]&&CL[dx[1].id]||[]).slice(0,3).map(t=>[dx[1].name,t]),...prods.flatMap(p=>(PCL[p]||[]).map(t=>['상품: '+p,t]))];
   const done=items.filter(([,t])=>clState[t]).length;
@@ -1450,8 +1490,12 @@ function closeMods(c,dx,IS){const ids=dx.slice(0,3).map(d=>d.id),lv=n=>(IS.find(
   if(corp&&(hot(4)||ids.some(x=>['ceo','exitRet','retire'].includes(x))))O.push({type:'cards',label:'퇴직금이 유리한 이유',kick:'RETIREMENT · 급여보다 퇴직금',h:['같은 돈이라도','<em>퇴직금으로 받으면 덜 냅니다</em>'],
     items:[['4대보험이 붙지 않음','급여에는 건강보험료·국민연금이 붙지만 퇴직금에는 붙지 않습니다.'],['따로 계산','다른 소득과 합치지 않고 따로 세금을 계산합니다.'],['공제가 큼','근속연수공제·환산급여공제로 세 부담이 낮아집니다.'],['규정이 먼저','정관과 임원 퇴직금 규정이 있어야 회사 비용으로 인정됩니다.']],
     src:'임원 퇴직금 한도는 정관·규정과 세법 한도로 정해집니다 · 세무사 검토',say:'같은 돈이라도 급여로 더 받는 것보다 퇴직금으로 받는 쪽이 4대보험이 없고 세금도 따로 계산돼 덜 냅니다. 다만 규정이 먼저 있어야 합니다.'});
+  if(corp&&O.some(o=>o.label==='퇴직금이 유리한 이유')){const v=svIn(c),r=salVsRet(v.S0,v.X,v.N,v.T20,v.T12);
+    O.push({type:'table',label:'급여 vs 퇴직금',kick:'RETIREMENT · 같은 돈, 받는 방법에 따라',h:[`월 ${mw(v.X)}을 ${v.N}년 동안`,r.diff>0?`<em>퇴직금으로 받으면 ${mw(r.diff)} 덜 냅니다</em>`:'<em>지금 연봉으로는 한도부터 맞춰야 합니다</em>'],rows:svTable(r),
+      sub:r.ex>0?`임원 퇴직금 한도(${mw(r.lim)})를 넘는 ${mw(r.ex)}은 근로소득으로 과세됩니다. 연봉·근속 설계가 먼저입니다.`:`지금 연봉 ${mw(v.S0)} 기준, 임원 퇴직금 한도 ${mw(r.lim)} 안입니다.`,
+      src:'소득세법 47·48·55·59조, 22조③ 기준 · 본인공제만 반영한 대략값 · 4대보험 2026년 요율 · 세무사 검토',say:r.diff>0?`같은 돈이라도 ${v.N}년 동안 급여로 더 받으면 세금과 4대보험이 ${mw(r.sTot)}, 퇴직금으로 받으면 ${mw(r.rTot)}입니다. ${mw(r.diff)} 차이가 납니다.`:'퇴직금으로 받으려면 먼저 한도를 맞춰야 합니다. 연봉과 근속을 같이 설계하겠습니다.'})}
   return O}
-function cmBullets(o){return[...(o.sub?[o.sub]:[]),...(o.steps||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.items||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.left?['그대로 두면: '+o.left,'준비하면: '+o.right]:[]),...(o.src?[o.src]:[])]}
+function cmBullets(o){return[...(o.sub?[o.sub]:[]),...(o.rows||[]).slice(1).map(x=>`${x[0]}: 급여 ${x[1]} / 퇴직금 ${x[2]}${x[3]?' ('+x[3]+')':''}`),...(o.steps||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.items||[]).map(x=>`${x[0]}: ${x[1]}`),...(o.left?['그대로 두면: '+o.left,'준비하면: '+o.right]:[]),...(o.src?[o.src]:[])]}
 function slideData(mode){const{c,dx,top,kv,notes}=reportData();if(!top)return[];const a=last.amount||proposeAmount(c,top);const S=[];const int=mode==='int';
   const who=(c.name||'대표님').replace(/\s+/g,' ');const kv1=kv.filter(x=>x[1]!=='–');const IS=issues(c),v=valuation(c),m=PCMOD[top.id]||null;
   const sigItems=IS.map(i=>({t:`${LV[i.lv][0]} · ${i.name}: ${i.line}`,color:LV[i.lv][1].slice(1)}));
@@ -1582,6 +1626,7 @@ function dkSlide(s,i,n,notes){const say=notes&&s.say?`<aside class="say">${dkE(s
   if(s.type==='issue')b=`<div class="two eq"><div class="card warnc" data-a="up" style="--d:.22s"><span class="lab">그대로 두면</span><p>${dkE(s.left)}</p></div><div class="card bluec glow" data-a="up" style="--d:.34s"><span class="lab">준비하면</span><p>${dkE(s.right)}</p></div></div><div class="need" data-a="up" style="--d:.44s"><span>필요한 자료</span>${dkE(s.need)}</div>${s.pc?`<div class="need int" data-a="up" style="--d:.5s"><span>PC 방향 (내부)</span>${dkE(s.pc)}</div>`:''}`;
   if(s.type==='steps')b=`<div class="steps">${s.steps.map((x,k)=>`<div class="card stp" data-a="up" style="--d:${.22+k*.12}s"><i>${k+1}</i><div><b>${dkE(x[0])}</b><p>${dkE(x[1])}</p></div></div>`).join('<span class="arr" data-a="up" style="--d:.3s">→</span>')}</div>${s.prods?`<div class="need int" data-a="up" style="--d:.6s"><span>상품 후보 (내부)</span>${dkE(s.prods.join(' · '))}</div>`:''}`;
   if(s.type==='amount')b=`<div class="tiles">${s.tiles.map((x,k)=>`<div class="card tile${k===1?' bluec glow':''}" data-a="up" style="--d:${.2+k*.1}s"><span>${dkE(x[0])}</span><b>월 ${dkE(x[1])}</b></div>`).join('')}</div>`;
+  if(s.type==='table')b=`<table class="dkt" data-a="up" style="--d:.22s">${s.rows.map((r,i)=>`<tr>${r.map(x=>i?`<td>${dkE(x)}</td>`:`<th>${dkE(x)}</th>`).join('')}</tr>`).join('')}</table>`;
   if(s.type==='cards')b=`<div class="faq">${s.items.map(([q,r],k)=>`<div class="card" data-a="up" style="--d:${.2+k*.08}s"><b>${dkE(q)}</b><p>${dkE(r)}</p></div>`).join('')}</div>`;
   if(s.type==='faq')b=`<div class="faq">${s.items.map(([q,r],k)=>`<div class="card" data-a="up" style="--d:${.2+k*.08}s"><b>Q. ${dkE(q)}</b><p>${dkE(r)}</p></div>`).join('')}</div>`;
   if(s.type==='next')b=`<ul class="chk">${s.items.map((x,k)=>`<li data-a="up" style="--d:${.2+k*.08}s"><i>✓</i>${dkE(x)}</li>`).join('')}</ul>`;
@@ -1633,6 +1678,7 @@ h1,h2{font-weight:800;letter-spacing:-.035em;line-height:1.14;margin-top:22px;te
 .steps{display:flex;align-items:stretch;gap:18px;width:100%}.steps .stp{flex:1;display:flex;gap:18px;align-items:center}.stp>i{flex:none;width:52px;height:52px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:22px}
 .stp b{font-size:26px}.stp p{font-size:18px;margin-top:6px}.arr{align-self:center;color:var(--acc);font-size:30px}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}.tile{text-align:center;padding:34px}.tile span{color:var(--sub);font-size:18px}.tile b{display:block;font-size:44px;font-weight:800;margin-top:10px}
+.dkt{width:100%;border-collapse:collapse;font-size:19px}.dkt th,.dkt td{padding:12px 14px;border-bottom:1px solid rgba(127,140,160,.3);text-align:left;vertical-align:top}.dkt th{font-size:16px;opacity:.75}.dkt tr:last-child td{font-weight:700;font-size:21px}
 .faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.faq b{font-size:21px}.faq p{font-size:18px}
 .chk{list-style:none;padding:0;display:grid;gap:14px;max-width:1000px;margin:0 auto;width:100%}.chk li{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);padding:18px 24px;font-size:24px;text-align:left}.chk i{flex:none;width:34px;height:34px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-style:normal;font-weight:800}
 .lv-r h2{color:var(--fg)}.lv-r .kick i{background:var(--warn);box-shadow:0 0 12px var(--warn)}
@@ -1702,7 +1748,7 @@ $('#fcCopy').onclick=async()=>{const t=`아래 자료를 최종 점검해 줘. �
 
 /* ---------- 렌더 ---------- */
 let last=null;
-function run(){save();const c=read();const plan=last&&last.plan;last={c,...build(c),plan};renderDx();renderSc();fillEdit();renderPrompt();renderAmount();renderReport();renderSlides();renderPC()}
+function run(){save();const c=read();const plan=last&&last.plan;last={c,...build(c),plan};renderDx();renderSc();fillEdit();renderPrompt();renderAmount();renderSV();renderReport();renderSlides();renderPC()}
 function renderDx(){const{c,dx,top,T}=last;
   if(!dx.length){$('#t-dx').innerHTML='<div class="muted">입력이 부족해서 진단할 신호가 없습니다. 상대 정보와 "알고 있는 신호"를 채워 주세요.</div>';return}
   const max=dx[0].sc;
@@ -1726,7 +1772,8 @@ function healthQs(c){const a=nz(c.age)?c.age:null,q=['기존에 가입한 보험
 function simpleSteps(c){const b=last||{},top=b.top,sec=b.sec,S=b.S||[],nm=c.name||'대표님',co=c.co||'회사',st=no=>(S.find(s=>s.no===no)||{}).say||'';
   const L=[],add=(no,tt,say,pt)=>L.push({no,tt,say,pt});let R=[];try{R=relaxIdeas(c)}catch(e){}
   add('①','릴렉스',R.length?R.slice(0,2).map(x=>`"${x}"`).join('\n'):`(오면서 본 현장 변화 한 가지를 짚습니다) ${P('예: 사무실 상패, 최근 기사, 설비·매장 변화')}`,'날씨·교통 말고 이 회사에서 본 것으로');
-  add('②','자기소개 · 나의 위치 다시 세우기',`(명함을 드리며) ${P('회사와 내 역할 한 줄 소개')}\n`+st('03'),'명함 + 회사 소개 + 왜 이제 이런 이야기를 하는지(명분)');
+  {const cert=c.cert||'세무사',why={기장:`그동안은 결산 숫자만 말씀드렸는데, 이제는 문제가 생기기 전에 미리 짚어 드리는 ${cert}가 되려고 합니다.`,소개:`${J(c.referrer||'OO 대표님','이','가')} 꼭 뵈라고 하셔서 왔습니다.`,초면:'오늘 기장 영업하러 온 건 아닙니다.'}[c.rel]||'';
+  add('②','자기소개 · 나의 위치 다시 세우기',`(명함을 드리며) "저는 ${cert}로 일하면서, 대표님들 세금과 재산 구조를 같이 봐 드리고 있습니다. ${why}"`,'명함 + 한 줄 소개 + 왜 이제 이런 이야기를 하는지. 긴 명분 사례는 15단계 3번 참고')}
   /* 문제 제기: 분석에서 빨강·주황 나온 것 + 1순위 컨셉 근거. 숫자는 위 진단과 같은 값 */
   const IS=issues(c).filter(i=>i.lv==='r'||i.lv==='o').sort((x,y)=>(x.lv==='r'?0:1)-(y.lv==='r'?0:1)).slice(0,4);
   const tax=c.form!=='법인'&&nz(c.profit)&&c.profit>0?[`올해 이익 ${eok(c.profit)} 기준이면 종합소득세가 ${itBracket(c.profit)}% 구간입니다. 건강보험료도 같이 오릅니다.`]:[];

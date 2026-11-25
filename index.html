@@ -1700,8 +1700,10 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   const caExt=()=>{try{const w=frCa.contentWindow;if(!w||!w.calc)return null;const R=w.calc();if(R.stake==null&&R.retained==null&&!R.a.assets)return null;
     return{whole:R.val?R.val.v:null,share:R.c.share??100,stake:R.stake??null,projW:R.proj?R.proj.map(p=>[p.k,p.val]):[],re:R.reRatio>=.5,young:R.years!=null&&R.years<3,mode:R.val&&R.val.mode,gwOff:R.val&&R.val.gwOff,
       yrs:[0,1,2].filter(i=>(R.h.pretax[i]??R.h.ni[i])!=null).length,retained:R.retained,re10:R.proj?R.proj[3].re:null,loan:R.loanKnown?R.a.loan:null,
-      need:(R.a.ap||R.a.stb||R.a.ltb||R.a.cash)?R.need:null,inh:R.inhNow||null,ind:R.c.ind||''}}catch(e){return null}};
+      need:(R.a.ap||R.a.stb||R.a.ltb||R.a.cash)?R.need:null,inh:R.inhNow||null,ind:R.c.ind||'',sal:R.salNow||null}}catch(e){return null}};
   const sync=()=>{try{frAp.contentWindow.setExt&&frAp.contentWindow.setExt(caExt())}catch(e){}};
+  /* 11/25: 업체 분석 화면은 컨셉 진단(위) + 한눈에 보는 진단 보고서(아래)를 같이 보여 줌 */
+  const showRD=()=>{try{const d=frAp.contentDocument,rp=d.getElementById('t-rp'),dx=d.getElementById('t-dx');if(!rp||!dx)return;rp.hidden=false;dx.hidden=false;d.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t==='dx'))}catch(e){}setTimeout(fit,200)};
   const apRun=()=>{sync();try{const w=frAp.contentWindow,g=frAp.contentDocument.getElementById('gen');w.toggle&&w.toggle();if(g)g.click();else{w.run&&w.run()}w.save&&w.save()}catch(e){}};
   const EMB={ca:'header,aside,.imp{display:none!important}.wrap{display:block!important;padding:0!important}html,body{height:auto!important;min-height:0!important;overflow:hidden!important;background:transparent!important}',
     ap:'header,#form,.qs,.steps,#out>.btns,#out>.row{display:none!important}.layout{display:block!important}.wrap{max-width:none!important;padding:0!important}.tab[data-t="rp"]{display:none!important}html,body{height:auto!important;min-height:0!important;overflow:hidden!important;background:transparent!important}'};
@@ -1710,7 +1712,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   const fit=()=>{if(!document.body.contains(frCa)){clearInterval(fitT);return}if(!$('#goFr').classList.contains('shown'))return;
     [frCa,frAp].forEach(f=>{try{emb(f,f===frCa?'ca':'ap');const d=f.contentDocument,h=Math.max(d.body.offsetHeight,d.documentElement.offsetHeight)+8;if(h>50&&Math.abs(f.offsetHeight-h)>6)f.style.height=h+'px'}catch(e){}})};
   const fitT=setInterval(fit,700);
-  const tab=p=>{if(p==='ca'){$('#goCad').open=true;setTimeout(fit,100);$('#goHca').scrollIntoView({behavior:'smooth',block:'start'});return}try{const b=frAp.contentDocument.querySelector(`.tab[data-t="${p==='ap'?'dx':p}"]`);if(b)b.click()}catch(e){}setTimeout(fit,100);$('#goHap').scrollIntoView({behavior:'smooth',block:'start'})};
+  const tab=p=>{if(p==='ca'){$('#goCad').open=true;setTimeout(fit,100);$('#goHca').scrollIntoView({behavior:'smooth',block:'start'});return}try{const b=frAp.contentDocument.querySelector(`.tab[data-t="${p==='ap'?'dx':p}"]`);if(b)b.click()}catch(e){}if(p==='dx'||p==='ap')showRD();setTimeout(fit,100);$('#goHap').scrollIntoView({behavior:'smooth',block:'start'})};
   $('#goNav').addEventListener('click',e=>{const b=e.target.closest('[data-j]');if(b)tab(b.dataset.j)});
   $('#goNext').addEventListener('click',()=>{const co=((apEl('co')||{}).value||'').trim();if(co)DEAL.cur(co)});
   /* 2단계 칸: 제안 준비의 값으로 채우고, 바꾸면 제안 준비에 넣음 */
@@ -1728,7 +1730,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
     busy=true;$('#goRun').disabled=true;msg.textContent='돌리는 중… 보고서와 제안 준비를 같이 만들고 있어요 (PDF가 많으면 1분쯤)';
     try{if(FILES.length)await Promise.all([feed(frCa,'#impFile',FILES),feed(frAp,'#fsFile',FILES)]);else{await ready(frCa,'#impFile');await ready(frAp,'#fsFile')}
       if(co){const a=apEl('co'),c=frCa.contentDocument.getElementById('co');if(a&&!a.value.trim())a.value=co;if(c&&!c.value.trim()){c.value=co;c.dispatchEvent(new Event('input',{bubbles:true}))}const k=apEl('crmCo');if(k)k.value=co}
-      apRun();try{const x=frAp.contentDocument.querySelector('.tab[data-t="dx"]');if(x)x.click()}catch(e){}s2fill();$('#goS2').hidden=false;$('#goOut').hidden=false;$('#goFr').classList.add('shown');setTimeout(fit,300);
+      apRun();try{const x=frAp.contentDocument.querySelector('.tab[data-t="dx"]');if(x)x.click()}catch(e){}showRD();s2fill();$('#goS2').hidden=false;$('#goOut').hidden=false;$('#goFr').classList.add('shown');setTimeout(fit,300);
       setTimeout(()=>{try{$('#goNav').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}},700);
       const nm=(apEl('co')||{}).value||co;msg.innerHTML=`<b>${esc(nm||'업체')}</b> 1차 결과가 나왔어요. 아래 컨셉 진단을 보세요. «더 맞게 고르기»를 펼쳐 아는 것만 고르면 더 맞게 바뀌어요.`}
     catch(e){msg.textContent='돌리지 못했어요: '+(e.message||e)}
@@ -1753,7 +1755,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
     try{await ready(frAp,'#fsFile');await ready(frCa,'#impFile');const w=frAp.contentWindow,d=frAp.contentDocument;w.__fsReset&&w.__fsReset();
       if(data.ap)w.write(data.ap);Object.entries(data.f3||{}).forEach(([k,v])=>{const e=d.getElementById(k);if(e)e.value=v});const fa=d.getElementById('fs3Apply');if(fa&&Object.keys(data.f3||{}).length)fa.click();
       const cw=frCa.contentWindow;cw.__impReset&&cw.__impReset();if(data.ca&&cw.fill){cw.fill(data.ca);try{cw.render&&cw.render()}catch(e){}}
-      FILES=[];list();$('#goCo').value=co;apRun();try{const x=d.querySelector('.tab[data-t="dx"]');if(x)x.click()}catch(e){}s2fill();
+      FILES=[];list();$('#goCo').value=co;apRun();try{const x=d.querySelector('.tab[data-t="dx"]');if(x)x.click()}catch(e){}showRD();s2fill();
       $('#goS2').hidden=false;$('#goOut').hidden=false;$('#goFr').classList.add('shown');setTimeout(fit,300);msg.innerHTML=`<b>${esc(co)}</b> · 저장된 시점부터 이어서 엽니다. 바꾼 뒤 «반영하고 다시 돌리기»를 누르면 다시 저장돼요.`}
     catch(e){msg.textContent='불러오지 못했어요: '+(e.message||e)}};
   $('#goSaved').addEventListener('click',e=>{const l=e.target.closest('[data-ld]'),x=e.target.closest('[data-dl]');if(l)restore(l.dataset.ld);
@@ -1766,7 +1768,7 @@ function showGo(){tpl('tpl-go');document.title='업체 분석 · 4&7 NEXT 허브
   $('#goRun').onclick=()=>run().then(()=>{if(!$('#goS2').hidden)setTimeout(saveNow,1500)});
   $('#go_birth').addEventListener('input',()=>{if($('#go_birth').value.length===10)$('#go_birth').dispatchEvent(new Event('change'))});
   $('#go_birth').addEventListener('change',()=>{const bd=apEl('birth');if(!bd)return;bd.value=$('#go_birth').value;bd.dispatchEvent(new Event('input',{bubbles:true}));$('#go_age').value=(apEl('age')||{}).value||'';$('#go_ageOut').textContent=(apEl('ageOut')||{}).textContent||''});
-  $('#goAgain').onclick=()=>{s2apply();setTimeout(saveNow,800);$('#goMsg2').textContent='반영했어요. 아래 결과가 바뀌었어요.';setTimeout(fit,300)};
+  $('#goAgain').onclick=()=>{s2apply();showRD();setTimeout(saveNow,800);$('#goMsg2').textContent='반영했어요. 아래 결과가 바뀌었어요.';setTimeout(fit,300)};
   $('#goRes2').onclick=()=>{const co=$('#goCo').value.trim()||((apEl('co')||{}).value||'').trim(),k=apEl('crmCo'),b=apEl('resBtn');if(!co){$('#goMsg2').textContent='상호명을 먼저 적어 주세요.';return}
     if(k)k.value=co;if(b){b.click();$('#goMsg2').textContent='회사 정보를 찾는 중이에요 (1분쯤). 찾으면 보고서의 «회사 이야기»에 들어가요.'}};
   $('#goNew').onclick=async()=>{FILES=[];list();try{localStorage.removeItem('deal-cur')}catch(e){}$('#goCo').value='';msg.textContent='새 업체를 넣으세요.';$('#goS2').hidden=true;$('#goOut').hidden=true;$('#goFr').classList.remove('shown');

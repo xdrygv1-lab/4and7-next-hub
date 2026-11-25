@@ -135,7 +135,7 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
     <p class="tl">파일은 팀 드라이브(비공개)에 저장되고, 팀 비밀번호를 넣은 기기에서만 받을 수 있습니다. 새 버전은 «관리» → «새 버전 올리기»로 올리면 예전 판이 자동으로 내려갑니다.</p>
     <form id="tForm" onsubmit="return false">
       <div class="tg2">
-        <label>원수사<select id="tIns"><option>메트라이프</option><option>한화생명</option><option>KB라이프</option><option>신한라이프</option><option>삼성생명</option><option>공통</option></select></label>
+        <label>원수사<select id="tIns"><option>메트라이프</option><option>한화생명</option><option>KB라이프</option><option>신한라이프</option><option>삼성생명</option><option>교보생명</option><option>AIA생명</option><option>하나생명</option><option>DB생명</option><option>처브라이프</option><option>농협생명</option><option>라이나생명</option><option>ABL생명</option><option>공통</option></select></label>
         <label>상품<select id="tPid"></select></label>
         <label>자료 제목<input id="tTitle" placeholder="예: 2026년 11월 상품교육 요약본"></label>
         <label>종류<select id="tType"><option>고객용</option><option>내부·교육용</option><option>약관</option><option>설계 샘플</option><option>서식·매뉴얼</option><option>이미지</option><option>기타</option></select></label>
@@ -170,8 +170,8 @@ document.getElementById('g47f').addEventListener('submit',function(e){e.preventD
 const L = window.LIBRARY;
 const $ = id => document.getElementById(id);
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
-const INS = ['메트라이프','한화생명','KB라이프','신한라이프','삼성생명','공통'];
-const BRAND = { '메트라이프':'#A4CE4E', '한화생명':'#F37321', 'KB라이프':'#FFBC00', '신한라이프':'#0046FF', '삼성생명':'#1428A0', '공통':'#8a8f98' };
+const INS = ['메트라이프','한화생명','KB라이프','신한라이프','삼성생명','교보생명','AIA생명','하나생명','DB생명','처브라이프','농협생명','라이나생명','ABL생명','공통'];
+const BRAND = { '메트라이프':'#A4CE4E', '한화생명':'#F37321', 'KB라이프':'#FFBC00', '신한라이프':'#0046FF', '삼성생명':'#1428A0', '교보생명':'#00A651', 'AIA생명':'#D31145', '하나생명':'#008485', 'DB생명':'#00854A', '처브라이프':'#01224D', '농협생명':'#0075C1', '라이나생명':'#E4002B', 'ABL생명':'#7A1E99', '공통':'#8a8f98' };
 const TYPES = ['고객용','내부·교육용','약관','설계 샘플','서식·매뉴얼','이미지','기타'];
 const qs = new URLSearchParams(location.search);
 const st = { ins: qs.get('ins') || '전체', type: '전체', q: '', hideExp: false, p: qs.get('p') || '' };
@@ -219,9 +219,12 @@ function render(){
   $('list').innerHTML = fs.length ? INS.filter(g => st.ins === '전체' || g === st.ins).map(g => {
     const mine = fs.filter(f => f.ins === g); if (!mine.length) return '';
     const prods = L.products.filter(p => p.ins === g).map(p => [p, mine.filter(f => f.pid === p.id)]).filter(x => x[1].length);
-    const rest = mine.filter(f => !f.pid || !PROD[f.pid]);
+    const rest0 = mine.filter(f => !f.pid || !PROD[f.pid]);
+    const byName = {}; rest0.filter(f => f.pname && /공시실 자동 수집/.test(f.who || '')).forEach(f => (byName[f.pname] = byName[f.pname] || []).push(f));   /* 11/25 공시실 수집분은 상품명끼리 */
+    const rest = rest0.filter(f => !(f.pname && /공시실 자동 수집/.test(f.who || '')));
     return `<section class="ins" style="--bar:${BRAND[g]}"><h2><i></i>${g} <small>${mine.length}건</small></h2>`
       + prods.map(([p, x]) => group(p.id, p.name, x, g, p.id)).join('')
+      + Object.entries(byName).map(([n, x], i) => group(g + '-k' + i, n + ' · 공시', x, g, '')).join('')
       + (rest.length ? group(g + '-etc', g === '공통' ? '공통 서식·매뉴얼' : '서식·매뉴얼·공통 자료', rest, g, '') : '') + '</section>';
   }).join('') : '<p class="msg">찾는 자료가 없습니다. 검색어를 줄이거나 «전체»를 눌러 보세요.</p>';
 }

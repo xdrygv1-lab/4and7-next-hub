@@ -1205,7 +1205,7 @@ function uwQS(c,a){const q=new URLSearchParams({from:'ap',kind:'ceo',contractor:
   const n=i=>{const el=$('#f3_ni_'+i);return el&&el.value!==''?+el.value:null};const ni=[n(2),n(1),n(0)];if(ni[0]==null&&nz(c.profit))ni[0]=c.profit;ni.forEach((v,i)=>put('ni'+(i+1),v));
   if(a&&a.mid)put('wantPrem',Math.round(a.mid/1e4));return q.toString()}
 /* 업체 분석에 숫자가 들어올 때마다 재정심사 계산기가 읽을 자리에 남김 (같은 브라우저 안에서만) */
-function shareUw(c,a){try{if(!(c.form==='법인'||nz(c.profit)))return;const qs=uwQS(c,a),o=JSON.parse(localStorage.getItem('nx-ap-uw')||'null');if(!o||o.qs!==qs)localStorage.setItem('nx-ap-uw',JSON.stringify({t:Date.now(),qs}))}catch(e){}}
+function shareUw(c,a){try{if(!(c.form==='법인'||nz(c.profit)))return;const qs=uwQS(c,a),o=JSON.parse(localStorage.getItem('nx-ap-uw')||'null');if(!o||o.qs!==qs||o.co!==(c.co||''))localStorage.setItem('nx-ap-uw',JSON.stringify({t:Date.now(),qs,co:c.co||''}))}catch(e){}}
 
 /* ===== 급여 vs 퇴직금 (11/25, 실제 클로징 덱의 비교표를 세금계산 도구로 검산한 식) — 단위 만원 =====
    근로소득세: 총급여 − 근로소득공제(소득세법 47조) − 본인공제 150만 − 본인 4대보험 → 기본세율(55조) − 근로소득세액공제(59조, 한도 포함) → ×1.1(지방세)

@@ -492,7 +492,7 @@ const CONCEPTS=[
   test:c=>{const s=[];if(c.form!=='개인'||c.ind==='병의원')return s;   /* 의원은 주식회사로 못 바꿈 → 아래 «관리회사(MSO)» */
     s.push([4,'개인사업자: 법인전환 검토가 기본 컨셉']);
     if(nz(c.profit)&&c.profit>=0.88)s.push([3,`당기순이익 ${eok(c.profit)}: 종합소득세 ${itBracket(c.profit)}% 구간`]);
-    if(nz(c.sales)&&c.sales>=SINCERE[c.ind])s.push([2,`매출 ${eok(c.sales)}: 성실신고확인 대상 수준(${c.ind} ${SINCERE[c.ind]}억 이상)`]);
+    if(nz(c.sales)&&c.sales>=SINCERE[c.ind])s.push([2,c.ind==='기타'?`매출 ${eok(c.sales)}: 업종에 따라 성실신고확인 대상일 수 있음 (업종 확인 필요)`:`매출 ${eok(c.sales)}: 성실신고확인 대상 수준(${c.ind} ${SINCERE[c.ind]}억 이상)`]);
     if(c.f_askedCorp)s.push([3,'"법인이 유리하냐" 물어본 적 있음']);if(c.f_ownerAsset)s.push([1,'사업용 자산이 대표 개인 명의 (상속재산에 그대로 포함)']);
     if(c.f_giftHistory&&c.kids)s.push([1,'자녀 증여 이력: 가족 활용 구조에 관심']);
     if(c.f_reliefEnd)s.push([2,'창업감면 종료·성실 전환 시점: 적시 접근']);if(c.f_bidding)s.push([3,'입찰·대출 이슈로 먼저 문의']);
@@ -504,7 +504,7 @@ const CONCEPTS=[
   test:c=>{const s=[];if(c.form!=='개인'||c.ind!=='병의원')return s;
     s.push([4,'병원은 법인전환이 불가능해요. 관리회사(MSO)로 소득을 나누는 쪽을 검토']);
     if(nz(c.profit)&&c.profit>=0.88)s.push([3,`당기순이익 ${eok(c.profit)}: 종합소득세 ${itBracket(c.profit)}% 구간`]);
-    if(nz(c.sales)&&c.sales>=SINCERE[c.ind])s.push([2,`매출 ${eok(c.sales)}: 성실신고확인 대상 수준(${c.ind} ${SINCERE[c.ind]}억 이상)`]);
+    if(nz(c.sales)&&c.sales>=SINCERE[c.ind])s.push([2,c.ind==='기타'?`매출 ${eok(c.sales)}: 업종에 따라 성실신고확인 대상일 수 있음 (업종 확인 필요)`:`매출 ${eok(c.sales)}: 성실신고확인 대상 수준(${c.ind} ${SINCERE[c.ind]}억 이상)`]);
     if(c.f_payDoctor)s.push([2,'페이닥터 고용: 운영 규모가 커짐']);if(c.f_multiStore)s.push([2,'다점포·분산 운영']);if(c.f_coCEO)s.push([1,'공동 원장']);return s},
   need:'소득 분산 니즈 + 은퇴 자금 니즈',alt:'원장님, 의원은 법인으로 바꿀 수가 없습니다. 대신 경영 지원을 맡는 회사를 따로 두는 방법이 있습니다. 그러면 세율이 나뉘고, 가족과 나누는 구조가 생깁니다. 숫자는 다음에 보여드리겠습니다.',
   bring:'관리회사를 두었을 때 원장님 세금이 어떻게 달라지는지 비교',intro:'원장님처럼 이익이 커져 세금을 고민하시는',
@@ -522,7 +522,7 @@ const CONCEPTS=[
   test:c=>{const s=[];if(c.form!=='법인')return s;const v=stockVal(c);
     if(v!=null&&v>=10)s.push([3,`대표 지분 가치 약 ${eok(v)} (상증법 약식, 추정)`]);else if(v!=null&&v>=5)s.push([1,`대표 지분 가치 약 ${eok(v)} (추정)`]);
     if(nz(c.age)&&c.age>=50)s.push([2,`대표 ${c.age}세`]);if(c.f_realEstate)s.push([2,'재산이 부동산·주식 위주 (현금 부족)']);
-    if(c.ind==='부동산임대')s.push([2,'부동산임대업: 가업상속공제 대상 아님']);if(c.f_loan)s.push([1,'업무무관자산 많음: 공제 실효성 낮음']);
+    if(c.ind==='부동산임대')s.push([2,'부동산임대업: 가업상속공제 대상 아님']);if(c.f_loan){const lo=(typeof lastFS!=='undefined'&&lastFS&&lastFS.loan)||null;s.push([1,lo?`가지급금 ${eok(lo)}: 가업상속공제 실효성 확인 필요`:'가지급금·업무무관자산 체크: 가업상속공제 실효성 확인 필요'])}
     if(nz(c.cash)&&c.cash>=1)s.push([1,`법인 현금 ${eok(c.cash)}: 보험료 재원`]);if(c.f_nominee)s.push([1,'차명주주: 먼저 정리할 과제']);if(c.f_health)s.push([1,'건강 이슈: 시점 리스크']);return s},
   need:'상속세 납부 재원 + 주식가치 인식',alt:'제가 드리는 말씀은 세금을 줄이자는 게 아닙니다. 그때 낼 돈이 있느냐입니다. 그래서 법인 대표님들은 개인 돈이 아니라 법인에서 미리 준비해 두는 구조를 쓰십니다.',
   bring:'대표님 지분 가치와 상속세 규모를 계산하고, 그 재원을 어떻게 만들지 정리한 자료',intro:'대표님처럼 회사 주식 가치가 커져서 상속을 생각하셔야 하는',
@@ -572,7 +572,7 @@ const CONCEPTS=[
   bring:'가만히 있을 때와 설계했을 때 상속세가 얼마나 달라지는지 비교한 자료',intro:'대표님처럼 부모님 재산 승계를 고민하시는',
   pc:'가족법인 지분 재편·대여·채무면제 → 늘어나는 법인세는 경정기로 억제 → 보험료 재원은 금융빌딩',ff:['부모님 재산 구성과 연 이자소득','부모님 생활비 필요 여부','자녀·손주 현황, 자녀 법인 지분']},
  {id:'cashBld',name:'법인 유휴현금 활용 (금융빌딩)',card:'',
-  test:c=>{const s=[];if(c.form!=='법인')return s;if(nz(c.cash)&&c.cash>=3)s.push([3,`법인 유휴현금 ${eok(c.cash)}`]);else if(nz(c.cash)&&c.cash>=1)s.push([1,`법인 유휴현금 ${eok(c.cash)}`]);return s},
+  test:c=>{const s=[];if(c.form!=='법인')return s;try{if(typeof EXT!=='undefined'&&EXT&&EXT.need!=null&&EXT.need>0)return s;const f=lastFS||{},owe=['apay','stb','ltb'].reduce((t,k)=>t+(f[k]||0),0);if(owe>0&&nz(c.cash)&&c.cash<=owe)return s}catch(e){}if(nz(c.cash)&&c.cash>=3)s.push([3,`법인 유휴현금 ${eok(c.cash)}`]);else if(nz(c.cash)&&c.cash>=1)s.push([1,`법인 유휴현금 ${eok(c.cash)}`]);return s},
   need:'놀고 있는 법인 현금의 활용 + 은퇴 후 현금흐름',alt:'법인에 쓰지 않는 돈이 대표님 은퇴 후에 월급처럼 들어오게 만드는 구조가 있습니다. 건물을 사서 월세를 받는 것과 비슷하게 생각하시면 됩니다.',
   bring:'법인 현금을 그대로 둘 때와 구조를 바꿨을 때 10년 뒤 모습을 비교한 자료',intro:'대표님처럼 법인에 현금이 쌓여 있는',
   pc:'저축성 달러 연금(쿠폰형) → 쿠폰을 다른 보험료 재원으로',ff:['법인 현금 규모와 사용 계획','현재 이자 수준','은퇴 시점과 희망 월 소득']},
@@ -787,7 +787,7 @@ const BAN=[['경영인정기','bad'],['경정기','bad'],['CEO정기','bad'],['�
   ['확정 수익','warn'],['확정적','warn'],['보장합니다','warn'],['원금 보장','warn'],['무조건','warn'],['100%','warn'],['비과세','warn'],['절세','warn'],['상속세를 줄여','warn'],['제 생각에는','warn'],['연락드리겠습니다','warn'],['아는 분','warn'],['언제쯤 괜찮','warn'],['보험 하나','warn'],['보험 아니에요','warn'],['보험이 아닙니다','warn'],['페이백','bad'],['출처 마련','bad'],['출처를 만','bad'],['수수료 대신','bad'],['해드렸으니','bad'],['들어주세요','warn']];
 function check(txt){const lines=txt.split('\n');const hits=[];lines.forEach((l,i)=>{BAN.forEach(([w,lv])=>{if(l.includes(w))hits.push({w,lv,i:i+1,l})})});
   const uniq={};hits.forEach(h=>{const k=h.w+'@'+h.i;if(!uniq[k]&&!(h.w==='종신'&&hits.some(x=>x.i===h.i&&x.w==='종신보험'))&&!(h.w==='감자'&&hits.some(x=>x.i===h.i&&/상속감자|유상감자/.test(x.w))))uniq[k]=h});return Object.values(uniq)}
-function esc(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function esc(s){return String(s??'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
 
 /* ---------- 재무자료 파서 ---------- */
 const FS_KEYS=[
@@ -1114,27 +1114,108 @@ function applyDocInfo(info,notes){const set=(id,v)=>{if(v==null||v==='')return;c
   return got.length}
 
 let FSF=[];window.__fsReset=()=>{FSF=[];fsList();$('#fsFileMsg').textContent=''};
+/* 11/26 강사·강사: 사업자등록증·근로계약서·글 파일 머리(«업종: …», «설립일: …», «제18기 2025년»)에서도 기본 정보.
+   «○○»·«OO» 같은 빈칸 표시는 회사명으로 쓰지 않음 (예전엔 근로계약서 서식의 «○○»가 회사명으로 들어가 다른 업체에도 남았음) */
+const __pdi0=parseDocInfo;
+parseDocInfo=function(rows){const info=__pdi0(rows)||{};
+  try{const lines=rows.map(r=>r.join(' ')).filter(l=>!String(l).startsWith(PAGE)),S=lines.join('\n');
+    const g=re=>{const m=S.match(re);return m?m[1].replace(/\s+/g,' ').trim():''};
+    if(!info.kind&&/사\s*업\s*자\s*등\s*록\s*증/.test(S))info.kind='사업자등록증';
+    if(!info.kind&&/근\s*로\s*계\s*약\s*서/.test(S.slice(0,3000)))info.kind='근로계약서';
+    if(!info.co){let v=g(/(?:상\s*호|법\s*인\s*명|사\s*업\s*(?:체|장)\s*명|단\s*체\s*명)\s*(?:\(\s*법\s*인\s*명\s*\))?\s*[:：]?\s*([^\n:：]{2,40}?)\s*(?=\n|$|대\s*표|성\s*명|사\s*업\s*자|개\s*업|생\s*년)/);
+      if(!v){const f=String(lines[0]||'').trim();if(/주식회사|㈜|\(주\)|의원|병원|약국|치과/.test(f)&&f.length<=30)v=f}
+      if(v)info.co=v}
+    if(!info.ind){const v=g(/(?:업\s*종|종\s*목)\s*[:：]\s*([^\n]{2,30})/);if(v)info.ind=v}
+    if(info.founded==null){const m=S.match(/(?:설\s*립\s*(?:일|연\s*월\s*일)|개\s*업\s*(?:연\s*월\s*일|일))\s*[:：]?\s*((?:19|20)\d\d)\s*(?:년|[.\-\/])/);if(m)info.founded=+m[1]}
+    if(info.founded==null&&info.foundedEst==null){const m=S.match(/제\s*(\d{1,3})\s*(?:\(\s*당\s*\)\s*)?기\s*((?:19|20)\d\d)\s*년/);if(m){info.term=+m[1];info.foundedEst=+m[2]-info.term+1;if(!info.fy)info.fy=+m[2]}}
+    if(!info.ceoName){const v=g(/대\s*표\s*(?:자|이\s*사)\s*(?:성\s*명)?\s*[:：]?\s*([가-힣]{2,5})(?![가-힣])/);if(v&&!/대표|성명|이사|서명/.test(v))info.ceoName=v}
+    if(info.kind==='사업자등록증'&&info.personal==null){const bn=S.match(/(\d{3})\s*-\s*(\d{2})\s*-\s*(\d{5})/);if(bn){const mid=+bn[2];if(mid>=1&&mid<=79)info.personal=true}}}
+  catch(e){}
+  const ph=s=>/[○◯◎●]|^\s*[(（]?\s*(?:주|㈜)?\s*[)）]?\s*(?:OO|ＯＯ|ㅇㅇ|00)\s*/i.test(String(s||''));
+  if(info.co&&ph(info.co))delete info.co;if(info.coReg&&ph(info.coReg))delete info.coReg;
+  if(info.kind==='근로계약서'){delete info.ceoName}   /* 근로계약서의 이름은 직원일 수 있음 */
+  return info};
+
+/* 11/26 강사: 사진(jpg·png) 사업자등록증·근로계약서도 글자 인식. 글자 인식은 90초 넘으면 건너뜀 (예전엔 «돌리는 중»에서 멈춘 듯 보였음) */
+function ocrT(p){return Promise.race([p,new Promise((_,no)=>setTimeout(()=>no(new Error('글자 인식이 90초 넘게 걸려 건너뛰었어요. 글자가 있는 PDF나 엑셀로 넣어 주세요')),90000))])}
+async function ocrImg(file,onp){if(!window.Tesseract)await loadJs('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+  onp('글자 인식 도구 준비 중… (처음 한 번은 한국어 사전을 받느라 시간이 걸려요)');
+  const bmp=await createImageBitmap(file),k=Math.max(1,Math.min(3,2480/bmp.width)),cv=document.createElement('canvas');cv.width=Math.round(bmp.width*k);cv.height=Math.round(bmp.height*k);
+  const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(bmp,0,0,cv.width,cv.height);
+  const im=ctx.getImageData(0,0,cv.width,cv.height),d=im.data;for(let i=0;i<d.length;i+=4){const v=Math.min(d[i],d[i+1],d[i+2])<150?0:255;d[i]=d[i+1]=d[i+2]=v}ctx.putImageData(im,0,0);
+  const w=await Tesseract.createWorker('kor+eng');const rows=[[PAGE+1]];
+  try{onp('사진 글자 인식 중…');const {data}=await w.recognize(cv);data.text.split('\n').map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean).forEach(s=>rows.push([s]))}finally{await w.terminate()}
+  return rows}
+
+/* 11/26 강사: 급여대장·계정별원장·글 메모도 읽어 직원 수·인건비·복리후생비를 진단에 씀 (노무 쪽 자료만 넣어도 예시 회사가 아니라 이 업체로 나오게) */
+async function xtraXlsx(name,buf,X){const XL=await needXlsx();const wb=XL.read(buf,{type:'array'});const N=String(name);
+  const sheets=wb.SheetNames.map(n=>XL.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false,defval:''}).map(r=>r.map(v=>String(v).trim())));
+  const head=sheets.map(s=>s.slice(0,8).map(r=>r.join(' ')).join(' ')).join(' ');
+  if(/급여|임금|월급|급료/.test(N+head)){for(const aoa of sheets){const p=payRead(aoa);if(p){X.pay.push(p);return `급여대장 · 직원 ${p.n}명${p.tot?` · 지급 합계 ${man(p.tot)}`:''}`}}}
+  if(/원\s*장/.test(N+head)){const L=ledRead([].concat(...sheets));if(Object.keys(L).length){Object.entries(L).forEach(([k,v])=>X.led[k]=Math.max(X.led[k]||0,v));return '계정별원장 · '+Object.entries(L).map(([k,v])=>`${k} ${man(v)}`).join(' · ')}}
+  return ''}
+function payRead(aoa){let hi=-1,nc=-1,pc=-1;
+  for(let i=0;i<Math.min(aoa.length,40);i++){const r=aoa[i].map(x=>String(x).replace(/\s/g,''));const n=r.findIndex(x=>/^(성명|사원명|이름|직원명|근로자명)$/.test(x));
+    if(n>=0){hi=i;nc=n;pc=r.findIndex(x=>/지급(합계|총액|액계|계)|총지급|급여총액|지급액합계|과세총액|급여계/.test(x));if(pc<0)pc=r.findIndex(x=>/실지급|차인지급|실수령/.test(x));break}}
+  if(hi<0)return null;const names=new Set();let tot=0;
+  for(const r of aoa.slice(hi+1)){const nm=String(r[nc]||'').trim();if(!nm||/합\s*계|소\s*계|총\s*계|^계$|인원/.test(nm)||!/[가-힣A-Za-z]/.test(nm)||nm.length>12)continue;
+    names.add(nm);if(pc>=0){const v=+String(r[pc]||'').replace(/[^\d.\-]/g,'');if(v>0)tot+=v}}
+  return names.size?{n:names.size,tot}:null}
+function ledRead(rows){const out={},K=[['복리후생비',/복\s*리\s*후\s*생\s*비/],['접대비',/접\s*대\s*비|기업\s*업무\s*추진비/]];let cur=null;
+  for(const r of rows){const t=(Array.isArray(r)?r:[r]).map(x=>String(x==null?'':x)).join(' ').trim();if(!t||t.startsWith(PAGE))continue;
+    const tot=/누\s*계|합\s*계|총\s*계|월\s*계/.test(t),hit=K.find(([,re])=>re.test(t));
+    if(!tot&&/^(?:계\s*정\s*(?:과\s*목)?\s*[:：]?\s*)?\[?\s*\d{3,6}\s*\]?\s*[가-힣()·]{2,16}\s*$/.test(t))cur=hit?hit[0]:null;
+    else if(!tot&&hit&&!/\d{1,3},\d{3}/.test(t))cur=hit[0];
+    if(cur&&/누\s*계/.test(t)){const ns=(t.match(/-?\d{1,3}(?:,\d{3})+|\d{5,}/g)||[]).map(s=>+s.replace(/,/g,''));if(ns.length)out[cur]=Math.max(out[cur]||0,...ns)}}
+  return out}
+function xtraApply(X,notes){const L=[];
+  if(X.pay.length){const n=Math.max(...X.pay.map(p=>p.n)),ts=X.pay.map(p=>p.tot).filter(Boolean),avg=ts.length?ts.reduce((a,b)=>a+b,0)/ts.length:0;
+    if(!$('#emp').value)$('#emp').value=n;
+    L.push(`직원 ${n}명(급여대장 ${X.pay.length}개)`+(avg?` · 월 급여 합계 약 ${man(avg)}, 연 약 ${eok1(avg*12/1e8)}`:''));
+    notes.push(`<b>급여대장 ${X.pay.length}개:</b> 직원 최대 ${n}명${avg?`, 월 지급 합계 평균 약 ${man(avg)}`:''} → 직원 수에 넣었어요.`)}
+  Object.entries(X.led).forEach(([k,v])=>L.push(`${k} 연 약 ${man(v)}(계정별원장, 대략)`));
+  if(X.contract)L.push(`근로계약서 ${X.contract}부`);
+  X.txt.forEach(t=>L.push(t));
+  if(!L.length)return;const n=$('#notes'),base=String(n.value||'').replace(/\n?\[자료에서 읽음\][^\n]*/g,'').trim();
+  n.value=(base?base+'\n':'')+'[자료에서 읽음] '+L.join(' / ').replace(/\s+/g,' ')}
+/* 새 업체: 예시·앞 업체 값을 모두 비움 (업체 분석 화면 «돌리기»가 새 업체일 때 부름) */
+window.__blankCard=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'법인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'단독',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:[]});
+  FSF=[];fsList();$('#fsFileMsg').textContent='';window.__indText='';window.__ceoFull='';try{setExt(null)}catch(e){}lastFS={};
+  try{[0,1,2].forEach(i=>{$('#fy'+i).value='';FS3.forEach(k=>{const el=$(`#f3_${k}_${i}`);if(el)el.value=''})});$('#fsText').value=''}catch(e){}
+  try{localStorage.removeItem('ap-card-v0')}catch(e){}};
+/* 상호로 업종·사업 형태 짐작: «○○의원» → 병의원·개인 (의원은 주식회사로 못 바꿈) */
+window.__guessFromName=nm=>{nm=String(nm||'');if(!nm)return '';let got='';const ind=$('#ind');
+  if(ind&&(!ind.value||ind.value==='기타')){const m=IND_MAP.find(([r])=>r.test(nm));if(m){ind.value=m[1];got=m[1]}}
+  if(/의원|병원|치과|한의원|약국/.test(nm)&&!/의료법인|재단|주식회사|㈜|\(주\)/.test(nm)){$('#form_').value='개인';toggle();got+=(got?'·':'')+'개인'}
+  else if(/주식회사|㈜|\(주\)/.test(nm)){$('#form_').value='법인';toggle()}
+  return got};
+
 function fsList(){const el=$('#fsList');if(!el)return;el.innerHTML=FSF.length?FSF.map((f,i)=>`<span class="fchip">${esc(f.name)}<button type="button" data-fx="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" class="b" id="fsClr" style="padding:3px 10px">모두 빼기</button>':'';
   el.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{FSF.splice(+b.dataset.fx,1);fsList();if(FSF.length)readFs(FSF);else $('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
   const c=$('#fsClr');if(c)c.onclick=()=>{FSF=[];fsList();$('#fsFileMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}
-function addFs(list){const add=[...list].filter(f=>/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name)&&!FSF.some(g=>g.name===f.name&&g.size===f.size));const bad=[...list].filter(f=>!/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name));if(bad.length)$('#fsFileMsg').textContent=`${bad.map(f=>f.name).join(', ')}: PDF·엑셀·CSV만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`;
+function addFs(list){const OKX=/\.(pdf|xlsx|xls|csv|txt|jpe?g|png|webp)$/i;const add=[...list].filter(f=>OKX.test(f.name)&&!FSF.some(g=>g.name===f.name&&g.size===f.size));const bad=[...list].filter(f=>!OKX.test(f.name));if(bad.length)$('#fsFileMsg').textContent=`${bad.map(f=>f.name).join(', ')}: PDF·엑셀·CSV·사진(jpg·png)만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`;
   if(!add.length)return Promise.resolve();FSF=FSF.concat(add);fsList();return readFs(FSF)}
 $('#fsFile').onchange=e=>{addFs(e.target.files).finally(()=>e.target.value='')};
 {const z=$('#fsDrop');if(z){['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove('over')}));z.addEventListener('drop',e=>addFs(e.dataTransfer.files))}}
 async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');msg.textContent=`${files.length}개 파일 읽는 중…`;
-  const byYear={},pri={},notes=[],diffs=[];let corp=false;const INFO={};const DN={sales:'매출',profit:'당기순이익',equity:'자본총계'},r2=x=>Math.round(x*100)/100;
-  for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name);let raw=isPdf?await pdfRows(buf.slice(0)):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):(await f.text()).split(/\r?\n/).map(l=>[l]);
+  const byYear={},pri={},notes=[],diffs=[];let corp=false;const INFO={};const X={pay:[],led:{},txt:[],contract:0};const DN={sales:'매출',profit:'당기순이익',equity:'자본총계'},r2=x=>Math.round(x*100)/100;
+  for(const f of files){try{const buf=await f.arrayBuffer();const isPdf=/\.pdf$/i.test(f.name),isImg=/\.(jpe?g|png|webp)$/i.test(f.name);
+      if(/\.(xlsx|xls)$/i.test(f.name)){const ex=await xtraXlsx(f.name,buf.slice(0),X);if(ex){notes.push(`${f.name}: ${ex}`);continue}}
+      let raw=isImg?[]:isPdf?await pdfRows(buf.slice(0)):/\.(xlsx|xls)$/i.test(f.name)?await xlsxRows(buf):(await f.text()).split(/\r?\n/).map(l=>[l]);
       /* 글자 층이 거의 비어 있는 PDF(쪽당 30자 미만)도 스캔본으로 봄 */
       if(isPdf&&raw.length){const np=raw.filter(r=>String(r[0]).startsWith(PAGE)).length||1,nc=raw.filter(r=>!String(r[0]).startsWith(PAGE)).map(r=>r.join('')).join('').replace(/\s/g,'').length;if(nc<30*np)raw=[]}
-      let ocr=false;if(!raw.length&&isPdf){raw=ocrClean(await ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`));ocr=true}
+      let ocr=false;if(isImg){raw=ocrClean(await ocrT(ocrImg(f,t=>msg.textContent=`${f.name}: ${t}`)));ocr=true}else if(!raw.length&&isPdf){raw=ocrClean(await ocrT(ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`)));ocr=true}
       if(!raw.length){notes.push(`${f.name}: 글자가 없어요(스캔본). 글자가 있는 PDF나 엑셀로 넣어 주세요.`);continue}
+      if(/계\s*정\s*별\s*원\s*장/.test(f.name+raw.slice(0,30).map(r=>r.join(' ')).join(' '))){const L=ledRead(raw);if(Object.keys(L).length){Object.entries(L).forEach(([k,v])=>X.led[k]=Math.max(X.led[k]||0,v));notes.push(`${f.name}: 계정별원장 · ${Object.entries(L).map(([k,v])=>`${k} ${man(v)}`).join(' · ')}`);continue}}
       let di={};try{di=parseDocInfo(raw);Object.entries(di).forEach(([k,v])=>{if(v!=null&&v!==''&&INFO[k]==null)INFO[k]=v})}catch(err){}
       if(ocr)notes.push(`${f.name}: <span style="color:#c0392b">스캔본이라 글자 인식으로 읽었어요. 숫자가 틀릴 수 있으니 꼭 원본과 맞춰 보세요.</span>`);
       const pg=fsPages(raw,ocr),rows=pg.rows;
       const head=rows.slice(0,12).map(r=>r.join(' ')).join(' ');const hy=()=>{const h=rows.map(r=>r.join(' ')).find(l=>/구\s*분|과\s*목|계\s*정/.test(l)&&(l.match(/(?<!\d)20\d\d(?!\d)/g)||[]).length>=2);return h?[Math.max(...h.match(/(?<!\d)20\d\d(?!\d)/g).map(Number))]:null};
       const ys=pg.std?pg.year:(fsYears(head)||fsYears(rows.slice(0,40).map(r=>r.join(' ')).join(' '))||hy());
       const r=parseRows(rows);corp=corp||r.corp;if(pg.std)r.prev={};const nk=Object.keys(r.cur).length;
-      if(!nk){notes.push(di.kind?`${f.name}: ${di.kind}에서 기본정보를 읽었어요.`:`${f.name}: 재무제표 항목을 찾지 못했어요.`);continue}
+      if(!nk){if(di.kind==='근로계약서')X.contract++;
+        if(!di.kind&&/\.txt$/i.test(f.name)){X.txt.push(f.name.replace(/\.txt$/i,'')+': '+raw.map(r=>r.join(' ')).join(' ').replace(/\s+/g,' ').slice(0,280));notes.push(`${f.name}: 업체 이야기로 넣었어요.`);continue}
+        notes.push(di.kind?`${f.name}: ${di.kind}에서 기본정보를 읽었어요.`:`${f.name}: 재무제표 항목을 찾지 못했어요.`);continue}
       const y0=ys?ys[0]:new Date().getFullYear()-1;
       /* 값이 모두 0인 해(설립 첫해 재무제표의 «전기» 칸)는 만들지 않음. 같은 해가 여러 파일에 있으면 그 해가 «당기»인 파일을 우선 */
       [[y0,r.cur,2],[y0-1,r.prev,1]].forEach(([y,o,p])=>{if(!Object.values(o).some(v=>v))return;const b=byYear[y]=byYear[y]||{},q=pri[y]=pri[y]||{};
@@ -1144,12 +1225,15 @@ async function readFs(files){if(!files.length)return;const msg=$('#fsFileMsg');m
     catch(err){notes.push(`${f.name}: ${err.message||err}`)}}
   if(diffs.length)notes.push(`<span style="color:#c0392b">같은 해 숫자가 파일마다 달라요: ${[...new Set(diffs)].slice(0,4).join(', ')}. 그 해가 «당기»인 파일(없으면 나중 파일) 값을 썼어요. 최종 신고본이 맞는지 확인하세요.</span>`);
   const yrs=Object.keys(byYear).map(Number).sort().slice(-3);
+  xtraApply(X,notes);
   if(yrs.length||Object.keys(INFO).length){if(clearSample())notes.push('예시 회사(OO정밀) 정보는 지웠어요. 대표 나이·연소득 같은 빈칸은 직접 넣어 주세요.');applyDocInfo(INFO,notes)}
   if(!yrs.length){msg.innerHTML=notes.join('<br>');save();return}
   /* 가장 최근 해는 위 "읽어서 채우기"와 같은 방식으로 (자동 체크 포함) */
   const last=byYear[yrs[yrs.length-1]],NM={sales:'매출액',profit:'당기순이익',pretax:'법인세차감전이익',equity:'자본총계',retained:'이익잉여금',capital:'자본금',assets:'자산총계',debt:'부채총계',cash:'현금및현금성자산',stfin:'단기금융상품',loan:'가지급금',land:'토지',bldg:'건물',ins:'보험예치금',labor:'급여',gasu:'가수금',apay:'매입채무',stb:'단기차입금',ltb:'장기차입금'};
   $('#fsText').value='(단위: 원)\n'+(corp?'법인 자본금\n':'')+Object.entries(last).filter(([k])=>NM[k]).map(([k,v])=>`${NM[k]} ${Math.round(v*1e8)}`).join('\n');
   applyFS();if(INFO.personal){$('#form_').value='개인';toggle()}
+  else if(corp){$('#form_').value='법인';toggle()}
+  else if(!/주식회사|㈜|\(주\)|법인/.test(String(INFO.co||$('#co').value||''))){$('#form_').value='개인';toggle();notes.push('재무제표에 자본금 줄이 없어 개인사업자로 보았어요. 법인이면 «사업 형태»를 바꿔 주세요.')}
   [0,1,2].forEach(i=>{$('#fy'+i).value='';FS3.forEach(k=>{const el=$(`#f3_${k}_${i}`);if(el)el.value=''})});
   yrs.forEach((y,i)=>{const col=i+3-yrs.length,o=byYear[y];$('#fy'+col).value=y;
     const v={sales:o.sales,op:o.op,ni:o.profit!=null?o.profit:o.pretax,equity:o.equity,debt:o.debt,retained:o.retained,loan:o.loan,cash:(o.cash||0)+(o.stfin||0)||null};
@@ -1295,7 +1379,7 @@ function histRows(){const h=lastFS&&lastFS.hist;if(!h||!h.years||!h.years.length
   const R=[['매출',h.sales],['영업이익',h.op],['순이익',h.ni],['자본(순자산)',h.equity],['부채',h.debt],['이익잉여금',h.retained],['가지급금',h.loan],['현금성 자산',h.cash]].filter(([,a])=>(a||[]).some(x=>x!=null&&x!==0));
   return R.length?{years:h.years,rows:R}:null}
 function histTable(){const H=histRows();if(!H)return'';const mx=Math.max(...H.rows.flatMap(([,a])=>a.filter(x=>x!=null).map(Math.abs)),0.01);
-  const sa=(lastFS.hist.sales||[]).filter(x=>x!=null&&x>0);let g='';if(sa.length>=2){const n=sa.length-1,r=Math.pow(sa[sa.length-1]/sa[0],1/n)-1;g=`매출이 연평균 ${Math.round(r*1000)/10}% ${r>=0?'늘었':'줄었'}습니다 (${n+1}개년).`}
+  const sa=(lastFS.hist.sales||[]).filter(x=>x!=null&&x>0);let g='';if(sa.length>=2){const n=sa.length-1,r=Math.pow(sa[sa.length-1]/sa[0],1/n)-1;g=`매출이 ${n===1?'전년보다':'연평균'} ${Math.abs(Math.round(r*1000)/10)}% ${r>=0?'늘었':'줄었'}습니다${n===1?'':` (${n+1}개년)`}.`}
   const cell=x=>x==null?'<td class="muted">–</td>':`<td>${eok1(x)}<span class="bar${x<0?' neg':''}" style="width:${Math.round(Math.abs(x)/mx*60)}px"></span></td>`;
   return`<h3>최근 ${H.years.length}년 재무 흐름</h3><table class="mt trend"><tr><th>항목</th>${H.years.map(y=>`<th>${esc(y)}년</th>`).join('')}</tr>${H.rows.map(([k,a])=>`<tr><td>${k}</td>${H.years.map((_,i)=>cell(a[i])).join('')}</tr>`).join('')}</table>${g?`<div class="muted">${g}</div>`:''}`}
 /* 메트 리포트에서 읽은 숫자 (내부 참고, 고객 제시 불가) */
@@ -1401,9 +1485,11 @@ function issues(c){const out=[],v=valuation(c),f=lastFS||{},add=(n,name,lv,line,
   else if(c.form==='법인'&&nz(c.share))add(7,'주주 구성','g','주주 구성에 큰 문제는 보이지 않습니다.',[]);
   else add(7,'주주 구성','x','주주명부를 받으면 판단합니다.',[]);
   // 8 상속세 재원 (지분만, 일괄공제 5억, 현행 세율 대략)
-  if(v){const I=inhEst(c,v.now),t=I.lo;add(8,'상속세 재원',t>=5||(nz(c.age)&&c.age>=60&&t>0)?'r':t>0?'o':'g',t>0?`대표님 지분만으로도 예상 상속세가 약 ${eok1(t)}~${eok1(I.hi)}입니다. 준비된 재원을 확인해야 합니다.`:'지분 기준 상속세 부담은 크지 않습니다.',['inherit','policy','estate'])}
+  if(v){const I=inhEst(c,v.now),t=I.lo;add(8,'상속세 재원',t>=5||(nz(c.age)&&c.age>=60&&t>0)?'r':t>0?'o':'g',t>0?`대표님 지분만으로도 예상 상속세가 약 ${Math.abs(I.hi-t)<0.05?eok1(t):eok1(t)+'~'+eok1(I.hi)}입니다${nz(c.share)?'':' (주주명부가 없어 지분 100%로 가정)'}. 준비된 재원을 확인해야 합니다.`:'지분 기준 상속세 부담은 크지 않습니다.',['inherit','policy','estate'])}
   else if(c.f_realEstate)add(8,'상속세 재원','o','부동산 비중이 높아 상속세 낼 현금이 부족할 수 있습니다.',['estate','policy']);
   else add(8,'상속세 재원','x','재산 구성을 받으면 판단합니다.',[]);
+  if(c.form==='개인'){const o=out.filter(i=>![1,2,3,5,7].includes(i.n));const i4=o.find(i=>i.n===4);if(i4&&i4.lv==='x'){i4.lv='o';i4.line='개인사업자 대표는 퇴직금이 없습니다. 은퇴 뒤 쓸 돈을 따로 만들어야 합니다.';i4.con=['retire','corpConv']}
+    o.push({n:9,name:'법인 항목',lv:'x',line:c.ind==='병의원'?'의원은 주식회사로 바꿀 수 없어 회사 가치·주주 구성은 해당이 없습니다.':'회사 가치·잉여금·주주 구성은 법인으로 바꾼 뒤에 봅니다.',con:[]});return o}
   return out}
 function sigGrid(list){return`<div class="sigs">${list.map(i=>`<div class="sigc" style="border-left-color:${LV[i.lv][1]}"><div class="sh"><span class="dot" style="background:${LV[i.lv][1]}"></span>${i.n}. ${esc(i.name)} <span class="muted">${LV[i.lv][0]}</span></div><div class="sl2">${esc(i.line)}</div></div>`).join('')}</div>`}
 function renderReport(){const mode=$('#rpMode').value;const{c,dx,top,kv,notes}=reportData();const a=last.amount||proposeAmount(c,top);const today=new Date().toISOString().slice(0,10);
@@ -1934,7 +2020,7 @@ $('#gen').onclick=()=>{run();document.querySelector('.tab[data-t="rp"]').click()
 const SAMPLE2={name:'A 원장님',co:'A 강의',ind:'서비스',form_:'개인',years:'',emp:'',sales:4.25,profit:3.3,age:'',sex:'남',kids:2,heir:'모름',rel:'기장',relYears:2,cert:'세무사',occ:'단독',obs:'',k1:'소득이 대표 한 명에게 몰려 높은 세율 구간',k2:'배우자가 일부 업무를 함께 함',k3:'월 생활비 1,200만원 수준 필요',goal:'',day:'금요일',time:'오후 3시 30분',dur:'30분',introN:'두',apMin:'20',notes:'매출 5억 근접, 넘기 전에 법인 검토\n부부 월 생활비 약 1,200만원\n교재 집필·영상 콘텐츠로 확장 계획\n해외주식 등 투자 관심\n자녀 2명, 승계 관심',f_noRetire:1,f_reliefEnd:1,f_newBiz:1,f_highEarner:1};
 if($('#sample2'))$('#sample2').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE2,rs:['보험','나중']});toggle();run();document.querySelectorAll('.tab')[0].click()};
 $('#sample').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),...SAMPLE,rs:['보험','생각']});run()};
-$('#reset').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'제조',form_:'개인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'결산',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각']});run()};
+$('#reset').onclick=()=>{write({...Object.fromEntries(FIELDS.map(k=>[k,''])),ind:'기타',form_:'개인',sex:'남',heir:'모름',rel:'기장',cert:'세무사',occ:'결산',day:'목요일',time:'오후 2시',dur:'한 시간',introN:'두',apMin:'20',rs:['보험','생각']});run()};
 $('#form').addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(run,250)});
 /* 외부에서 넘겨받은 업체 자료 (예: CRM 연동 스킬). 주소 # 뒤에만 담겨 서버로 전송되지 않으며, 읽은 뒤 주소에서 지운다. */
 function importFromHash(){const h=location.hash;if(!h.startsWith('#import='))return false;
@@ -1991,7 +2077,7 @@ toggle();run();
     return [ins.filter(x=>x.type==='checkbox'||x.type==='radio'?x.checked:String(x.value||'').trim()!=='').length,ins.length]};
   const draw=()=>{G.forEach(g=>{const b=bar.querySelector(`[data-g="${g}"]`);b.classList.toggle('on',gOpen(g));
       const ts=T.filter(t=>t.g===g&&!t.isD),n=ts.reduce((s,t)=>s+fill(t)[0],0);b.querySelector('i').textContent=ts.length&&n?n:''});
-    T.forEach(t=>{if(!t.isD){const [n,m]=fill(t);t.head.querySelector('.cnt').textContent=m&&n?`${n}칸`:''}});
+    T.forEach(t=>{if(!t.isD){const [n,m]=fill(t),ce=t.head&&t.head.querySelector('.cnt');if(ce)ce.textContent=m&&n?`${n}칸`:''}});
     bar.querySelector('[data-all]').textContent=T.every(isOpen)?'모두 접기':'모두 펴기'};
   bar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     if(b.hasAttribute('data-all')){const o=!T.every(isOpen);T.forEach(t=>setOpen(t,o));keep();draw();return}

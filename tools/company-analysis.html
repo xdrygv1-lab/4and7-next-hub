@@ -1055,7 +1055,7 @@ async function importFiles(files){
       let ocr=false;
       /* 글자 층이 거의 비어 있는 PDF(쪽당 30자 미만: 스캔 위에 제목만 글자인 경우)도 스캔본으로 봄 */
       if(isPdf&&rows.length){const np=rows.filter(r=>String(r[0]).startsWith(PAGE)).length||1,nc=rows.filter(r=>!String(r[0]).startsWith(PAGE)).map(r=>r.join('')).join('').replace(/\s/g,'').length;if(nc<30*np)rows=[]}
-      if(!rows.length&&isPdf){rows=ocrClean(await ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`));ocr=true}
+      if(!rows.length&&isPdf){rows=ocrClean(await ocrT(ocrPdf(buf.slice(0),t=>msg.textContent=`${f.name}: ${t}`)));ocr=true}
       if(!rows.length){notes.push(`${esc(f.name)}: 글자를 찾지 못했어요.`);continue}
       if(ocr)notes.push(`${esc(f.name)}: <span class="bad">스캔본이라 글자 인식으로 읽었어요. 숫자·이름이 틀릴 수 있으니 꼭 확인하세요.</span>`);
       const di=ocr?parseDocInfo(rows):R0.di;
@@ -1080,11 +1080,34 @@ async function importFiles(files){
   else{$('impMsg').innerHTML=notes.join('<br>');render();try{localStorage.setItem(KEY,JSON.stringify(snap()))}catch(e){}}}
 /* 11/24: 고를 때마다 앞에 넣은 파일과 같이 다시 읽음 · 끌어다 놓기 · 하나씩 빼기 */
 let IMPF=[];window.__impReset=()=>{IMPF=[];impList();$('impMsg').textContent=''};
+/* 11/26 김성종·정성우: 사업자등록증·근로계약서·글 파일 머리(«업종: …», «설립일: …», «제18기 2025년»)에서도 기본 정보.
+   «○○»·«OO» 같은 빈칸 표시는 회사명으로 쓰지 않음 (예전엔 근로계약서 서식의 «○○»가 회사명으로 들어가 다른 업체에도 남았음) */
+const __pdi0=parseDocInfo;
+parseDocInfo=function(rows){const info=__pdi0(rows)||{};
+  try{const lines=rows.map(r=>r.join(' ')).filter(l=>!String(l).startsWith(PAGE)),S=lines.join('\n');
+    const g=re=>{const m=S.match(re);return m?m[1].replace(/\s+/g,' ').trim():''};
+    if(!info.kind&&/사\s*업\s*자\s*등\s*록\s*증/.test(S))info.kind='사업자등록증';
+    if(!info.kind&&/근\s*로\s*계\s*약\s*서/.test(S.slice(0,3000)))info.kind='근로계약서';
+    if(!info.co){let v=g(/(?:상\s*호|법\s*인\s*명|사\s*업\s*(?:체|장)\s*명|단\s*체\s*명)\s*(?:\(\s*법\s*인\s*명\s*\))?\s*[:：]?\s*([^\n:：]{2,40}?)\s*(?=\n|$|대\s*표|성\s*명|사\s*업\s*자|개\s*업|생\s*년)/);
+      if(!v){const f=String(lines[0]||'').trim();if(/주식회사|㈜|\(주\)|의원|병원|약국|치과/.test(f)&&f.length<=30)v=f}
+      if(v)info.co=v}
+    if(!info.ind){const v=g(/(?:업\s*종|종\s*목)\s*[:：]\s*([^\n]{2,30})/);if(v)info.ind=v}
+    if(info.founded==null){const m=S.match(/(?:설\s*립\s*(?:일|연\s*월\s*일)|개\s*업\s*(?:연\s*월\s*일|일))\s*[:：]?\s*((?:19|20)\d\d)\s*(?:년|[.\-\/])/);if(m)info.founded=+m[1]}
+    if(info.founded==null&&info.foundedEst==null){const m=S.match(/제\s*(\d{1,3})\s*(?:\(\s*당\s*\)\s*)?기\s*((?:19|20)\d\d)\s*년/);if(m){info.term=+m[1];info.foundedEst=+m[2]-info.term+1;if(!info.fy)info.fy=+m[2]}}
+    if(!info.ceoName){const v=g(/대\s*표\s*(?:자|이\s*사)\s*(?:성\s*명)?\s*[:：]?\s*([가-힣]{2,5})(?![가-힣])/);if(v&&!/대표|성명|이사|서명/.test(v))info.ceoName=v}
+    if(info.kind==='사업자등록증'&&info.personal==null){const bn=S.match(/(\d{3})\s*-\s*(\d{2})\s*-\s*(\d{5})/);if(bn){const mid=+bn[2];if(mid>=1&&mid<=79)info.personal=true}}}
+  catch(e){}
+  const ph=s=>/[○◯◎●]|^\s*[(（]?\s*(?:주|㈜)?\s*[)）]?\s*(?:OO|ＯＯ|ㅇㅇ|00)\s*/i.test(String(s||''));
+  if(info.co&&ph(info.co))delete info.co;if(info.coReg&&ph(info.coReg))delete info.coReg;
+  if(info.kind==='근로계약서'){delete info.ceoName}   /* 근로계약서의 이름은 직원일 수 있음 */
+  return info};
+
+function ocrT(p){return Promise.race([p,new Promise((_,no)=>setTimeout(()=>no(new Error('글자 인식이 90초 넘게 걸려 건너뛰었어요. 글자가 있는 PDF나 엑셀로 넣어 주세요')),90000))])}
 function impList(){const el=$('impList');el.innerHTML=IMPF.length?IMPF.map((f,i)=>`<span class="ichip">${esc(f.name)}<button type="button" data-ix="${i}" aria-label="빼기">×</button></span>`).join('')+'<button type="button" id="impClr" class="iclr">모두 빼기</button>':'';
   el.querySelectorAll('[data-ix]').forEach(b=>b.onclick=()=>{IMPF.splice(+b.dataset.ix,1);impList();if(IMPF.length)importFiles(IMPF);else $('impMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'});
   const c=$('impClr');if(c)c.onclick=()=>{IMPF=[];impList();$('impMsg').textContent='파일을 모두 뺐어요. 채운 숫자는 그대로예요.'}}
 function impAdd(list){const add=[...list].filter(f=>/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name)&&!IMPF.some(g=>g.name===f.name&&g.size===f.size));
-  const bad=[...list].filter(f=>!/\.(pdf|xlsx|xls|csv|txt)$/i.test(f.name));if(bad.length)$('impMsg').textContent=`${bad.map(f=>f.name).join(', ')}: PDF·엑셀·CSV만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`;
+  const bad=[...list].filter(f=>!/\.(pdf|xlsx|xls|csv|txt|jpe?g|png|webp)$/i.test(f.name));if(bad.length)$('impMsg').textContent=`${bad.map(f=>f.name).join(', ')}: PDF·엑셀·CSV만 읽어요. 한글(hwp)은 PDF로 저장해서 넣어 주세요.`;
   if(!add.length)return Promise.resolve();IMPF=IMPF.concat(add);impList();return importFiles(IMPF)}
 $('impFile').onchange=e=>{impAdd(e.target.files).finally(()=>e.target.value='')};
 {const z=$('impDrop');['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove('over')}));z.addEventListener('drop',e=>impAdd(e.dataTransfer.files))}
@@ -1114,6 +1137,8 @@ document.querySelector('aside').addEventListener('input',()=>{render();try{local
 $('btnSample').onclick=()=>fill(SAMPLE);
 const BLANK={execN:1,retAge:65,retRule:'모름',spouse:'있음',lastYear:2025,grow:3,saveR:30,divOff:true,others:0};
 $('btnClear').onclick=()=>fill(BLANK);
+/* 11/26: 새 업체는 예시(B사)·앞 업체 값 없이 시작 */
+window.__blank=()=>{IMPF=[];impList();$('impMsg').textContent='';fill(BLANK);$('co').value='';$('ind').value='';try{localStorage.removeItem(KEY)}catch(e){}render()};
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 fill(saved||SAMPLE);
 </script>
